@@ -12,5 +12,11 @@ public class HelloController {
     public String helloWorld() {
         return "Hello World!!";
     }
+	
+	@ResponseBody
+    @RequestMapping("/hello2")
+    public String helloWorldTwo() {
+        return "Hello World!! test2";
+    }
 }
 
