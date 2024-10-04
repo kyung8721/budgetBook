@@ -12,3 +12,13 @@
 .bigLogo{
 	font-size : 50px;
 }
+
+.input_password{
+	position : relative;
+}
+
+.input_password_eye{
+	position : absolute;
+	right : 10px;
+	top : 5px;
+}
