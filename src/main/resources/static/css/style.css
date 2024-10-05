@@ -59,3 +59,25 @@
 	color : black;
 	font-weight : bold;
 }
+
+.budgetExhausted{
+	
+}
+
+.fixedCostAndbudgetPrediction{
+	width : 33.333%;
+	height : 100%;
+}
+
+.downSection{
+	height : 80%;
+	flex-direction: row;
+}
+
+.calendarSection{
+	flex-grow: 1;
+}
+
+.miniProgress{
+	flex-direction: row;
+}

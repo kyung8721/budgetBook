@@ -11,9 +11,18 @@
 				</div>
 				
 				<!-- 프로필 -->
-				<div class="profileSection bg-secondary">
-					<img src="https://cdn.pixabay.com/photo/2019/10/30/14/51/fall-4589724_1280.jpg" class="profileImage">
+				<div class="dropstart">
+					<div class="profileSection bg-secondary" data-toggle="dropdown">
+						<img src="https://cdn.pixabay.com/photo/2019/10/30/14/51/fall-4589724_1280.jpg" class="profileImage">
+					</div>
+					<ul class="dropdown-menu">
+					    <li><a class="dropdown-item" href="#">프로필 사진</a></li>
+					    <li><hr class="dropdown-divider"></li>
+					    <li><a class="dropdown-item text-danger" href="#">로그아웃</a></li>
+					 </ul>
 				</div>
+				
+				
 			</div>
 		</th:block>
 </html>
