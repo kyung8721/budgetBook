@@ -96,3 +96,10 @@ body::-webkit-scrollbar-thumb {
 body::-webkit-scrollbar-track {
     background: #e2e2e2;  /*스크롤바 뒷 배경 색상*/
 }
+.budgetPredictionDetailList tr:hover{
+	background: #e2e2e2;
+}
+
+.budgetPredictionDetailList tr:active{
+	background: #c3c3c3;
+}
