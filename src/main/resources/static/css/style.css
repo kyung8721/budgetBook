@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 #wrap{
-	width : 100vw;
+	width : 98vw;
 	height : 100vh;
 }
 
@@ -80,4 +80,19 @@
 
 .miniProgress{
 	flex-direction: row;
+}
+
+body::-webkit-scrollbar {
+    width: 5px;  /* 스크롤바의 너비 */
+}
+
+body::-webkit-scrollbar-thumb {
+    height: 30%; /* 스크롤바의 길이 */
+    background: #c0c0c0; /* 스크롤바의 색상 */
+    
+    border-radius: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #e2e2e2;  /*스크롤바 뒷 배경 색상*/
 }
