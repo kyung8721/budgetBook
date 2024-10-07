@@ -34,10 +34,12 @@
 
 #contentSection{
 	height: 90%;
+	flex-direction: row;
 }
 
 .mainContents{
 	width : 85%;
+	flex-grow: 1;
 }
 
 .profileSection{
@@ -102,4 +104,32 @@ body::-webkit-scrollbar-track {
 
 .budgetPredictionDetailList tr:active{
 	background: #c3c3c3;
+}
+
+.detailSection{
+	width : 100%;
+	
+}
+
+.detailTable{
+	width : 100%;
+	overflow : hidden;
+	border-radius : 13px;
+	outline : solid 1px #c0c0c0;
+}
+
+h3 > a{
+	color : black;
+}
+
+.inputBottomBorder{
+	border-width : 0 0 1px;
+}
+
+.modalText{
+	font-size : 14px;
+}
+
+input:focus{
+	outline : none;
 }

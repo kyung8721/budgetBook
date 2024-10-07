@@ -12,4 +12,9 @@ public class MoneyController {
 	public String mainView() {
 		return "money/main";
 	}
+	
+	@GetMapping("/fixedCost-view")
+	public String fixedCostView() {
+		return "money/fixedCost";
+	}
 }

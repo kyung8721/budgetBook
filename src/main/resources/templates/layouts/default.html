@@ -9,19 +9,8 @@
 <link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-<script>
+<script layout:fragment="scriptTop">
 
-	document.addEventListener('DOMContentLoaded', function() {
-		var calendarEl = document.getElementById('calendar');
-		var calendar = new FullCalendar.Calendar(calendarEl, {
-			initialView: 'dayGridMonth'
-	    });
-		calendar.render();
-		
-		calendar.setOption('height', "100%");
-	});
-	
-	
 </script>
 </head>
 <body>

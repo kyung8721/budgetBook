@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" >
 		<th:block th:fragment = "menu">
-			<div class="mainMenuSection border-right">
+			<div class="mainMenuSection border-right collapse show" id="mainMenuSection">
 				<nav class="pl-3 pt-3">
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<a class="nav-link menuText" href="#">내역</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link menuText" href="#">고정비 작성</a>
+							<a class="nav-link menuText" href="/budgetBook/money/fixedCost-view">고정비 작성</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link menuText" href="#">예산 짜기</a>
