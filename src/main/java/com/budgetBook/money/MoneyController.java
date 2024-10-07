@@ -17,4 +17,16 @@ public class MoneyController {
 	public String fixedCostView() {
 		return "money/fixedCost";
 	}
+	
+	// 상세 내역 모달
+	@GetMapping("/detailList")
+	public String detailListView() {
+		return "money/detail";
+	}
+	
+	// 상세 내역 모달
+	@GetMapping("/breakdown-view")
+	public String breakdownView() {
+		return "money/detailView";
+	}
 }

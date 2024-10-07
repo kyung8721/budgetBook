@@ -145,9 +145,27 @@
     				<div>
     					<!-- 예산예측 내역 리스트 -->
     					<table class="table budgetPredictionDetailList" id="budgetPredictionDetailList">
-    						<tr>
-    							<td>월세</td>
-    							<td>500,000</td>
+    						<tr class="dropdown">
+    							<td data-toggle="dropdown">
+    								<div>월세</div>
+    								<ul class="dropdown-menu">
+									    <li><a class="dropdown-item" href="#">수정</a></li>
+									    <li><hr class="dropdown-divider"></li>
+									    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+									    <li><hr class="dropdown-divider"></li>
+									    <li id="partUse"><a class="dropdown-item" href="#">일부 사용</a></li>
+									 </ul>
+    							</td>
+    							<td data-toggle="dropdown">
+    								<div>500,000</div>
+    								<ul class="dropdown-menu">
+									    <li><a class="dropdown-item" href="#">수정</a></li>
+									    <li><hr class="dropdown-divider"></li>
+									    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+									    <li><hr class="dropdown-divider"></li>
+									    <li id="partUse"><a class="dropdown-item" href="#">일부 사용</a></li>
+									 </ul>
+    							</td>
     							<td class="dropdown">
     								<button class="btn dropdown-toggle btn-warning" data-toggle="dropdown" value="bank">카카오뱅크</button>
 	    							<ul class="dropdown-menu">
@@ -163,7 +181,10 @@
 									    <li><a class="dropdown-item" href="#">꾸밈비</a></li>
 									 </ul>
     							</td>
+    							
     						</tr>
+    						
+    						
     						
     						<tr id="">
     							<td>월세</td>
@@ -214,16 +235,203 @@
     			<div id='calendar'></div>
     		</div>
     	</div>
+    	
+    	<!-- Modal -->
+		<div class="modal fade" id="detailModal"  aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable ">
+		    <div class="modal-content p-3">
+		      <div class="modal-body">
+		      	<table class="table detailTable text-center table-hover">
+	    			<thead class="table-secondary">
+	    				<tr>
+	    					<th>분류</th>
+	    					<th>날짜</th>
+	    					<th>자산</th>
+	    					<th>카테고리</th>
+	    					<th>세부 카테고리</th>
+	    					<th>내역</th>
+	    					<th>금액</th>
+	   					</tr>
+	    			</thead>
+	    			<tbody>
+	    				<tr id="detailList">
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<!-- 이후로 삭제 예정 -->
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    				<tr>
+	    					<td><span class="text-danger">지출</span></td>
+	    					<td>매월 1일</td>
+	    					<td>카카오뱅크 생활비 통장</td>
+	    					<td>주거/통신비</td>
+	    					<td>월세</td>
+	    					<td></td>
+	    					<td><span class="text-danger">-500,000</span></td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+    	
+    	
+		
     </section>
     
     <script layout:fragment="script">
     
+    
     	$(document).ready(function(){
     		
-    		$("#budgetPredictionDetailList").on("click", "tr td:not(:has(.btn))", function(){
+    		$("#partUse").on("click", function(){
+    			$("#detailModal").modal("show");
+    		});
+    		
+    		/* $("#budgetPredictionDetailList").on("click", "tr td:not(:has(.btn))", function(){
     			alert("클릭");
     			
-    		}); // 예산 예측 클릭 이벤트 종료
+    		}); // 예산 예측 클릭 이벤트 종료 */
     	}); // 문서 종료
     </script>
 
