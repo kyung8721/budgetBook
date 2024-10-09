@@ -7,19 +7,7 @@
 	      			<button type="button" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1">이체</button>
 	      		</div>
 	      		
-	      		<div class="d-flex align-items-center mt-3 modalText">
-	      			<div class="col-4">날짜</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7">
-	      		</div>
 	      		
-	      		<div class="d-flex align-items-center mt-3 modalText">
-	      			<div class="col-4">자산</div>
-	      			<select class="form-control form-control-sm">
-      					<option>카카오뱅크 생활비 통장</option>
-      					<option>하나은행</option>
-      					<option>신한은행</option>
-      				</select>
-	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
@@ -31,32 +19,40 @@
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
-	      			<div class="col-4">세부 카테고리</div>
-	      			<select class="form-control form-control-sm col-4">
-      					<option>커피</option>
-      					<option>식재료</option>
-      					<option>외식</option>
-      				</select>
-	      		</div>
-	      		
-	      		<div class="d-flex align-items-center mt-3 modalText">
-	      			<div class="col-4">내역</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7">
-	      		</div>
-	      		
-	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
 	      			<input type="number" class="inputBottomBorder ml-1 col-7" >
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
-	      			<div class="col-4">메모</div>
+	      			<div class="col-4">색상</div>
+	      			<div id="colorPicker" class="pl-3 pr-3">색상 수정하기</div>
+	      			<input id="inputColor" type="color" class="d-none" value="#c0c0c0">
 	      		</div>
 	      		
+	      		<div class="d-flex align-items-center mt-3 modalText">
+	      			<div class="col-4">메모</div>
+	      		</div>
 	      		<div class="d-flex justify-content-center">
 	      			<textarea class="form-control mt-1 col-11" rows = "8"></textarea>
 	      		</div>
 	      		
 	      		
+	      		
 	      	</div>
+	      	
+	      	<script>
+	      		$(document).ready(function(){
+	      			// 색상 수정하기 클릭 시 컬러피커 나오게 이벤트 설정
+	      			$("#colorPicker").on("click", function(){
+	        			$("#inputColor").click();
+	        			
+	        		});
+	      			
+	      			// 컬러피커 값이 변하면 나오는 이벤트
+	      			$("#inputColor").change(function(){
+	      				let color = $("#inputColor").val();
+	      				$("#colorPicker").attr("style", "background-color : " + color);
+	      			});
+	      		});
+	      	</script>
 	      

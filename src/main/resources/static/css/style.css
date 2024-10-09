@@ -53,7 +53,8 @@
 }
 
 .profileImage{
-	height : 50px;
+	width : 50px;
+	object-fit : cover;
 }
 
 .menuText{
@@ -132,4 +133,26 @@ h3 > a{
 
 input:focus{
 	outline : none;
+}
+
+#colorPicker{
+	border-radius : 13px;
+	outline : solid 1px #c0c0c0;
+	background-color : #e4e4e4;
+}
+
+.profileDetailSection{
+	width : 100%;
+	border-radius : 13px;
+	outline : solid 1px #c0c0c0;
+}
+
+.profileBicImgSection{
+	width : 300px;
+	height : 300px;
+}
+
+.profileBigImg{
+	width : 300px;
+	object-fit : cover;
 }

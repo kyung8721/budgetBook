@@ -13,20 +13,63 @@ public class MoneyController {
 		return "money/main";
 	}
 	
+	// 고정비 작성 페이지
 	@GetMapping("/fixedCost-view")
 	public String fixedCostView() {
 		return "money/fixedCost";
 	}
 	
 	// 상세 내역 모달
-	@GetMapping("/detailList")
+	@GetMapping("/detailModal")
 	public String detailListView() {
 		return "money/detail";
 	}
 	
-	// 상세 내역 모달
+	// 고정비 작성 모달
+	@GetMapping("/fixedCostModal")
+	public String fixedCostModalView() {
+		return "money/fixedCostModal";
+	}
+	
+	// 내역 페이지
 	@GetMapping("/breakdown-view")
 	public String breakdownView() {
 		return "money/detailView";
+	}
+	
+	// 예산 예측 페이지
+	@GetMapping("/budgetPrediction-view")
+	public String budgetPredictionView() {
+		return "money/budgetPrediction";
+	}
+	
+	// 카테고리 추가 모달
+	@GetMapping("/categoryModal")
+	public String categoryModalView() {
+		return "money/categoryModal";
+	}
+	
+	// 자산 페이지
+	@GetMapping("/assets-view")
+	public String assetView() {
+		return "money/assetView";
+	}
+	
+	// 자산 추가 모달 페이지
+	@GetMapping("/assetModal")
+	public String assetModalView() {
+		return "money/assetModal";
+	}
+	
+	// 통계 - 지출 페이지
+	@GetMapping("/statics/outgoing-view")
+	public String staticOutGoingView() {
+		return "money/staticOutGoingView";
+	}
+	
+	// 통계 - 수입 페이지
+	@GetMapping("/statics/income-view")
+	public String staticinComeView() {
+		return "money/staticinComeView";
 	}
 }

@@ -17,4 +17,9 @@ public class UserController {
 	public String joinView() {
 		return "/user/join";
 	}
+	
+	@GetMapping("/profile-view")
+	public String profileView() {
+		return "/user/profile";
+	}
 }
