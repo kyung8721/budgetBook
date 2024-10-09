@@ -2,9 +2,9 @@
 	      	<div>
 	      		<div class="d-flex align-items-center modalText">
 	      			<div class="col-4">분류</div>
-	      			<button type="button" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
-	      			<button type="button" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1">지출</button>
-	      			<button type="button" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1">이체</button>
+	      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
+	      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1">지출</button>
+	      			<button type="button" id="transferBtn" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1">이체</button>
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -59,4 +59,37 @@
 	      		
 	      		
 	      	</div>
+	      	
+	      	<script>
+	      		$(document).ready(function(){
+	      			// 버튼 클릭 시 버튼 스타일 변경
+	      			$("#incomeBtn").on("click", function(){
+	      				$("#incomeBtn").removeClass("btn-outline-success");
+	      				$("#incomeBtn").addClass("btn-success");
+	      				
+	      				$("#outgoingBtn").removeClass("btn-danger");
+	      				$("#outgoingBtn").addClass("btn-outline-danger");
+	      				$("#transferBtn").removeClass("btn-secondary");
+	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      			}); // 수입 버튼
+	      			$("#outgoingBtn").on("click", function(){
+	      				$("#outgoingBtn").removeClass("btn-outline-danger");
+	      				$("#outgoingBtn").addClass("btn-danger");
+	      				
+	      				$("#incomeBtn").removeClass("btn-success");
+	      				$("#incomeBtn").addClass("btn-outline-success");
+	      				$("#transferBtn").removeClass("btn-secondary");
+	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      			}); // 지출 버튼
+	      			$("#transferBtn").on("click", function(){
+	      				$("#transferBtn").removeClass("btn-outline-secondary");
+	      				$("#transferBtn").addClass("btn-secondary");
+	      				
+	      				$("#outgoingBtn").removeClass("btn-danger");
+	      				$("#outgoingBtn").addClass("btn-outline-danger");
+	      				$("#incomeBtn").removeClass("btn-success");
+	      				$("#incomeBtn").addClass("btn-outline-success");
+	      			}); // 이체 버튼
+	      		});
+	      	</script>
 	      

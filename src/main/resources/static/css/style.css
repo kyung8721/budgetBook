@@ -156,3 +156,17 @@ input:focus{
 	width : 300px;
 	object-fit : cover;
 }
+
+.thisPageText{
+	color : black;
+	text-decoration : underline;
+}
+
+.notThisPageText{
+	color : gray;
+}
+
+.borderSection{
+	border-radius : 13px;
+	outline : solid 1px #c0c0c0;
+}

@@ -16,13 +16,13 @@
 			</svg>
     		
     		<!-- 수입 / 지출 -->
-    		<a href="/budgetBook/money/statics/income-view" class="ml-4 notThisPageText">수입</a>
-    		<a href="/budgetBook/money/statics/outgoing-view" class="ml-4 thisPageText">지출</a>
+    		<a href="/budgetBook/money/statics/income-view" class="ml-4 thisPageText">수입</a>
+    		<a href="/budgetBook/money/statics/outgoing-view" class="ml-4 notThisPageText">지출</a>
     	</div>
     	
     	<div class="d-flex">
     		<div class="col-3 borderSection">
-    			<h3 class="mt-2">카테고리 별 지출</h3>
+    			<h3 class="mt-2">카테고리 별 수입</h3>
     			<canvas id="pieChart" style = "width : 100%; height : 400px;"></canvas>
     			<div style = "font-size : 20px;">전체</div>
     			<table class="table detailTable text-center table-hover">
@@ -35,32 +35,17 @@
     			</thead>
     			<tbody>
     				<tr>
-    					<td>주거/통신비</td>
-    					<td>600,000</td>
-    					<td>56%</td>
-    				</tr>
-    				<tr>
-    					<td>주거/통신비</td>
-    					<td>600,000</td>
-    					<td>56%</td>
-    				</tr>
-    				<tr>
-    					<td>주거/통신비</td>
-    					<td>600,000</td>
-    					<td>56%</td>
-    				</tr>
-    				<tr>
-    					<td>주거/통신비</td>
-    					<td>600,000</td>
-    					<td>56%</td>
+    					<td>월급</td>
+    					<td>3,000,000</td>
+    					<td>100%</td>
     				</tr>
     			</table>
     		</div>
     		
     		<div class="ml-2 col-9 borderSection">
-    			<h3 class="mt-2">카테고리 별 지출 비교</h3>
+    			<h3 class="mt-2">카테고리 별 수입 비교</h3>
 				<canvas id="barChart" style = "width : 100%; height : 400px;"></canvas>
-				<div style = "font-size : 20px;">주거/통신비</div>
+				<div style = "font-size : 20px;">월급</div>
 				<table class="table detailTable text-center table-hover">
 	    			<thead class="table-secondary">
 	    				<tr>
@@ -75,54 +60,15 @@
 	    			</thead>
 	    			<tbody>
 	    				<tr id="detailList">
-	    					<td><span class="text-danger">지출</span></td>
+	    					<td><span class="text-success">수입</span></td>
 	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
+	    					<td>월급통장</td>
+	    					<td>월급</td>
 	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
+	    					<td></td>
+	    					<td><span class="text-success">3,000,000</span></td>
 	    				</tr>
 	    				
-	    				<tr>
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
-	    				
-	    				<tr>
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
-	    				
-	    				<tr>
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
-	    				
-	    				<tr>
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
 	    			</tbody>
 	    		</table>
 			</div>
