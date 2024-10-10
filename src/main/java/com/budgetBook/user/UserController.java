@@ -22,4 +22,6 @@ public class UserController {
 	public String profileView() {
 		return "/user/profile";
 	}
+	
+	
 }
