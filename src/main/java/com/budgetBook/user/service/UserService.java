@@ -4,7 +4,9 @@ import java.security.SecureRandom;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.budgetBook.common.FileManager;
 import com.budgetBook.common.HashingEncoder;
 import com.budgetBook.common.SHA256HashingEncoder;
 import com.budgetBook.user.domain.Profile;
@@ -48,9 +50,7 @@ public class UserService {
 		// 비밀번호 user에 암호화된 것으로 교체
 		user.setPassword(encryptPassword);
 		// salt DB에 저장
-		user = User.builder()
-				.salt(salt)
-				.build();
+		user.setSalt(salt);
 		
 		// user 저장
 		return userRepository.save(user);
@@ -113,6 +113,23 @@ public class UserService {
 			// 사용자가 없으면
 			return null;
 		}
+		
+	}
+	
+	// 프로필 이미지 저장
+	public String profileImageSave(int userId, MultipartFile img) {
+		String urlPath = FileManager.saveFile(userId, img);
+		return urlPath;
+	}
+	
+	// 프로필 이미지 업데이트
+	public Profile updateProfileImage(int userId, String ProfileImagePath) {
+		Profile profile = profileRepository.findByUserId(userId);
+		profile.setProfileImagePath(ProfileImagePath);
+		
+		return profileRepository.save(profile);
+		
+		
 		
 	}
 }
