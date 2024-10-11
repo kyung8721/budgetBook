@@ -3,6 +3,7 @@ package com.budgetBook.user;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,7 +35,8 @@ public class UserRestController {
 			@RequestParam("loginId") String loginId
 			, @RequestParam("password") String password
 			, @RequestParam("email") String email
-			, @RequestParam("snsLogin") String snsLogin) {
+			, @RequestParam(value = "snsLogin", required = false) String snsLogin
+			, @RequestParam(value = "profileImagePath", required = false) String profileImagePath) {
 		
 		User user = User.builder()
 				.loginId(loginId)
@@ -43,7 +45,10 @@ public class UserRestController {
 				.snsLogin(snsLogin)
 				.build();
 		
+		// 유저 저장
 		User result = userService.addUser(user);
+		// 유저 프로필 생성
+		userService.addProfile(user.getId(), profileImagePath);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
@@ -123,6 +128,23 @@ public class UserRestController {
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(profile != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 프로필 사진 삭제 후 기본 이미지로 돌아가기
+	@DeleteMapping("/profileImage/delete")
+	public Map<String, String> profileImageDelete(HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		boolean result = userService.deleteProfileImage(userId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(result) {
 			resultMap.put("result", "success");
 		}else {
 			resultMap.put("result", "fail");

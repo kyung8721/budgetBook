@@ -46,7 +46,6 @@ public class UserService {
 		String encryptPassword = encoder.encode(user.getPassword() + salt);
 		
 		
-		
 		// 비밀번호 user에 암호화된 것으로 교체
 		user.setPassword(encryptPassword);
 		// salt DB에 저장
@@ -54,6 +53,24 @@ public class UserService {
 		
 		// user 저장
 		return userRepository.save(user);
+		
+	}
+	
+	// 프로필 생성
+	public Profile addProfile(int userId, String profileImagePath) {
+		
+		if(profileImagePath != null) {
+			Profile profile = Profile.builder()
+					.userId(userId)
+					.profileImagePath(profileImagePath)
+					.build();
+			return profileRepository.save(profile);
+		}else {
+			Profile profile = Profile.builder()
+					.userId(userId)
+					.build();
+			return profileRepository.save(profile);
+		}
 		
 	}
 	
@@ -128,8 +145,23 @@ public class UserService {
 		profile.setProfileImagePath(ProfileImagePath);
 		
 		return profileRepository.save(profile);
+	}
+	
+	// 프로필 사진 삭제 후 기본 이미지로 돌아가기
+	public boolean deleteProfileImage(int userId) {
+		Profile profile = profileRepository.findByUserId(userId);
 		
-		
+		if(profile != null) {
+			// 프로필 DB에 저장된 경로의 사진 및 폴더 삭제
+			FileManager.deleteImageFile(profile.getProfileImagePath());
+			// 프로필 DB update
+			profile.setProfileImagePath("https://cdn.pixabay.com/photo/2016/11/14/17/39/person-1824144_1280.png");
+			profileRepository.save(profile);
+			
+			return true;
+		}else {
+			return false;
+		}
 		
 	}
 }
