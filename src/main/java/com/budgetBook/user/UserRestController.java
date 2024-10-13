@@ -17,6 +17,7 @@ import com.budgetBook.user.domain.User;
 import com.budgetBook.user.dto.UserDto;
 import com.budgetBook.user.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -98,13 +99,17 @@ public class UserRestController {
 	@PostMapping("/login")
 	public Map<String, String> login(
 			@RequestParam("loginId")String loginId
-			, @RequestParam("password") String password){
+			, @RequestParam("password") String password
+			, HttpServletRequest request){
 		UserDto user = userService.loginService(loginId, password);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(user != null) {
 			resultMap.put("result", "success");
+			HttpSession session = request.getSession();
+			session.setAttribute("userId", user.getUserId());
+			session.setAttribute("loginId", user.getLoginId());
 		}else {
 			resultMap.put("result", "fail");
 		}
