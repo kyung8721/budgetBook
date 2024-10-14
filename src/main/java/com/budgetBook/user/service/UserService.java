@@ -25,6 +25,7 @@ public class UserService {
 	UserService(UserRepository userRepository, HashingEncoder encoder, ProfileRepository profileRepository){
 		this.userRepository = userRepository;
 		this.encoder = encoder;
+		this.profileRepository = profileRepository;
 	}
 	
 	// 회원가입

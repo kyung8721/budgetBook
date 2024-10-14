@@ -70,7 +70,7 @@ public class UserRestController {
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
-		if(user != null) {
+		if(user == null) {
 			resultMap.put("isDuplicate", "false");
 		}else {
 			resultMap.put("isDuplicate", "true");
@@ -86,7 +86,7 @@ public class UserRestController {
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
-		if(user != null) {
+		if(user == null) {
 			resultMap.put("isDuplicate", "false");
 		}else {
 			resultMap.put("isDuplicate", "true");

@@ -25,15 +25,17 @@
 						<!-- 아이디, 비밀번호 입력 -->
 						<label>아이디</label>
 						<div class="input-group">
-							<input type="text" placeholder="아이디를 입력하세요" class="form-control">
+							<input type="text" placeholder="아이디를 입력하세요" class="form-control" id="loginId">
 							<div class="input-group-append">
-								<button class="btn btn-outline-secondary" type="button">중복확인</button>
+								<button class="btn btn-outline-secondary" type="button" id="loginIdDuplicateBtn">중복확인</button>
 							</div>
 						</div>
+						<div class="text-success text-sm mt-2 d-none" id = "nonDuplicateLoginId">사용 가능한 아이디입니다.</div>
+						<div class="text-danger text-sm mt-2 d-none" id = "duplicateLoginId">중복된 아이디입니다.</div>
 						
 						<label class="mt-3">비밀번호</label>
 						<div class="d-flex input_password">
-							<input type="password" placeholder="비밀번호를 입력하세요" class="form-control" width="100%">
+							<input type="password" placeholder="비밀번호를 입력하세요" class="form-control" width="100%" id="password">
 							<div class="input_password_eye">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
 									<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
@@ -45,11 +47,13 @@
 						<!-- 이메일 -->
 						<label class="mt-3">이메일</label>
 						<div class="input-group">
-							<input type="text" placeholder="이메일을 입력하세요" class="form-control">
+							<input type="text" placeholder="이메일을 입력하세요" class="form-control" id="email">
 							<div class="input-group-append">
-								<button class="btn btn-outline-secondary" type="button">중복확인</button>
+								<button class="btn btn-outline-secondary" type="button" id="emailDuplicateBtn">중복확인</button>
 							</div>
 						</div>
+						<div class="text-success text-sm mt-2 d-none" id = "nonDuplicateEmail">사용 가능한 이메일입니다.</div>
+						<div class="text-danger text-sm mt-2 d-none" id = "duplicateEmail">중복된 이메일입니다.</div>
 						
 						<!-- 인증번호 확인 버튼 -->
 						<button class="btn btn-outline-secondary mt-3" type="button" id="verificationCodeBtn">인증번호 확인</button>
@@ -60,8 +64,8 @@
 							<div>
 								<label class="mt-3">인증번호 확인</label>
 								<div class="input-group">
-									<input type="text" placeholder="인증번호를 입력하세요" class="form-control">
-									<button class="btn btn-outline-secondary" type="button">인증번호 확인</button>
+									<input type="text" placeholder="인증번호를 입력하세요" class="form-control" id="verificationCode">
+									<button class="btn btn-outline-secondary" type="button" id="verificationCodeCheckBtn">인증번호 확인</button>
 								</div>
 							</div>
 							<!-- 인증번호 확인 후 문구 -->
@@ -72,7 +76,7 @@
 						</div>
 						
 						<!-- 회원가입 버튼 -->
-						<button class="btn btn-dark btn-block mt-3">회원가입</button>
+						<button class="btn btn-dark btn-block mt-3" id="joinBtn">회원가입</button>
 						
 					</div>
 					<!-- SNS 로그인 부분 -->
@@ -104,6 +108,157 @@
     
     <script>
     	$(document).ready(function(){
+    		
+    		// 전역변수
+			var checkDuplicateEmail = false;
+			var idDuplicateEmail = false;
+			var checkDuplicateLoginId = false;
+			var idDuplicateLoginId = false;
+			
+			// 로그인 아이디 입력이 바뀌면 중복체크 초기화
+			$("loginId").on("input", function(){
+				var checkDuplicateLoginId = false;
+				var idDuplicateLoginId = false;
+				
+				$("#nonDuplicateLoginId").addClass("d-none");
+				$("#duplicateLoginId").addClass("d-none");
+			}); // 로그인 아이디 입력이 바뀌면 중복체크 초기화 종료
+			
+			// 로그인 아이디 중복 확인
+			$("#loginIdDuplicateBtn").on("click", function(){
+				let loginId = $("#loginId").val();
+				
+				$.ajax({
+					type : "get"
+					, url : "/budgetBook/user/join/loginId-check"
+					, data : {"loginId" : loginId}
+					, success : function(data){
+						
+						checkDuplicateLoginId = true;
+	                	isDuplicateLoginId = data.isDuplicate;
+	                	
+						if(data.isDuplicate == "false"){
+							$("#nonDuplicateLoginId").removeClass("d-none");
+							$("#duplicateLoginId").addClass("d-none");
+						}else{
+							$("#nonDuplicateLoginId").addClass("d-none");
+							$("#duplicateLoginId").removeClass("d-none");
+						}
+					}
+					, error : function(){
+						alert("아이디 중복검사 에러!")
+					}
+				});
+				
+			}); // 로그인 아이디 중복 확인 이벤트 종료
+			
+			// 이메일 입력이 바뀌면 중복체크 초기화
+    		$("email").on("input", function(){
+				var checkDuplicateEmail = false;
+				var idDuplicateEmail = false;
+				
+				$("#nonDuplicateEmail").addClass("d-none");
+				$("#duplicateEmail").addClass("d-none");
+			}); // 로그인 아이디 입력이 바뀌면 중복체크 초기화 종료
+			
+			// 이메일 중복 확인
+			$("#emailDuplicateBtn").on("click", function(){
+				let email = $("#email").val();
+				
+				$.ajax({
+					type : "get"
+					, url : "/budgetBook/user/join/email-check"
+					, data : {"email" : email}
+					, success : function(data){
+						
+						checkDuplicateEmail = true;
+	                	isDuplicateEmail = data.isDuplicate;
+	                	
+						if(data.isDuplicate == "false"){
+							$("#nonDuplicateEmail").removeClass("d-none");
+							$("#duplicateEmail").addClass("d-none");
+						}else{
+							$("#nonDuplicateEmail").addClass("d-none");
+							$("#duplicateEmail").removeClass("d-none");
+						}
+					}
+					, error : function(){
+						alert("아이디 중복검사 에러!")
+					}
+				});
+				
+			}); // 이메일 중복 확인 이벤트 종료
+			
+			
+    		// 회원가입 버튼 클릭 이벤트
+    		$("#joinBtn").on("click", function(){
+    			let loginId = $("#loginId").val();
+    			let password = $("#password").val();
+    			let email = $("#email").val();
+    			
+    			// 유효성 검사
+    			if(loginId == ""){
+    				alert("아이디를 입력하세요");
+    				return ;
+    			}
+    			
+    			if(password == ""){
+    				alert("비밀번호를 입력하세요");
+    				return ;
+    			}
+    			
+    			if(email == ""){
+    				alert("이메일을 입력하세요");
+    				return ;
+    			}
+    			
+    			// 중복 체크 - 아이디
+    			if(!checkDuplicateLoginId){
+    				alert("아이디 중복을 확인하세요");
+    				return ;
+    			}
+    			if(isDuplicateLoginId == true){
+    				alert("아이디가 중복입니다");
+    				return ;
+    			}
+    			
+    			// 중복 체크 - 이메일
+    			if(!checkDuplicateEmail){
+    				alert("이메일 중복을 확인하세요");
+    				return ;
+    			}
+    			if(isDuplicateEmail == true){
+    				alert("이메일이 중복입니다");
+    				return ;
+    			}
+    			
+    			let formData = new FormData();
+    			formData.append("loginId", loginId);
+    			formData.append("password", password);
+    			formData.append("email", email);
+    			
+    			$.ajax({
+    				type : "post"
+    				, url : "/budgetBook/user/join"
+    				, data : formData
+    				, processData : false
+                    , contentType : false
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		location.href = "/budgetBook/user/login-view"
+                    	}else{
+                    		alert("회원가입 실패!")
+                    	}
+                    }
+    				, error : function(){
+    					alert("회원가입 에러!")
+    				}
+    			});
+    			
+    			
+    		}); // 회원가입 버튼 클릭 이벤트 종료
+    		
+    		// 인증버튼 확인 버튼 클릭하여 인증버튼 확인 과정 펼치기 이벤트
     		$("#verificationCodeBtn").on("click", function(){
     			$("#verificationCode").removeClass("d-none");
     		}); // 인증번호 확인버튼 클릭
