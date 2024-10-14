@@ -3,7 +3,6 @@ package com.budgetBook.money.domain;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
@@ -19,14 +18,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="fixedCost")
+@Table(name="category")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@DynamicInsert
-public class FixedCost {
+public class Category {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -36,20 +34,12 @@ public class FixedCost {
 	private int userId;
 	
 	private String classification;
-	private String period;
 	
-	@Column(name="assetsId")
-	private int assetsId;
+	@Column(name="categoryName")
+	private String categoryName;
 	
-	@Column(name="categoryId")
-	private int categoryId;
-	
-	@Column(name="detailCategoryId")
-	private int detailCategoryId;
-	
-	@Column(name="fixedCost")
-	private int fixedCost;
-	
+	private int amount; // 예산금액
+	private String color;
 	private String memo;
 	
 	@Column(name="createdAt")

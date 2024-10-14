@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.service.MoneyService;
 import com.budgetBook.user.dto.UserDto;
 
@@ -32,7 +33,18 @@ public class MoneyController {
 	
 	// 고정비 작성 페이지
 	@GetMapping("/fixedCost-view")
-	public String fixedCostView() {
+	public String fixedCostView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		// 사용자 정보
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		// 고정비 내역 불러오기
+		FixedCostDto fixedCostDto = moneyService.callFixedCost(userId);
+		
+		model.addAttribute("user", userDto);
+		model.addAttribute("fixedCost", fixedCostDto);
+		
 		return "money/fixedCost";
 	}
 	
@@ -50,13 +62,25 @@ public class MoneyController {
 	
 	// 내역 페이지
 	@GetMapping("/breakdown-view")
-	public String breakdownView() {
+	public String breakdownView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
+		
 		return "money/detailView";
 	}
 	
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
-	public String budgetPredictionView() {
+	public String budgetPredictionView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
+		
 		return "money/budgetPrediction";
 	}
 	
@@ -68,7 +92,13 @@ public class MoneyController {
 	
 	// 자산 페이지
 	@GetMapping("/assets-view")
-	public String assetView() {
+	public String assetView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
+		
 		return "money/assetView";
 	}
 	
@@ -80,13 +110,26 @@ public class MoneyController {
 	
 	// 통계 - 지출 페이지
 	@GetMapping("/statics/outgoing-view")
-	public String staticOutGoingView() {
+	public String staticOutGoingView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
+		
 		return "money/staticOutGoingView";
 	}
 	
 	// 통계 - 수입 페이지
 	@GetMapping("/statics/income-view")
-	public String staticinComeView() {
+	public String staticinComeView(HttpSession session, Model model) {
+		
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
+		
 		return "money/staticinComeView";
 	}
 }
