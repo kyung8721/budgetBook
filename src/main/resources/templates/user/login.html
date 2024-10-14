@@ -20,7 +20,7 @@
 				<div class="ml-2 mr-2">
 					<!-- 로그인 부분 -->
 					<div>
-						<form>
+						<form id="loginForm">
 							<!-- 로그인 글자 -->
 							<div><h2>로그인</h2></div>
 							<!-- 아이디, 비밀번호 입력 -->
@@ -29,7 +29,7 @@
 							<label class="mt-3">비밀번호</label>
 							<input type="password" placeholder="비밀번호를 입력하세요" class="form-control" id="password">
 							
-							<button class="btn btn-dark btn-block mt-3" id="loginBtn">로그인</button>
+							<button type="submit" class="btn btn-dark btn-block mt-3">로그인</button>
 						</form>
 						
 						<div class="d-flex justify-content-center mt-1">
@@ -71,10 +71,17 @@
     
     <script>
     	$(document).ready(function(){
+    		
+    		
     		// 로그인 버튼 클릭 이벤트
-    		$("#loginBtn").on("click", function(){
+    		$("#loginForm").on("submit", function(e){
+    			
+    			// 이벤트 기본 기능 없애기
+				e.preventDefault();
+    			
     			let loginId = $("#loginId").val();
     			let password = $("#password").val();
+    			
     			
     			// 유효성 검사
     			if(loginId == ""){
@@ -82,7 +89,7 @@
     				return ;
     			}
     			
-    			if(password = ""){
+    			if(password == ""){
     				alert("비밀번호를 입력하세요");
     				return ;
     			}
@@ -98,7 +105,11 @@
     				, processData : false
                     , contentType : false
     				, success : function(data){
-    					location.href = "/budgetBook/money/main-view";
+    					if(data.result == "success"){
+    						location.href = "/budgetBook/money/main-view";
+    					}else{
+    						alert("로그인 실패");
+    					}
     				}
     				, error : function(){
     					alert("로그인 에러!");

@@ -1,12 +1,24 @@
 package com.budgetBook.user;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.budgetBook.user.dto.UserDto;
+import com.budgetBook.user.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/budgetBook/user")
 public class UserController {
+	
+	private UserService userService;
+	
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 	
 	@GetMapping("/login-view")
 	public String loginView() {
@@ -19,7 +31,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/profile-view")
-	public String profileView() {
+	public String profileView(HttpSession session, Model model) {
+		
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = userService.userData(userId);
+		
+		model.addAttribute("user", userDto);
+		
+		
 		return "/user/profile";
 	}
 	

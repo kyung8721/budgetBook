@@ -2,7 +2,7 @@ package com.budgetBook.money.domain;
 
 import java.time.LocalDateTime;
 
-import com.budgetBook.user.domain.User;
+import org.hibernate.annotations.DynamicInsert;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@DynamicInsert
 public class FixedCost {
 	
 	@Id

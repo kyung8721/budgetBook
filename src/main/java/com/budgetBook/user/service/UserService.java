@@ -111,7 +111,7 @@ public class UserService {
 			String DBPassword = user.getPassword();
 			
 			// 비밀번호끼리 비교
-			if(encryptPassword == DBPassword) {
+			if(encryptPassword.equals(DBPassword)) {
 				// 비밀번호 동일 : UserDto 리턴
 				Profile profile = profileRepository.findByUserId(user.getId());
 				UserDto userDto = UserDto.builder()
@@ -163,6 +163,29 @@ public class UserService {
 		}else {
 			return false;
 		}
+		
+	}
+	
+	// 사용자 정보 조회 및 전달
+	public UserDto userData(int userId) {
+		Optional<User> optionalUser = userRepository.findById(userId);
+		User user = optionalUser.orElse(null);
+		Profile profile = profileRepository.findByUserId(userId);
+		
+		if(user == null || profile == null) {
+			return null;
+		}else {
+			UserDto userDto = UserDto.builder()
+					.userId(user.getId())
+					.profileId(profile.getId())
+					.loginId(user.getLoginId())
+					.email(user.getEmail())
+					.snsLogin(user.getSnsLogin())
+					.profileImagePath(profile.getProfileImagePath())
+					.build();
+			return userDto;
+		}
+		
 		
 	}
 }

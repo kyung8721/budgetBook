@@ -14,9 +14,7 @@
     			<div class = "col-3">
     				SNS 로그인
     			</div>
-    			<div>
-    				NAVER
-    			</div>
+    			<div th:text = "${user.snsLogin}">NAVER</div>
     		</div>
     		
     		<hr style = "height : 1px; background-color : #c0c0c0; border : 0; margin : 0;">
@@ -24,7 +22,7 @@
     		<!-- 아이디 확인 및 수정 -->
     		<div class = "d-flex pl-2 pt-4 pb-4 align-items-center">
     			<div class = "col-3">아이디</div>
-    			<div>sfqw_269</div>
+    			<div th:text="${user.loginId}">sfqw_269</div>
     			<button type = "button" class="btn btn-outline-dark ml-3">수정</button>
     		</div>
     		
@@ -44,7 +42,7 @@
 	    			<div class = "col-3">프로필</div>
 	    			<div class="col-12">
 	    				<div class="d-flex justify-content-center bg-secondary profileBicImgSection">
-	    					<img class="profileBigImg" src="https://cdn.pixabay.com/photo/2019/10/30/14/51/fall-4589724_1280.jpg">
+	    					<img class="profileBigImg" th:src="${user.profileImagePath}">
 	    				</div>
 	    				<button type = "button" class="mt-2 btn btn-outline-dark d-flex justify-content-end align-items-center">수정</button>
 	    			</div>

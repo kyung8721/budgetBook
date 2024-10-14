@@ -2,6 +2,8 @@ package com.budgetBook.user.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@DynamicInsert
 public class User {
 	
 	@Id
