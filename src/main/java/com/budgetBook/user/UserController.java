@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.budgetBook.user.dto.UserDto;
 import com.budgetBook.user.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -41,6 +42,17 @@ public class UserController {
 		
 		
 		return "/user/profile";
+	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request) {
+		// session 내의 내용을 삭제
+		HttpSession session = request.getSession();
+		
+		session.removeAttribute("userId");
+		session.removeAttribute("loginId");
+		
+		return "redirect:/budgetBook/user/login-view";
 	}
 	
 	

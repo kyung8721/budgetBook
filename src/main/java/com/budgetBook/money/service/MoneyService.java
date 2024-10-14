@@ -6,14 +6,18 @@ import org.springframework.stereotype.Service;
 
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.repository.FixedCostRepository;
+import com.budgetBook.user.dto.UserDto;
+import com.budgetBook.user.service.UserService;
 
 @Service
 public class MoneyService {
 	
 	private FixedCostRepository fixedCostRepository;
+	private UserService userService;
 	
-	public MoneyService(FixedCostRepository fixedCostRepository) {
+	public MoneyService(FixedCostRepository fixedCostRepository, UserService userService) {
 		this.fixedCostRepository = fixedCostRepository;
+		this.userService = userService;
 	}
 	
 	// 고정비 저장 및 수정
@@ -33,5 +37,10 @@ public class MoneyService {
 		}else {
 			return false;
 		}
+	}
+	
+	// 유저 정보 불러오기
+	public UserDto callUserData(int userId) {
+		return userService.userData(userId);
 	}
 }

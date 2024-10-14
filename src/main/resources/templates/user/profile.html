@@ -44,7 +44,16 @@
 	    				<div class="d-flex justify-content-center bg-secondary profileBicImgSection">
 	    					<img class="profileBigImg" th:src="${user.profileImagePath}">
 	    				</div>
-	    				<button type = "button" class="mt-2 btn btn-outline-dark d-flex justify-content-end align-items-center">수정</button>
+	    				<div class="dropstart">
+	    					<button type = "button" data-toggle="dropdown" class="mt-2 btn btn-outline-dark d-flex justify-content-end align-items-center">수정</button>
+	    					<ul class="dropdown-menu">
+							    <li class="dropdown-item" id = "profileImgChangeBtn">프로필 사진 수정</li>
+							    <li><hr class="dropdown-divider"></li>
+							    <li class="dropdown-item" id="profileDelete">프로필 삭제</li>
+							 </ul>
+	    				</div>
+	    				<input type="file" id="profileImgChangeFileBtn" class="d-none">
+	    				
 	    			</div>
 	    			
     			</div>
@@ -69,12 +78,89 @@
 		    </div>
 		  </div>
 		</div>
+		
+		<!-- 프로필 이미지 삭제 시 확인질문 Modal -->
+		<div class="modal fade" id="deleteProfileImgModal"aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content">
+		      <div class="modal-body text-danger">
+		        프로필 이미지를 삭제하고 기본 이미지로 돌아갑니다.
+		      </div>
+		      <div class="modal-footer d-flex justify-content-between">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">아니요</button>
+		        <button type="button" class="btn btn-danger" id="deleteProfileImageBtn" th:data-userId = "${user.userId}">프로필 이미지 삭제</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
     
     </section>
     
     <script layout:fragment="script">
     
     	$(document).ready(function(){
+    		
+    		// 프로필 이미지 삭제
+    		$("#deleteProfileImageBtn").on("click", function(){
+    			let userId = $("#deleteProfileImageBtn").attr("data-userId");
+    			
+    			$.ajax({
+    				type : "delete"
+    				, url : "/budgetBook/user/profileImage/delete"
+    				, data : {"userId" : userId}
+    				, success : function(data){
+    					if(data.result == "success"){
+    						location.reload();
+    					}else{
+    						alert("프로필 삭제 실패!");
+    					}
+    				}
+    				, error : function(){
+    					alert("프로필 수정 에러!");
+    				}
+    			});
+    		});
+    		
+    		
+    		// 프로필 사진 삭제 버튼 클릭 시 확인 모달을 여는 이벤트
+    		$("#profileDelete").on("click", function(){
+    			$("#deleteProfileImgModal").modal("show");
+    		});
+    		
+    		// 프로필 수정
+    		$("#profileImgChangeFileBtn").on("input", function(){
+    			let file = $("#profileImgChangeFileBtn")[0].files[0];
+    			
+    			let formData = new FormData();
+    			formData.append("profileImage", file);
+    			
+    			$.ajax({
+    				type : "put"
+    				, url : "/budgetBook/user/profileImage"
+    				, data : formData
+    				, enctype : "multipart/form-data" // 파일 업로드 필수
+        			, processData : false // 파일 업로드 필수
+        			, contentType : false // 파일 업로드 필수
+    				, success : function(data){
+    					if(data.result == "success"){
+    						location.reload();
+    					}else{
+    						alert("프로필 사진 수정 실패!");
+    					}
+    				}
+    				, error : function(){
+    					alert("프로필 사진 수정 에러!");
+    				}
+    			});
+    		});
+    		
+    		// 프로필 수정 버튼 클릭
+    		$("#profileImgChangeBtn").on("click", function(){
+    			// 파일 버튼 클릭되게
+    			$("#profileImgChangeFileBtn").click();
+    		});
+    		
     		//회원 삭제 시 정말 삭제하겠냐는 모달 띄우기
     		$("#deleteUserCheck").on("click", function(){
     			$("#deleteUserCheckModal").modal("show");

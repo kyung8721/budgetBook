@@ -5,14 +5,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.budgetBook.money.service.MoneyService;
+import com.budgetBook.user.dto.UserDto;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/budgetBook/money")
 public class MoneyController {
 	
+	private MoneyService moneyService;
+	
+	public MoneyController(MoneyService moneyService) {
+		this.moneyService = moneyService;
+	}
+	
 	@GetMapping("/main-view")
 	public String mainView(HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		model.addAttribute("user", userDto);
 		return "money/main";
 	}
 	

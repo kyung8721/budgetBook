@@ -143,8 +143,7 @@ public class UserRestController {
 	
 	// 프로필 사진 삭제 후 기본 이미지로 돌아가기
 	@DeleteMapping("/profileImage/delete")
-	public Map<String, String> profileImageDelete(HttpSession session){
-		int userId = (Integer)session.getAttribute("userId");
+	public Map<String, String> profileImageDelete(@RequestParam("userId")int userId){
 		boolean result = userService.deleteProfileImage(userId);
 		
 		Map<String, String> resultMap = new HashMap<>();
