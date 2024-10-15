@@ -1,5 +1,6 @@
 package com.budgetBook.money;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.budgetBook.money.domain.Assets;
+import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
@@ -230,6 +232,36 @@ public class MoneyRestController {
 		Map<String, String> resultMap = new HashMap<>();
 
 		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 예산 내역 작성 및 수정
+	@PostMapping("/breakdown/create")
+	public Map<String, String> breakdownSave(
+			@RequestParam("classification") String classification
+			, @RequestParam("date") LocalDateTime date
+			, @RequestParam("assetsId") int assetsId
+			, @RequestParam(value = "categoryId", required = false)int categoryId
+			, @RequestParam(value = "detailCategoryId", required = false)int detailCategoryId
+			, @RequestParam("breakdownName")String breakdownName
+			, @RequestParam("cost")int cost
+			, @RequestParam(value = "memo", required = false)String memo
+			, @RequestParam(value = "breakdownId", required = false)Integer breakdownId
+			, @RequestParam(value = "memoImagePath", required = false)String memoImagePath
+			, HttpSession session){
+		
+		int userId = (Integer)session.getAttribute("userId");
+		
+		Breakdown result = moneyService.saveBreakdown(userId, classification, date, assetsId, categoryId, detailCategoryId, breakdownName, cost, memo, memoImagePath, breakdownId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(result != null) {
 			resultMap.put("result", "success");
 		}else {
 			resultMap.put("result", "fail");

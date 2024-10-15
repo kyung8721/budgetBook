@@ -1,10 +1,12 @@
 package com.budgetBook.money.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.budgetBook.money.domain.Assets;
+import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
@@ -240,5 +242,10 @@ public class MoneyService {
 		}else {
 			return false;
 		}
+	}
+	
+	// 상세 내역 작성 및 수정
+	public Breakdown saveBreakdown(int userId, String classification, LocalDateTime date, int assetsId, int categoryId, int detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
+		
 	}
 }
