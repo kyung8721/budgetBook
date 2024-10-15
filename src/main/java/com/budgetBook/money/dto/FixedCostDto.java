@@ -13,9 +13,9 @@ public class FixedCostDto {
 	private int userId;
 	private String classification;
 	private String period;
-	private int assets;
-	private int category;
-	private int detailCategory;
+	private String assetsName;
+	private String categoryName;
+	private String detailCategoryName;
 	private int fixedCost;
 	private String memo;
 }

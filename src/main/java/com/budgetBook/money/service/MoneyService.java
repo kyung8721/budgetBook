@@ -10,6 +10,7 @@ import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
+import com.budgetBook.money.dto.AssetsDto;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.repository.AssetsRepository;
 import com.budgetBook.money.repository.BreakdownRepository;
@@ -114,19 +115,25 @@ public class MoneyService {
 				return null;
 			}
 			// 자산명
+			AssetsDto assetsDto = CallAssetsDto(fixedCost.getAssetsId());
+			String assetsName = assetsDto.getAssetsName();
 			
 			// 카테고리명
+			Optional<Category> optionalCategory = categoryRepository.findById(fixedCost.getCategoryId());
+			Category category = optionalCategory.orElse(null);
+			String categoryName = category.getCategoryName();
 			
 			// 세부 카테고리명
+			
 			
 			FixedCostDto fixedCostDto = FixedCostDto.builder()
 					.id(fixedCost.getId())
 					.userId(userId)
 					.classification(fixedCost.getClassification())
 					.period(period)
-					.assets()
-					.category()
-					.detailCategory()
+					.assetsName(assetsName)
+					.categoryName(categoryName)
+					.detailCategoryName()
 					.fixedCost(fixedCost.getFixedCost())
 					.memo(fixedCost.getMemo())
 					.build();
@@ -137,21 +144,9 @@ public class MoneyService {
 		}
 	}
 	
-	// 자산 추가
+	// 자산 추가 및 수정
 	public Assets saveAssets(int userId, String assetsName, int balance, String color, String memo, Integer assetsId) {
-		Assets assets;
-		if(assetsId == null) {
-			// 자산 추가
-			assets = Assets.builder()
-					.userId(userId)
-					.assetsName(assetsName)
-					.balance(balance)
-					.color(color)
-					.memo(memo)
-					.build();
-		}else {
-			// 자산 수정
-			assets = Assets.builder()
+		Assets assets = Assets.builder()
 					.id(assetsId)
 					.userId(userId)
 					.assetsName(assetsName)
@@ -159,8 +154,6 @@ public class MoneyService {
 					.color(color)
 					.memo(memo)
 					.build();
-		}
-		
 		return assetsRepository.save(assets);
 	}
 	
@@ -176,6 +169,22 @@ public class MoneyService {
 		}else {
 			return false;
 		}
+	}
+	
+	// 자산 DTO로 불러오기
+	public AssetsDto CallAssetsDto(int id) {
+		Optional<Assets> optionalAssets = assetsRepository.findById(id);
+		Assets assets = optionalAssets.orElse(null);
+		AssetsDto assetsDto = AssetsDto.builder()
+				.id(id)
+				.userId(assets.getUserId())
+				.assetsName(assets.getAssetsName())
+				.balance(assets.getBalance())
+				.lastBalance(assets.getLastBalance())
+				.color(assets.getColor())
+				.memo(assets.getMemo())
+				.build();
+		return assetsDto;
 	}
 	
 	// 예산 카테고리 작성 및 수정
@@ -220,6 +229,9 @@ public class MoneyService {
 			return false;
 		}
 	}
+	
+	// 예산 카테고리 Dto 불러오기
+	public CategoryDto categoryDto
 	
 	// 세부 예산 카테고리 작성 및 수정
 	public DetailCategory saveDetailCategory(int userId, int categoryId, String detailCategoryName, String memo, Integer detailCategoryId) {
