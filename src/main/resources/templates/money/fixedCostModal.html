@@ -9,13 +9,18 @@
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">반복주기</div>
-	      			<select class="form-control col-2 form-control-sm">
-	      				<option selected>매월</option>
+	      			<select class="form-control col-2 form-control-sm" id="periodSelect">
+	      				<option>매월</option>
 	      				<option>매주</option>
 	      				<option>매일</option>
 	      			</select>
-	      			<input type="text" class="inputBottomBorder col-2 ml-1">
-	      			<div>일 반복</div>
+	      			<input type="text" class="inputBottomBorder col-2 ml-1" id="periodInput">
+	      			<select class="form-control col-2 ml-1" id="weekPeriod">
+	      				<option>월</option> <!-- 여기 진행중 -->
+	      				<option>화</option>
+	      				<option>수</option>
+	      			</select>
+	      			<div id = "periodText">일 반복</div>
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -67,7 +72,20 @@
 	      	
 	      	<script>
 	      		$(document).ready(function(){
+	      			// 반복주기에 따라 뒤에 오는 글자를 다르게 하기
+	      			$("#periodSelect").change(function(){
+	      				let period = $("#periodSelect :selected").text();
+	      				
+	      				if(period == "매월"){
+	      					$("#periodText").val("일 마다 반복");
+	      				}else if(period == "매주"){
+	      					$("#periodText").val("마다 반복");
+	      					$("#periodInput").addClass("d-none");
+	      				}
+	      			});
+	      			
 	      			// 버튼 클릭 시 버튼 스타일 변경
+	      			 // 수입 버튼
 	      			$("#incomeBtn").on("click", function(){
 	      				$("#incomeBtn").removeClass("btn-outline-success");
 	      				$("#incomeBtn").addClass("btn-success");
@@ -76,7 +94,8 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
-	      			}); // 수입 버튼
+	      			});
+	      			// 지출 버튼
 	      			$("#outgoingBtn").on("click", function(){
 	      				$("#outgoingBtn").removeClass("btn-outline-danger");
 	      				$("#outgoingBtn").addClass("btn-danger");
@@ -85,7 +104,8 @@
 	      				$("#incomeBtn").addClass("btn-outline-success");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
-	      			}); // 지출 버튼
+	      			}); 
+	      			// 이체 버튼
 	      			$("#transferBtn").on("click", function(){
 	      				$("#transferBtn").removeClass("btn-outline-secondary");
 	      				$("#transferBtn").addClass("btn-secondary");
@@ -94,7 +114,7 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#incomeBtn").removeClass("btn-success");
 	      				$("#incomeBtn").addClass("btn-outline-success");
-	      			}); // 이체 버튼
+	      			}); 
 	      		});
 	      	</script>
 	      
