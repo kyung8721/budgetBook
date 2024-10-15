@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.budgetBook.money.domain.Assets;
 import com.budgetBook.money.domain.Category;
+import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.service.MoneyService;
 
@@ -77,7 +78,7 @@ public class MoneyRestController {
 		if(result != null) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;
@@ -98,7 +99,7 @@ public class MoneyRestController {
 		if(result) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;
@@ -110,19 +111,19 @@ public class MoneyRestController {
 			@RequestParam("assetsName")String assetsName
 			, @RequestParam("balance")int balance
 			, @RequestParam("color")String color
-			, @RequestParam("memo")String memo
-			, @RequestParam("assetsId") Integer assetsId
+			, @RequestParam(value = "memo", required = false)String memo
+			, @RequestParam(value = "assetsId", required = false) Integer assetsId
 			, HttpSession session){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Assets result = moneyService.addAssets(userId, assetsName, balance, color, memo, assetsId);
+		Assets result = moneyService.saveAssets(userId, assetsName, balance, color, memo, assetsId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(result != null) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;
@@ -143,7 +144,7 @@ public class MoneyRestController {
 		if(result) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;
@@ -156,19 +157,19 @@ public class MoneyRestController {
 			, @RequestParam("categoryName")String categoryName
 			, @RequestParam("amount")int amount
 			, @RequestParam("color") String color
-			, @RequestParam("memo")String memo
-			, @RequestParam("categoryId") Integer categoryId
+			, @RequestParam(value = "memo", required = false)String memo
+			, @RequestParam(value = "categoryId", required = false) Integer categoryId
 			, HttpSession session){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Category result = moneyService.addCategory(userId, classification, categoryName, amount, color, memo, categoryId);
+		Category result = moneyService.saveCategory(userId, classification, categoryName, amount, color, memo, categoryId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(result != null) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;
@@ -188,7 +189,50 @@ public class MoneyRestController {
 		if(result) {
 			resultMap.put("result", "success");
 		}else {
-			resultMap.put("result", "false");
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 세부 예산 카테고리 생성, 수정
+	@PostMapping("/detailCategory/create")
+	public Map<String, String> detailCategoryCreate(
+			@RequestParam("categoryId") int categoryId
+			, @RequestParam("detailCategoryName") String detailCategoryName
+			, @RequestParam(value = "memo", required = false) String memo
+			, @RequestParam(value = "detailCategoryId", required = false) Integer detailCategoryId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		DetailCategory result = moneyService.saveDetailCategory(userId, categoryId, detailCategoryName, memo, detailCategoryId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(result != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 세부 예산 카테고리 삭제
+	@DeleteMapping("/detailCategory/delete")
+	public Map<String, String> detailCategoryDelete(
+			@RequestParam("detailCategoryId")int detailCategoryId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		boolean result = moneyService.deleteDetailCategory(userId, detailCategoryId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
 		}
 		
 		return resultMap;

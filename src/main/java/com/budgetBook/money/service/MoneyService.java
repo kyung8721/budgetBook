@@ -2,15 +2,16 @@ package com.budgetBook.money.service;
 
 import java.util.Optional;
 
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import com.budgetBook.money.domain.Assets;
 import com.budgetBook.money.domain.Category;
+import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.repository.AssetsRepository;
 import com.budgetBook.money.repository.CategoryRepository;
+import com.budgetBook.money.repository.DetailCategoryRepository;
 import com.budgetBook.money.repository.FixedCostRepository;
 import com.budgetBook.user.dto.UserDto;
 import com.budgetBook.user.service.UserService;
@@ -22,12 +23,19 @@ public class MoneyService {
 	private UserService userService;
 	private AssetsRepository assetsRepository;
 	private CategoryRepository categoryRepository;
+	private DetailCategoryRepository detailCategoryRepository;
 	
-	public MoneyService(FixedCostRepository fixedCostRepository, UserService userService, AssetsRepository assetsRepository, CategoryRepository categoryRepository) {
+	public MoneyService(
+			FixedCostRepository fixedCostRepository
+			, UserService userService
+			, AssetsRepository assetsRepository
+			, CategoryRepository categoryRepository
+			, DetailCategoryRepository detailCategoryRepository) {
 		this.fixedCostRepository = fixedCostRepository;
 		this.userService = userService;
 		this.assetsRepository = assetsRepository;
 		this.categoryRepository = categoryRepository;
+		this.detailCategoryRepository = detailCategoryRepository;
 	}
 	
 	// 고정비 저장 및 수정
@@ -124,7 +132,7 @@ public class MoneyService {
 	}
 	
 	// 자산 추가
-	public Assets addAssets(int userId, String assetsName, int balance, String color, String memo, Integer assetsId) {
+	public Assets saveAssets(int userId, String assetsName, int balance, String color, String memo, Integer assetsId) {
 		Assets assets;
 		if(assetsId == null) {
 			// 자산 추가
@@ -165,7 +173,7 @@ public class MoneyService {
 	}
 	
 	// 예산 카테고리 작성 및 수정
-	public Category addCategory(int userId, String classification, String categoryName, int amount, String color, String memo, Integer categoryId) {
+	public Category saveCategory(int userId, String classification, String categoryName, int amount, String color, String memo, Integer categoryId) {
 		Category category;
 		if(categoryId == null) {
 			// 예산 카테고리 저장
@@ -201,6 +209,33 @@ public class MoneyService {
 		if(userId == category.getUserId()){
 			// 사용자와 예산 카테고리 작성자의 id가 동일하면 진행
 			categoryRepository.delete(category);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	// 세부 예산 카테고리 작성 및 수정
+	public DetailCategory saveDetailCategory(int userId, int categoryId, String detailCategoryName, String memo, Integer detailCategoryId) {
+		DetailCategory detailCategory;
+		detailCategory = DetailCategory.builder()
+					.userId(userId)
+					.categoryId(categoryId)
+					.detailCategoryName(detailCategoryName)
+					.memo(memo)
+					.id(detailCategoryId)
+					.build();
+		return detailCategory;
+	}
+	
+	// 세부 예산 카테고리 삭제
+	public boolean deleteDetailCategory(int userId, int detailCategoryId) {
+		Optional<DetailCategory> optionalDetailCategory = detailCategoryRepository.findById(detailCategoryId);
+		DetailCategory detailCategory = optionalDetailCategory.orElse(null);
+		
+		if(userId == detailCategory.getUserId()){
+			// 사용자와 예산 카테고리 작성자의 id가 동일하면 진행
+			detailCategoryRepository.delete(detailCategory);
 			return true;
 		}else {
 			return false;
