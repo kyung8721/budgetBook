@@ -12,6 +12,7 @@ import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.repository.AssetsRepository;
+import com.budgetBook.money.repository.BreakdownRepository;
 import com.budgetBook.money.repository.CategoryRepository;
 import com.budgetBook.money.repository.DetailCategoryRepository;
 import com.budgetBook.money.repository.FixedCostRepository;
@@ -26,18 +27,21 @@ public class MoneyService {
 	private AssetsRepository assetsRepository;
 	private CategoryRepository categoryRepository;
 	private DetailCategoryRepository detailCategoryRepository;
+	private BreakdownRepository breakdownRepository;
 	
 	public MoneyService(
 			FixedCostRepository fixedCostRepository
 			, UserService userService
 			, AssetsRepository assetsRepository
 			, CategoryRepository categoryRepository
-			, DetailCategoryRepository detailCategoryRepository) {
+			, DetailCategoryRepository detailCategoryRepository
+			, BreakdownRepository breakdownRepository) {
 		this.fixedCostRepository = fixedCostRepository;
 		this.userService = userService;
 		this.assetsRepository = assetsRepository;
 		this.categoryRepository = categoryRepository;
 		this.detailCategoryRepository = detailCategoryRepository;
+		this.breakdownRepository = breakdownRepository;
 	}
 	
 	// 고정비 저장 및 수정
@@ -244,8 +248,34 @@ public class MoneyService {
 		}
 	}
 	
-	// 상세 내역 작성 및 수정
-	public Breakdown saveBreakdown(int userId, String classification, LocalDateTime date, int assetsId, int categoryId, int detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
+	// 내역 작성 및 수정
+	public Breakdown saveBreakdown(int userId, String classification, LocalDateTime date, int assetsId, Integer categoryId, Integer detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
+		Breakdown breakdown = Breakdown.builder()
+				.userId(userId)
+				.classification(classification)
+				.date(date)
+				.assetsId(assetsId)
+				.categoryId(categoryId)
+				.detailCategoryId(detailCategoryId)
+				.breakdownName(breakdownName)
+				.cost(cost)
+				.memoImagePath(memoImagePath)
+				.memo(memo)
+				.build();
+		return breakdownRepository.save(breakdown);
+	}
+	
+	// 내역 삭제
+	public boolean deleteBreakdown(int userId, int breakdownId) {
+		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
+		Breakdown breakdown = optionalBreakdown.orElse(null);
 		
+		if(userId == breakdown.getUserId()){
+			// 사용자와 예산 카테고리 작성자의 id가 동일하면 진행
+			breakdownRepository.delete(breakdown);
+			return true;
+		}else {
+			return false;
+		}
 	}
 }

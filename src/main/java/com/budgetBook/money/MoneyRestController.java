@@ -240,14 +240,14 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
-	// 예산 내역 작성 및 수정
+	// 내역 작성 및 수정
 	@PostMapping("/breakdown/create")
 	public Map<String, String> breakdownSave(
 			@RequestParam("classification") String classification
 			, @RequestParam("date") LocalDateTime date
 			, @RequestParam("assetsId") int assetsId
-			, @RequestParam(value = "categoryId", required = false)int categoryId
-			, @RequestParam(value = "detailCategoryId", required = false)int detailCategoryId
+			, @RequestParam(value = "categoryId", required = false)Integer categoryId
+			, @RequestParam(value = "detailCategoryId", required = false)Integer detailCategoryId
 			, @RequestParam("breakdownName")String breakdownName
 			, @RequestParam("cost")int cost
 			, @RequestParam(value = "memo", required = false)String memo
@@ -262,6 +262,26 @@ public class MoneyRestController {
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(result != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 내역 삭제
+	@DeleteMapping("/breakdown/delete")
+	public Map<String, String> breakdownDelete(
+			@RequestParam("breakdownId")int breakdownId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		boolean result = moneyService.deleteBreakdown(userId, breakdownId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(result) {
 			resultMap.put("result", "success");
 		}else {
 			resultMap.put("result", "fail");
