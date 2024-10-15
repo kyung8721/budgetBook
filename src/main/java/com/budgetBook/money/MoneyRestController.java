@@ -240,10 +240,11 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
-	// 내역 작성 및 수정
+	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)
 	@PostMapping("/breakdown/create")
 	public Map<String, String> breakdownSave(
-			@RequestParam("classification") String classification
+			@RequestParam("RealTimePrediction") int RealTimePrediction
+			, @RequestParam("classification") String classification
 			, @RequestParam("date") LocalDateTime date
 			, @RequestParam("assetsId") int assetsId
 			, @RequestParam(value = "categoryId", required = false)Integer categoryId
@@ -257,7 +258,7 @@ public class MoneyRestController {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Breakdown result = moneyService.saveBreakdown(userId, classification, date, assetsId, categoryId, detailCategoryId, breakdownName, cost, memo, memoImagePath, breakdownId);
+		Breakdown result = moneyService.saveBreakdown(userId, RealTimePrediction, classification, date, assetsId, categoryId, detailCategoryId, breakdownName, cost, memo, memoImagePath, breakdownId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
@@ -270,7 +271,7 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
-	// 내역 삭제
+	// 내역 삭제(실제 사용내역 및 예측 사용내역)
 	@DeleteMapping("/breakdown/delete")
 	public Map<String, String> breakdownDelete(
 			@RequestParam("breakdownId")int breakdownId

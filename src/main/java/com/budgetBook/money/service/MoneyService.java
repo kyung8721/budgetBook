@@ -248,10 +248,11 @@ public class MoneyService {
 		}
 	}
 	
-	// 내역 작성 및 수정
-	public Breakdown saveBreakdown(int userId, String classification, LocalDateTime date, int assetsId, Integer categoryId, Integer detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
+	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)
+	public Breakdown saveBreakdown(int userId, int RealTimePrediction, String classification, LocalDateTime date, int assetsId, Integer categoryId, Integer detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
 		Breakdown breakdown = Breakdown.builder()
 				.userId(userId)
+				.RealTimePrediction(RealTimePrediction)
 				.classification(classification)
 				.date(date)
 				.assetsId(assetsId)
@@ -265,7 +266,7 @@ public class MoneyService {
 		return breakdownRepository.save(breakdown);
 	}
 	
-	// 내역 삭제
+	// 내역 삭제(실제 사용내역 및 예측 사용내역)
 	public boolean deleteBreakdown(int userId, int breakdownId) {
 		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
 		Breakdown breakdown = optionalBreakdown.orElse(null);

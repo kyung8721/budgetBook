@@ -12,6 +12,7 @@ import lombok.Setter;
 public class BreakdownDto {
 	private int id;
 	private int userId;
+	private int RealTimePrediction;
 	private String classification;
 	private LocalDateTime date;
 	private String assetsName;

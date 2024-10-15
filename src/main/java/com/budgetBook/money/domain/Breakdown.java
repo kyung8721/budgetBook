@@ -32,6 +32,9 @@ public class Breakdown {
 	@Column(name="userId")
 	private int userId;
 	
+	@Column(name="RealTimePrediction")
+	private int RealTimePrediction;
+	
 	private String classification;
 	private LocalDateTime date;
 	
