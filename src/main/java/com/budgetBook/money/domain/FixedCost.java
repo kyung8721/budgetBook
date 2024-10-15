@@ -47,6 +47,9 @@ public class FixedCost {
 	@Column(name="detailCategoryId")
 	private int detailCategoryId;
 	
+	@Column(name="fixedCostName")
+	private String fixedCostName;
+	
 	@Column(name="fixedCost")
 	private int fixedCost;
 	

@@ -16,6 +16,7 @@ public class FixedCostDto {
 	private String assetsName;
 	private String categoryName;
 	private String detailCategoryName;
+	private String fixedCostName;
 	private int fixedCost;
 	private String memo;
 }

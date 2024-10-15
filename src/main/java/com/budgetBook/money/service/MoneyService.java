@@ -11,6 +11,8 @@ import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.dto.AssetsDto;
+import com.budgetBook.money.dto.CategoryDto;
+import com.budgetBook.money.dto.DetailCategoryDto;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.repository.AssetsRepository;
 import com.budgetBook.money.repository.BreakdownRepository;
@@ -82,7 +84,7 @@ public class MoneyService {
 				period = "매월" + fixedCost.getPeriod().substring(1);
 			}else if(fixedCost.getPeriod().startsWith("W")) {
 				// 매주
-				String periodWeek;
+				String periodWeek = "";
 				switch(fixedCost.getPeriod().substring(1)) {
 				case "Mon":
 					periodWeek = "월요일";
@@ -115,16 +117,16 @@ public class MoneyService {
 				return null;
 			}
 			// 자산명
-			AssetsDto assetsDto = CallAssetsDto(fixedCost.getAssetsId());
+			AssetsDto assetsDto = callAssetsDto(fixedCost.getAssetsId());
 			String assetsName = assetsDto.getAssetsName();
 			
 			// 카테고리명
-			Optional<Category> optionalCategory = categoryRepository.findById(fixedCost.getCategoryId());
-			Category category = optionalCategory.orElse(null);
-			String categoryName = category.getCategoryName();
+			CategoryDto categoryDto = callCategoryDto(fixedCost.getCategoryId());
+			String categoryName = categoryDto.getCategoryName();
 			
 			// 세부 카테고리명
-			
+			DetailCategoryDto detailCategoryDto = callDetailCategoryDto(fixedCost.getDetailCategoryId());
+			String detailCategoryName = detailCategoryDto.getDetailCategoryName();
 			
 			FixedCostDto fixedCostDto = FixedCostDto.builder()
 					.id(fixedCost.getId())
@@ -133,7 +135,8 @@ public class MoneyService {
 					.period(period)
 					.assetsName(assetsName)
 					.categoryName(categoryName)
-					.detailCategoryName()
+					.detailCategoryName(detailCategoryName)
+					.fixedCostName(fixedCost.getFixedCostName())
 					.fixedCost(fixedCost.getFixedCost())
 					.memo(fixedCost.getMemo())
 					.build();
@@ -172,7 +175,7 @@ public class MoneyService {
 	}
 	
 	// 자산 DTO로 불러오기
-	public AssetsDto CallAssetsDto(int id) {
+	public AssetsDto callAssetsDto(int id) {
 		Optional<Assets> optionalAssets = assetsRepository.findById(id);
 		Assets assets = optionalAssets.orElse(null);
 		AssetsDto assetsDto = AssetsDto.builder()
@@ -231,7 +234,20 @@ public class MoneyService {
 	}
 	
 	// 예산 카테고리 Dto 불러오기
-	public CategoryDto categoryDto
+	public CategoryDto callCategoryDto(int id) {
+		Optional<Category> optionalCategory = categoryRepository.findById(id);
+		Category category = optionalCategory.orElse(null);
+		CategoryDto categoryDto = CategoryDto.builder()
+				.id(id)
+				.userId(category.getUserId())
+				.classification(category.getClassification())
+				.categoryName(category.getCategoryName())
+				.amount(category.getAmount())
+				.color(category.getColor())
+				.memo(category.getMemo())
+				.build();
+		return categoryDto;
+	}
 	
 	// 세부 예산 카테고리 작성 및 수정
 	public DetailCategory saveDetailCategory(int userId, int categoryId, String detailCategoryName, String memo, Integer detailCategoryId) {
@@ -258,6 +274,24 @@ public class MoneyService {
 		}else {
 			return false;
 		}
+	}
+	
+	// 세부 예산 카테고리 조회
+	public DetailCategoryDto callDetailCategoryDto(int id) {
+		Optional<DetailCategory> optionalDetailCategory = detailCategoryRepository.findById(id);
+		DetailCategory detailCategory = optionalDetailCategory.orElse(null);
+		
+		CategoryDto categoryDto = callCategoryDto(detailCategory.getCategoryId());
+		
+		DetailCategoryDto detailCategoryDto = DetailCategoryDto.builder()
+				.id(id)
+				.userId(detailCategory.getUserId())
+				.categoryName(categoryDto.getCategoryName())
+				.detailCategoryName(detailCategory.getDetailCategoryName())
+				.color(detailCategory.getColor())
+				.memo(detailCategory.getMemo())
+				.build();
+		return detailCategoryDto;
 	}
 	
 	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)

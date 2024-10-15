@@ -11,7 +11,7 @@ import lombok.Setter;
 public class DetailCategoryDto {
 	private int id;
 	private int userId;
-	private int category; // 상위 카테고리명
+	private String categoryName; // 상위 카테고리명
 	private String detailCategoryName;
 	private String color;
 	private String memo;

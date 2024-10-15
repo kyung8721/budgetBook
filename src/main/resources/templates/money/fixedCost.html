@@ -45,11 +45,11 @@
     				<tr id="fixedCostDetail" th:each="FC, FCStat : ${fixedCost}">
     					<td><span class="text-danger" th:text="${FC.classification}">지출</span></td>
     					<td th:text="${FC.period}">매월 1일</td>
-    					<td th:text="${}">카카오뱅크 생활비 통장</td>
-    					<td>주거/통신비</td>
-    					<td>월세</td>
-    					<td></td>
-    					<td><span class="text-danger">-500,000</span></td>
+    					<td th:text="${FC.assetsName}">카카오뱅크 생활비 통장</td>
+    					<td th:text="${FC.categoryName}">주거/통신비</td>
+    					<td th:text="${FC.detailCategoryName}">월세</td>
+    					<td th:text="${FC.fixedCostName}"></td>
+    					<td><span class="text-danger" th:text="${FC.fixedCost}">-500,000</span></td>
     				</tr>
     			</tbody>
     		</table>
