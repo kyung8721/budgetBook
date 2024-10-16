@@ -1,6 +1,8 @@
 package com.budgetBook.money.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -72,79 +74,97 @@ public class MoneyService {
 	}
 	
 	// 사용자의 고정비 내역 불러오기
-	public FixedCostDto callFixedCost(int userId) {
-		Optional<FixedCost> optionalFixedCost = fixedCostRepository.findByUserId(userId);
-		FixedCost fixedCost = optionalFixedCost.orElse(null);
+	public List<FixedCostDto> callFixedCost(int userId) {
+		List<FixedCost> fixedCostList = fixedCostRepository.findAllByUserId(userId);
 		
-		if(fixedCost !=null) {
-			String period;
-			// 반복주기
-			if(fixedCost.getPeriod().startsWith("M")) {
-				// 매월
-				period = "매월" + fixedCost.getPeriod().substring(1);
-			}else if(fixedCost.getPeriod().startsWith("W")) {
-				// 매주
-				String periodWeek = "";
-				switch(fixedCost.getPeriod().substring(1)) {
-				case "Mon":
-					periodWeek = "월요일";
-					break;
-				case "Tue":
-					periodWeek = "화요일";
-					break;
-				case "Wed":
-					periodWeek = "수요일";
-					break;
-				case "Thu":
-					periodWeek = "목요일";
-					break;
-				case "Fri":
-					periodWeek = "금요일";
-					break;
-				case "Sat":
-					periodWeek = "토요일";
-					break;
-				case "Sun":
-					periodWeek = "일요일";
-					break;
-				};
-				period = "매월" + periodWeek;
-			}else if(fixedCost.getPeriod().startsWith("Daily")) {
-				// 매일
-				period = "매일";
-			}else {
-				// 오류
-				return null;
+		List<FixedCostDto> fixedCostDtoList = new ArrayList<>();
+		
+		if(fixedCostList !=null) {
+			for(FixedCost i : fixedCostList) {
+				String period;
+				// 반복주기
+				if(i.getPeriod().startsWith("M")) {
+					// 매월
+					period = "매월" + i.getPeriod().substring(1);
+				}else if(i.getPeriod().startsWith("W")) {
+					// 매주
+					String periodWeek = "";
+					switch(i.getPeriod().substring(1)) {
+					case "Mon":
+						periodWeek = "월요일";
+						break;
+					case "Tue":
+						periodWeek = "화요일";
+						break;
+					case "Wed":
+						periodWeek = "수요일";
+						break;
+					case "Thu":
+						periodWeek = "목요일";
+						break;
+					case "Fri":
+						periodWeek = "금요일";
+						break;
+					case "Sat":
+						periodWeek = "토요일";
+						break;
+					case "Sun":
+						periodWeek = "일요일";
+						break;
+					};
+					period = "매월" + periodWeek;
+				}else if(i.getPeriod().startsWith("Daily")) {
+					// 매일
+					period = "매일";
+				}else {
+					// 오류
+					return null;
+				}
+				// 자산명
+				AssetsDto assetsDto = callAssetsDto(i.getAssetsId());
+				String assetsName = assetsDto.getAssetsName();
+				
+				// 카테고리명
+				String categoryName;
+				if(i.getCategoryId() != null) {
+					CategoryDto categoryDto = callCategoryDto(i.getCategoryId());
+					categoryName = categoryDto.getCategoryName();
+				}else {
+					categoryName = null;
+				}
+				
+				
+				// 세부 카테고리명
+				String detailCategoryName;
+				if(i.getDetailCategoryId() != null) {
+					DetailCategoryDto detailCategoryDto = callDetailCategoryDto(i.getDetailCategoryId());
+					detailCategoryName = detailCategoryDto.getDetailCategoryName();
+				}else {
+					detailCategoryName = null;
+				}
+				
+				
+				FixedCostDto fixedCostDto = FixedCostDto.builder()
+						.id(i.getId())
+						.userId(userId)
+						.classification(i.getClassification())
+						.period(period)
+						.assetsName(assetsName)
+						.categoryName(categoryName)
+						.detailCategoryName(detailCategoryName)
+						.fixedCostName(i.getFixedCostName())
+						.fixedCost(i.getFixedCost())
+						.memo(i.getMemo())
+						.build();
+				
+				fixedCostDtoList.add(fixedCostDto);
 			}
-			// 자산명
-			AssetsDto assetsDto = callAssetsDto(fixedCost.getAssetsId());
-			String assetsName = assetsDto.getAssetsName();
-			
-			// 카테고리명
-			CategoryDto categoryDto = callCategoryDto(fixedCost.getCategoryId());
-			String categoryName = categoryDto.getCategoryName();
-			
-			// 세부 카테고리명
-			DetailCategoryDto detailCategoryDto = callDetailCategoryDto(fixedCost.getDetailCategoryId());
-			String detailCategoryName = detailCategoryDto.getDetailCategoryName();
-			
-			FixedCostDto fixedCostDto = FixedCostDto.builder()
-					.id(fixedCost.getId())
-					.userId(userId)
-					.classification(fixedCost.getClassification())
-					.period(period)
-					.assetsName(assetsName)
-					.categoryName(categoryName)
-					.detailCategoryName(detailCategoryName)
-					.fixedCostName(fixedCost.getFixedCostName())
-					.fixedCost(fixedCost.getFixedCost())
-					.memo(fixedCost.getMemo())
-					.build();
-			
-			return fixedCostDto;
+		
 		}else {
-			return null;
+			fixedCostDtoList = null;
 		}
+		
+		return fixedCostDtoList;
 	}
 	
 	// 자산 추가 및 수정
@@ -190,33 +210,44 @@ public class MoneyService {
 		return assetsDto;
 	}
 	
+	// 자산 DTO UserId로 불러오기
+	public List<AssetsDto> callAssetsDtoByUserId(int userId) {
+		List<Assets> assetsList = assetsRepository.findAllByUserId(userId);
+		
+		List<AssetsDto> assetsDtoList = new ArrayList<>();
+		if(assetsList != null) {
+			for(Assets i : assetsList) {
+				AssetsDto assetsDto = AssetsDto.builder()
+						.id(i.getId())
+						.userId(userId)
+						.assetsName(i.getAssetsName())
+						.balance(i.getBalance())
+						.lastBalance(i.getLastBalance())
+						.color(i.getColor())
+						.memo(i.getMemo())
+						.build();
+				assetsDtoList.add(assetsDto);
+			}
+			
+		}else {
+			assetsDtoList = null;
+		}
+		
+		return assetsDtoList;
+	}
+	
 	// 예산 카테고리 작성 및 수정
 	public Category saveCategory(int userId, String classification, String categoryName, int amount, String color, String memo, Integer categoryId) {
-		Category category;
-		if(categoryId == null) {
-			// 예산 카테고리 저장
-			category = Category.builder()
-					.userId(userId)
-					.classification(classification)
-					.categoryName(categoryName)
-					.amount(amount)
-					.color(color)
-					.memo(memo)
-					.build();
-			return categoryRepository.save(category);
-		}else {
-			// 예산 카테고리 수정
-			category = Category.builder()
-					.id(categoryId)
-					.userId(userId)
-					.classification(classification)
-					.categoryName(categoryName)
-					.amount(amount)
-					.color(color)
-					.memo(memo)
-					.build();
-			return categoryRepository.save(category);
-		}
+		Category category = Category.builder()
+				.userId(userId)
+				.classification(classification)
+				.categoryName(categoryName)
+				.amount(amount)
+				.color(color)
+				.memo(memo)
+				.build();
+		return categoryRepository.save(category);
+		
 	}
 	
 	// 예산 카테고리 삭제
@@ -247,6 +278,32 @@ public class MoneyService {
 				.memo(category.getMemo())
 				.build();
 		return categoryDto;
+	}
+	
+	// 예산 카테고리 DTO userId로 불러오기
+	public List<CategoryDto> callCategoryDtoByUserId(int userId) {
+		List<Category> categoryList = categoryRepository.findAllByUserId(userId);
+		List<CategoryDto> categoryDtoList = new ArrayList<>();
+		
+		if(categoryList != null) {
+			for(Category i : categoryList) {
+				CategoryDto categoryDto = CategoryDto.builder()
+						.id(i.getId())
+						.userId(userId)
+						.classification(i.getClassification())
+						.categoryName(i.getCategoryName())
+						.amount(i.getAmount())
+						.color(i.getColor())
+						.memo(i.getMemo())
+						.build();
+				categoryDtoList.add(categoryDto);
+			}
+			
+		}else {
+			categoryDtoList = null;
+		}
+		
+		return categoryDtoList;
 	}
 	
 	// 세부 예산 카테고리 작성 및 수정

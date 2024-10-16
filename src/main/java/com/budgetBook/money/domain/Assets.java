@@ -39,7 +39,7 @@ public class Assets {
 	private int balance; // 자산 잔액
 	
 	@Column(name="lastBalance")
-	private int lastBalance;
+	private Integer lastBalance;
 	
 	private String color;
 	private String memo;

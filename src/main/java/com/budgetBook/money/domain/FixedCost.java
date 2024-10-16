@@ -42,10 +42,10 @@ public class FixedCost {
 	private int assetsId;
 	
 	@Column(name="categoryId")
-	private int categoryId;
+	private Integer categoryId;
 	
 	@Column(name="detailCategoryId")
-	private int detailCategoryId;
+	private Integer detailCategoryId;
 	
 	@Column(name="fixedCostName")
 	private String fixedCostName;

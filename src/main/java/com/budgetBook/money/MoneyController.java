@@ -1,10 +1,14 @@
 package com.budgetBook.money;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.budgetBook.money.dto.AssetsDto;
+import com.budgetBook.money.dto.CategoryDto;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.service.MoneyService;
 import com.budgetBook.user.dto.UserDto;
@@ -40,10 +44,12 @@ public class MoneyController {
 		UserDto userDto = moneyService.callUserData(userId);
 		
 		// 고정비 내역 불러오기
-		FixedCostDto fixedCostDto = moneyService.callFixedCost(userId);
+		List<FixedCostDto> fixedCostDtoList = moneyService.callFixedCost(userId);
+		
 		
 		model.addAttribute("user", userDto);
-		model.addAttribute("fixedCost", fixedCostDto);
+		model.addAttribute("fixedCostList", fixedCostDtoList);
+		
 		
 		return "money/fixedCost";
 	}
@@ -56,7 +62,15 @@ public class MoneyController {
 	
 	// 고정비 작성 모달
 	@GetMapping("/fixedCostModal")
-	public String fixedCostModalView() {
+	public String fixedCostModalView(Model model, HttpSession session) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		
+		model.addAttribute("assetsList", assetsDtoList);
+		model.addAttribute("categoryList", categoryDtoList);
+		
 		return "money/fixedCostModal";
 	}
 	

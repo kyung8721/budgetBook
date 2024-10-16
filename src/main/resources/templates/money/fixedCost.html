@@ -42,14 +42,21 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="fixedCostDetail" th:each="FC, FCStat : ${fixedCost}">
-    					<td><span class="text-danger" th:text="${FC.classification}">지출</span></td>
-    					<td th:text="${FC.period}">매월 1일</td>
+    				<tr id="fixedCostDetail" th:each="FC, FCStat : ${fixedCostList}">
+    					<td><span class="text-danger" th:text="${FC.classification}">수입</span></td>
+    					<td th:text="|${FC.period}일|">매월 1일</td>
     					<td th:text="${FC.assetsName}">카카오뱅크 생활비 통장</td>
     					<td th:text="${FC.categoryName}">주거/통신비</td>
     					<td th:text="${FC.detailCategoryName}">월세</td>
     					<td th:text="${FC.fixedCostName}"></td>
-    					<td><span class="text-danger" th:text="${FC.fixedCost}">-500,000</span></td>
+    					<td>
+    						<span th:if = "${FC.classification} == '지출'" class="text-danger">-</span>
+    						<th:block th:switch="${FC.classification}">
+    							<span th:case = "지출" class="text-danger" th:text="${FC.fixedCost}"></span>
+    							<span th:case = "수입" class="text-danger" th:text="${FC.fixedCost}"></span>
+    							<span th:case = "이체" th:text="${FC.fixedCost}"></span>
+    						</th:block>
+   						</td>
     				</tr>
     			</tbody>
     		</table>
