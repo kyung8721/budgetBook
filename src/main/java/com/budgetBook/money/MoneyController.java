@@ -86,6 +86,8 @@ public class MoneyController {
 			, Model model, HttpSession session) {
 		int userId = (Integer)session.getAttribute("userId");
 		
+		// 해당 고정비 정보 불러오기
+		FixedCostDto fixedCostDto = moneyService.callFixedCostDtoById(fixedCostId);
 		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
@@ -95,6 +97,7 @@ public class MoneyController {
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
+		model.addAttribute("fixedCost", fixedCostDto);
 		
 		return "money/fixedCostModal";
 	}
