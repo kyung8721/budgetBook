@@ -333,7 +333,7 @@ public class MoneyService {
 		}
 	}
 	
-	// 세부 예산 카테고리 조회
+	// 세부 예산 카테고리 Dto 조회
 	public DetailCategoryDto callDetailCategoryDto(int id) {
 		Optional<DetailCategory> optionalDetailCategory = detailCategoryRepository.findById(id);
 		DetailCategory detailCategory = optionalDetailCategory.orElse(null);
@@ -345,10 +345,32 @@ public class MoneyService {
 				.userId(detailCategory.getUserId())
 				.categoryName(categoryDto.getCategoryName())
 				.detailCategoryName(detailCategory.getDetailCategoryName())
-				.color(detailCategory.getColor())
 				.memo(detailCategory.getMemo())
 				.build();
 		return detailCategoryDto;
+	}
+	
+	// 세부 예산 카테고리 DTO userId로 조회
+	public List<DetailCategoryDto> callDetailCategoryDtoList(int userId){
+		List<DetailCategory> detailCategoryList = detailCategoryRepository.findAllByUserId(userId);
+		List<DetailCategoryDto> detailCategoryDtoList = new ArrayList<>();
+		DetailCategoryDto detailCategoryDto;
+		
+		if(detailCategoryList != null) {
+			for(DetailCategoryDto i : detailCategoryDtoList) {
+				detailCategoryDto = DetailCategoryDto.builder()
+						.id(i.getId())
+						.userId(userId)
+						.categoryName(i.getCategoryName())
+						.detailCategoryName(i.getDetailCategoryName())
+						.memo(i.getMemo())
+						.build();
+				detailCategoryDtoList.add(detailCategoryDto);
+			}
+		}else {
+			detailCategoryDtoList = null;
+		}
+		return detailCategoryDtoList;
 	}
 	
 	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)

@@ -10,7 +10,7 @@
 </head>
 	      	<div>
 	      		<!-- 수입 지출 이체 구분 -->
-	      		<div class="d-flex align-items-center modalText">
+	      		<div class="d-flex align-items-center modalText" >
 	      			<div class="col-4">분류</div>
 	      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
 	      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
@@ -25,7 +25,7 @@
 	      				<option value="W">매주</option>
 	      				<option value="Daily">매일</option>
 	      			</select>
-	      			<input type="number" class="inputBottomBorder col-2 ml-1" id="periodInput" min="1" max="31" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+	      			<input type="number" class="inputBottomBorder col-2 ml-1" id="periodInput" min="1" max="31" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"> 
 	      			<select class="form-control col-3 ml-1 d-none" id="weekPeriod">
 	      				<option value="Mon">월요일</option>
 	      				<option value="Tue">화요일</option>
@@ -35,16 +35,16 @@
 	      				<option value="Sat">토요일</option>
 	      				<option value="Sun">일요일</option>
 	      			</select>
-	      			<div id = "periodText">일 반복</div>
+	      			<div id = "periodText">일마다 반복</div>
 	      		</div>
 	      		
 	      		<!-- 자산 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
-	      			<select class="form-control form-control-sm" th:if="${assetsList != null}">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected">
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}"></option>
       				</select>
-      				<button th:if="${assetsList == null}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					자산 추가하기
      				</button>
@@ -53,10 +53,10 @@
 	      		<!-- 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
-	      			<select class="form-control form-control-sm col-4"  th:if="${categoryList != null}">
+	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
       					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}"></option>
       				</select>
-      				<button th:if="${categoryList == null}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					카테고리 추가하기
      				</button>
@@ -65,11 +65,13 @@
 	      		<!-- 세부 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
-	      			<select class="form-control form-control-sm col-4">
-      					<option>커피</option>
-      					<option>식재료</option>
-      					<option>외식</option>
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}">
+      					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}"></option>
       				</select>
+      				<button th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+     					<i class="bi bi-plus-circle mr-2"></i>
+     					세부 카테고리 추가하기
+     				</button>
 	      		</div>
 	      		
 	      		<!-- 내역명 -->
@@ -91,8 +93,17 @@
 	      		<div class="d-flex justify-content-center">
 	      			<textarea class="form-control mt-1 col-11" rows = "8"></textarea>
 	      		</div>
+	      		<img src="" class="mt-2">
+	      		<input type="file" class="col-10 mt-2">
 	      		
 	      	</div>
+	      	
+	      	
+	      	<div class="d-flex justify-content-between mt-2">
+	      		<button type="button" class="btn btn-outline-danger">삭제</button>
+	        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
+	      	</div>
+	      	
 	      	
 	      	<script
 		      src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -107,6 +118,72 @@
 		    >
 	      	<script>
 	      		$(document).ready(function(){
+	      			
+	      			// 완료 버튼 클릭
+	        		$("#submitBtn").on("click", function(){
+	        			
+	        			// 분류
+	        			if($("#incomeBtn").hasClass("btn-success")){
+	        				
+	        			}else if($("#outgoingBtn").hasClass("btn-danger")){
+	        				
+	        			}else if($("#transferBtn").hasClass("btn-secondary")){
+	        				
+	        			}else{
+	        				alert("분류를 선택해주세요!"); // 유효성 검사
+	        				return ;
+	        			}
+	        			
+	        			// 주기
+	        			let period = $("#periodSelect :selected").text();
+	        			let finalPeriod = "";
+	        			
+	        			
+	        			if(period == "매월"){
+	      					let Mperiod = $("#periodInput").val();
+	      					if(Mperiod == null){ // 유효성 검사
+	      						alert("반복일을 입력해주세요!");
+	      						return ;
+	      					}
+	      					finalPeriod = "M" + Mperiod;
+	      					
+	      				}else if(period == "매주"){
+	      					let Wperiod = $("#weekPeriod").val();
+	      					if(Wperiod == null){ // 유효성 검사
+	      						alert("요일을 선택해주세요!");
+	      						return ;
+	      					}
+	      					finalPeriod = "W" + Wperiod;
+	      					
+	      				}else{
+	      					finalPeriod = "Daily";
+	      				};
+	      				
+	      				// 자산
+	      				let assets = $("#assetsSelected :selected").text();
+	      				
+	      				if(assets == null){
+	      					alert("자산을 선택해주세요!"); // 유효성 검사
+	      				}
+	      				
+	      				// 카테고리 - 비어있어도 됨
+	      				let category = $("#categorySelected : selected").text();
+	      				
+	      				// 세부 카테고리 - 비어있어도 됨
+	      				
+	      				
+	      				// 내역명
+	      				
+	      				// 금액
+	      				
+	      				// 메모
+	      				
+	      				// 메모 사진
+	      				
+	      				
+	        		});
+	      			
+	      			
 	      			// 반복주기에 따라 뒤에 오는 글자를 다르게 하기
 	      			$("#periodSelect").change(function(){
 	      				let period = $("#periodSelect :selected").text();

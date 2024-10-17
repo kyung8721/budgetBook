@@ -38,7 +38,6 @@ public class DetailCategory {
 	@Column(name="detailCategoryName")
 	private String detailCategoryName;
 	
-	private String color;
 	private String memo;
 	
 	@Column(name="createdAt")

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.budgetBook.money.dto.AssetsDto;
 import com.budgetBook.money.dto.CategoryDto;
+import com.budgetBook.money.dto.DetailCategoryDto;
 import com.budgetBook.money.dto.FixedCostDto;
 import com.budgetBook.money.service.MoneyService;
 import com.budgetBook.user.dto.UserDto;
@@ -67,9 +68,11 @@ public class MoneyController {
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
 		
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		
 		return "money/fixedCostModal";
 	}
