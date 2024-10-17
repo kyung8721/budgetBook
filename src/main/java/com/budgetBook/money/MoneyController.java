@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.budgetBook.money.dto.AssetsDto;
 import com.budgetBook.money.dto.CategoryDto;
@@ -65,6 +66,27 @@ public class MoneyController {
 	@GetMapping("/fixedCostModal")
 	public String fixedCostModalView(Model model, HttpSession session) {
 		int userId = (Integer)session.getAttribute("userId");
+		
+		
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
+		
+		model.addAttribute("assetsList", assetsDtoList);
+		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("detailCategoryList", detailCategoryDtoList);
+		
+		return "money/fixedCostModal";
+	}
+	
+	// 고정비 내역 클릭 시 내역 모달(고정비 수정 가능)
+	@GetMapping("/fixedCostModal")
+	public String fixedCostEditModalView(
+			@RequestParam("fixedCostId") int fixedCostId 
+			, Model model, HttpSession session) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
