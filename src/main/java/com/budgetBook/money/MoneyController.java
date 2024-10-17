@@ -80,7 +80,7 @@ public class MoneyController {
 	}
 	
 	// 고정비 내역 클릭 시 내역 모달(고정비 수정 가능)
-	@GetMapping("/fixedCostModal")
+	@GetMapping("/fixedCostEditModal")
 	public String fixedCostEditModalView(
 			@RequestParam("fixedCostId") int fixedCostId 
 			, Model model, HttpSession session) {
