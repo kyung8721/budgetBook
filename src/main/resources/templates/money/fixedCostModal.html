@@ -42,9 +42,9 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected">
-      					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}"></option>
+      					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
-      				<button th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					자산 추가하기
      				</button>
@@ -56,7 +56,7 @@
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
       					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}"></option>
       				</select>
-      				<button th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					카테고리 추가하기
      				</button>
@@ -65,10 +65,10 @@
 	      		<!-- 세부 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}">
-      					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}"></option>
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected">
+      					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
-      				<button th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					세부 카테고리 추가하기
      				</button>
@@ -77,13 +77,13 @@
 	      		<!-- 내역명 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">내역</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName">
 	      		</div>
 	      		
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input type="number" class="inputBottomBorder ml-1 col-7" >
+	      			<input type="number" class="inputBottomBorder ml-1 col-7" id="fixedCostCost">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -91,10 +91,8 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo"></textarea>
 	      		</div>
-	      		<img src="" class="mt-2">
-	      		<input type="file" class="col-10 mt-2">
 	      		
 	      	</div>
 	      	
@@ -123,12 +121,13 @@
 	        		$("#submitBtn").on("click", function(){
 	        			
 	        			// 분류
+	        			let classification = "";
 	        			if($("#incomeBtn").hasClass("btn-success")){
-	        				
+	        				classification = "수입";
 	        			}else if($("#outgoingBtn").hasClass("btn-danger")){
-	        				
+	        				classification = "지출";
 	        			}else if($("#transferBtn").hasClass("btn-secondary")){
-	        				
+	        				classification = "이체";
 	        			}else{
 	        				alert("분류를 선택해주세요!"); // 유효성 검사
 	        				return ;
@@ -160,25 +159,80 @@
 	      				};
 	      				
 	      				// 자산
-	      				let assets = $("#assetsSelected :selected").text();
-	      				
-	      				if(assets == null){
+	      				let assetsId = $("#assetsSelected :selected").val();
+	      				if(assetsId == null){
 	      					alert("자산을 선택해주세요!"); // 유효성 검사
 	      				}
 	      				
 	      				// 카테고리 - 비어있어도 됨
-	      				let category = $("#categorySelected : selected").text();
+	      				let categoryId = "";
+						if($("#categorySelected").length > 0){
+							categoryId = $("#categorySelected : selected").val();
+	      				}else{
+	      					categoryId = 0;
+	      				};
+	      				
 	      				
 	      				// 세부 카테고리 - 비어있어도 됨
+	      				let detailCategoryId = "";
+						if(document.getElementById("detailCategorySelected") != null){
+							detailCategoryId = $("#detailCategorySelected : selected").val();
+	      				}else{
+	      					detailCategoryId = 0;
+	      				}
 	      				
 	      				
 	      				// 내역명
+	      				let fixedCostName = $("#fixedCostName").val();
+	      				
+	      				if(fixedCostName == null){
+	      					alert("내역명을 입력해주세요!"); // 유효성 검사
+	      					return ;
+	      				}
 	      				
 	      				// 금액
+	      				let fixedCostCost = $("#fixedCostCost").val();
+	      				if(fixedCostCost == null){
+	      					alert("금액을 입력해주세요!"); // 유효성 검사
+	      					return ;
+	      				}
 	      				
-	      				// 메모
+	      				// 메모 - 비어있어도 됨
+	      				let memo = $("#memo").val();
 	      				
-	      				// 메모 사진
+	      				
+	      				
+	      				
+	      				// FormData
+	      				let formData = new FormData();
+	        			formData.append("classification", classification);
+	        			formData.append("period", finalPeriod);
+	        			formData.append("assetsId", assetsId);
+	        			formData.append("categoryId", categoryId);
+	        			formData.append("detailCategoryId", detailCategoryId);
+	        			formData.append("fixedCostName", fixedCostName);
+	        			formData.append("fixedCost", fixedCostCost);
+	        			formData.append("memo", null);
+	        			
+	        			
+	        			
+	        			$.ajax({
+	        				type : "post"
+	        				, url : "/budgetBook/money/fixedCost/save"
+	        				, data : formData
+	        				, processData : false
+	                        , contentType : false
+	                        , success : function(data){
+	                        	if(data.result == "success"){
+	                        		location.href = "/budgetBook/money/fixedCost-view";
+	                        	}else{
+	                        		alert("고정비 추가 실패!");
+	                        	}
+	                        }
+	        				, error : function(){
+	        					alert("고정비 추가 에러!");
+	        				}
+	        			});
 	      				
 	      				
 	        		});

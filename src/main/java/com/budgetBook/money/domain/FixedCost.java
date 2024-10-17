@@ -39,7 +39,7 @@ public class FixedCost {
 	private String period;
 	
 	@Column(name="assetsId")
-	private int assetsId;
+	private Integer assetsId;
 	
 	@Column(name="categoryId")
 	private Integer categoryId;

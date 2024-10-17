@@ -35,14 +35,22 @@ public class MoneyRestController {
 			@RequestParam("classification")String classification
 			, @RequestParam("period") String period
 			, @RequestParam("assetsId") int assetsId
-			, @RequestParam(value = "categoryId", required = false) int categoryId
-			, @RequestParam(value = "detailCategoryId") int detailCategoryId
+			, @RequestParam(value = "categoryId", required = false) Integer categoryId
+			, @RequestParam(value = "detailCategoryId") Integer detailCategoryId
+			, @RequestParam("fixedCostName") String fixedCostName
 			, @RequestParam("fixedCost") int fixedCost
 			, @RequestParam(value = "memo") String memo
 			, @RequestParam(value = "fixedCostId", required = false) Integer fixedCostId
 			, HttpSession session){
 		int userId = (Integer)session.getAttribute("userId");
 		
+		if(categoryId == 0) {
+			categoryId = null;
+		}
+		
+		if(detailCategoryId == 0) {
+			detailCategoryId = null;
+		}
 		FixedCost result;
 		
 		if(fixedCostId == null) {
@@ -54,6 +62,7 @@ public class MoneyRestController {
 					.assetsId(assetsId)
 					.categoryId(categoryId)
 					.detailCategoryId(detailCategoryId)
+					.fixedCostName(fixedCostName)
 					.fixedCost(fixedCost)
 					.memo(memo)
 					.build();
@@ -68,6 +77,7 @@ public class MoneyRestController {
 					.assetsId(assetsId)
 					.categoryId(categoryId)
 					.detailCategoryId(detailCategoryId)
+					.fixedCostName(fixedCostName)
 					.fixedCost(fixedCost)
 					.memo(memo)
 					.build();
