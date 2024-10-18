@@ -10,18 +10,13 @@
     		<div><h3>고정비 작성</h3></div>
     		<div class="d-flex col-4 align-items-center justify-content-end">
     			<button id="fixedCostModalAdd" class="btn btn-light d-flex align-items-center border mr-2 col-4 justify-content-center">
-    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle mr-2" viewBox="0 0 16 16">
-						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-						<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-					</svg>
+    				<i class="bi bi-plus-circle mr-1"></i>
     				<div>내역 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
 	    			<input type="search" class="form-control ">
 	    			<div class="input-group-append">
-		    			<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-search pl-2 input-group-text" viewBox="0 0 16 16">
-							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-						</svg>
+						<span class=" input-group-text"><i class="bi bi-search"></i></span>
 					</div>
     			</div>
     			
@@ -42,7 +37,7 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="fixedCostDetail" th:each="FC, FCStat : ${fixedCostList}">
+    				<tr th:id="|fixedCostDetail${FC.id}|" th:each="FC, FCStat : ${fixedCostList}" th:data-fixed-cost-id = "${FC.id}">
     					<td>
     						<th:block th:switch="${FC.classification}">
     							<span th:case = "지출" class="text-danger" th:text="${FC.classification}"></span>
@@ -50,7 +45,7 @@
     							<span th:case = "이체" th:text="$${FC.classification}"></span>
     						</th:block>
    						</td>
-    					<td th:text="|${FC.period}일|">매월 1일</td>
+    					<td th:text="${FC.period}">매월 1일</td>
     					<td th:text="${FC.assetsName}">카카오뱅크 생활비 통장</td>
     					<td th:text="${FC.categoryName}">주거/통신비</td>
     					<td th:text="${FC.detailCategoryName}">월세</td>
@@ -103,8 +98,9 @@
     		}); // 예산 예측 클릭 이벤트 종료
     		
     		// 상세내역 모달 불러오기
-    		$("#fixedCostDetail").on("click", function(){
-    			$("#fixedCostModal .modal-body").load("/budgetBook/money/fixedCostModal");
+    		$("[id^='fixedCostDetail']").on("click", function(){
+    			let fixedCostId = $(this).data("fixed-cost-id");
+    			$("#fixedCostModal .modal-body").load("/budgetBook/money/fixedCostEditModal?fixedCostId=" + fixedCostId);
     			$("#fixedCostModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료

@@ -99,7 +99,7 @@ public class MoneyController {
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("fixedCost", fixedCostDto);
 		
-		return "money/fixedCostModal";
+		return "money/fixedCostEditModal";
 	}
 	
 	// 내역 페이지
