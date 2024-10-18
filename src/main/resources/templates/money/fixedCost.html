@@ -42,10 +42,12 @@
     						<th:block th:switch="${FC.classification}">
     							<span th:case = "지출" class="text-danger" th:text="${FC.classification}"></span>
     							<span th:case = "수입" class="text-success" th:text="${FC.classification}"></span>
-    							<span th:case = "이체" th:text="$${FC.classification}"></span>
+    							<span th:case = "이체" th:text="${FC.classification}"></span>
     						</th:block>
    						</td>
-    					<td th:text="${FC.period}">매월 1일</td>
+    					<td class="d-flex justify-content-center">
+    						<span th:text="${FC.period}"></span><span th:if="${#strings.substring(FC.period, 0, 2) =='매월'}">일</span>
+    					</td>
     					<td th:text="${FC.assetsName}">카카오뱅크 생활비 통장</td>
     					<td th:text="${FC.categoryName}">주거/통신비</td>
     					<td th:text="${FC.detailCategoryName}">월세</td>

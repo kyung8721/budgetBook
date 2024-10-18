@@ -79,7 +79,7 @@ public class MoneyService {
 		// 반복주기
 		if(i.getPeriod().startsWith("M")) {
 			// 매월
-			period = "매월" + i.getPeriod().substring(1) + "일";
+			period = "매월" + i.getPeriod().substring(1);
 		}else if(i.getPeriod().startsWith("W")) {
 			// 매주
 			String periodWeek = "";
