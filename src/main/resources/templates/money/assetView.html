@@ -35,7 +35,7 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="assetSummary" th:each="assets, assetsStat : ${assetsList}">
+    				<tr th:id="|assetSummary${assets.id}|" th:each="assets, assetsStat : ${assetsList}" th:data-assets-id = "${assets.id}">
     					<td th:text="${assetsStat.count}">1</td>
     					<td th:text="${assets.assetsName}">카카오뱅크 생활비 통장</td>
     					<td th:text="${assets.balance}">300,000</td>
@@ -81,8 +81,9 @@
     		}); // 예산 예측 클릭 이벤트 종료
     		
     		// 상세내역 모달 불러오기
-    		$("#assetSummary").on("click", function(){
-    			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+    		$("[id^='assetSummary']").on("click", function(){
+    			let assetsId = $(this).data("assets-id");
+    			$("#assetModal .modal-body").load("/budgetBook/money/assetEditModal?assetsId=" + assetsId);
     			$("#assetModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료

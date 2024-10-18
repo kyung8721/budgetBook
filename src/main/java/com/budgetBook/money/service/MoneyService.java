@@ -202,14 +202,21 @@ public class MoneyService {
 					.memo(memo)
 					.build();
 		}else {
-			assets = Assets.builder()
-					.id(assetsId)
-					.userId(userId)
-					.assetsName(assetsName)
-					.balance(balance)
-					.color(color)
-					.memo(memo)
-					.build();
+			// 수정 시 userId와 해당 자산의 userId가 동일한지 검사
+			Optional<Assets> optionalAssets = assetsRepository.findById(assetsId);
+			Assets assetsCheck = optionalAssets.orElse(null);
+			if(userId == assetsCheck.getUserId()) {
+				assets = Assets.builder()
+						.id(assetsId)
+						.userId(userId)
+						.assetsName(assetsName)
+						.balance(balance)
+						.color(color)
+						.memo(memo)
+						.build();
+			}else {
+				assets = null;
+			}
 		}
 		
 		return assetsRepository.save(assets);

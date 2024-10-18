@@ -79,7 +79,7 @@ public class MoneyController {
 		return "money/fixedCostModal";
 	}
 	
-	// 고정비 내역 클릭 시 내역 모달(고정비 수정 가능)
+	// 고정비 내역 클릭 시 모달(고정비 수정 가능)
 	@GetMapping("/fixedCostEditModal")
 	public String fixedCostEditModalView(
 			@RequestParam("fixedCostId") int fixedCostId 
@@ -153,6 +153,17 @@ public class MoneyController {
 	public String assetModalView() {
 		
 		return "money/assetModal";
+	}
+	
+	// 자산 내역 클릭 시 모달(자산 수정 가능)
+	@GetMapping("/assetEditModal")
+	public String assetEditModalView(@RequestParam("assetsId")int assetsId, HttpSession session, Model model) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		AssetsDto assetsDto = moneyService.callAssetsDto(assetsId);
+		model.addAttribute("assets", assetsDto);
+			
+		return "money/assetEditModal";
 	}
 	
 	// 통계 - 지출 페이지
