@@ -273,14 +273,28 @@ public class MoneyService {
 	
 	// 예산 카테고리 작성 및 수정
 	public Category saveCategory(int userId, String classification, String categoryName, int amount, String color, String memo, Integer categoryId) {
-		Category category = Category.builder()
-				.userId(userId)
-				.classification(classification)
-				.categoryName(categoryName)
-				.amount(amount)
-				.color(color)
-				.memo(memo)
-				.build();
+		Category category;
+		if(categoryId == null) {
+			category = Category.builder()
+					.userId(userId)
+					.classification(classification)
+					.categoryName(categoryName)
+					.amount(amount)
+					.color(color)
+					.memo(memo)
+					.build();
+		}else {
+			category = Category.builder()
+					.id(categoryId)
+					.userId(userId)
+					.classification(classification)
+					.categoryName(categoryName)
+					.amount(amount)
+					.color(color)
+					.memo(memo)
+					.build();
+		}
+		
 		return categoryRepository.save(category);
 		
 	}
@@ -344,13 +358,23 @@ public class MoneyService {
 	// 세부 예산 카테고리 작성 및 수정
 	public DetailCategory saveDetailCategory(int userId, int categoryId, String detailCategoryName, String memo, Integer detailCategoryId) {
 		DetailCategory detailCategory;
-		detailCategory = DetailCategory.builder()
+		if(detailCategoryId == null) {
+			detailCategory = DetailCategory.builder()
 					.userId(userId)
 					.categoryId(categoryId)
 					.detailCategoryName(detailCategoryName)
 					.memo(memo)
-					.id(detailCategoryId)
 					.build();
+		}else {
+			detailCategory = DetailCategory.builder()
+					.id(detailCategoryId)
+					.userId(userId)
+					.categoryId(categoryId)
+					.detailCategoryName(detailCategoryName)
+					.memo(memo)
+					.build();
+		}
+		
 		return detailCategory;
 	}
 	
@@ -410,19 +434,38 @@ public class MoneyService {
 	
 	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)
 	public Breakdown saveBreakdown(int userId, int RealTimePrediction, String classification, LocalDateTime date, int assetsId, Integer categoryId, Integer detailCategoryId, String breakdownName, int cost, String memo, String memoImagePath, Integer breakdownId) {
-		Breakdown breakdown = Breakdown.builder()
-				.userId(userId)
-				.RealTimePrediction(RealTimePrediction)
-				.classification(classification)
-				.date(date)
-				.assetsId(assetsId)
-				.categoryId(categoryId)
-				.detailCategoryId(detailCategoryId)
-				.breakdownName(breakdownName)
-				.cost(cost)
-				.memoImagePath(memoImagePath)
-				.memo(memo)
-				.build();
+		Breakdown breakdown;
+		if(breakdownId == null) {
+			breakdown = Breakdown.builder()
+					.userId(userId)
+					.RealTimePrediction(RealTimePrediction)
+					.classification(classification)
+					.date(date)
+					.assetsId(assetsId)
+					.categoryId(categoryId)
+					.detailCategoryId(detailCategoryId)
+					.breakdownName(breakdownName)
+					.cost(cost)
+					.memoImagePath(memoImagePath)
+					.memo(memo)
+					.build();
+		}else {
+			breakdown = Breakdown.builder()
+					.id(breakdownId)
+					.userId(userId)
+					.RealTimePrediction(RealTimePrediction)
+					.classification(classification)
+					.date(date)
+					.assetsId(assetsId)
+					.categoryId(categoryId)
+					.detailCategoryId(detailCategoryId)
+					.breakdownName(breakdownName)
+					.cost(cost)
+					.memoImagePath(memoImagePath)
+					.memo(memo)
+					.build();
+		}
+		
 		return breakdownRepository.save(breakdown);
 	}
 	
