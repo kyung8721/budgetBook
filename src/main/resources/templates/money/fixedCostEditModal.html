@@ -168,6 +168,28 @@
 	      				$("#transferBtn").addClass("btn-secondary");
 	      			}
 	      			
+	      			//// 삭제 버튼 클릭
+	      			$("#deleteBtn").on("click", function(){
+	      				// fixedCostId
+	        			let fixedCostId = $("#fixedCostDiv").data("fixed-cost-id");
+	      				
+	      				$.ajax({
+	      					type : "delete"
+	      					, url : "/budgetBook/money/fixedCost/delete"
+	      					, data : {"fixedCostId" : fixedCostId}
+	      					, success : function(data){
+	      						if(data.result = "success"){
+	      							location.reload();
+	      						}else{
+	      							alert("고정비 삭제 실패!");
+	      						}
+	      					}
+	      					, error : function(){
+	      						alert("고정비 삭제 에러!");
+	      					}
+	      				});
+	      			});
+	      			
 	      			
 	      			//// 완료 버튼 클릭
 	        		$("#submitBtn").on("click", function(){
