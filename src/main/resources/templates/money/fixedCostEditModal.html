@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-	      	<div>
+	      	<div id="fixedCostDiv" th:data-fixed-cost-id = "${fixedCost.id}">
 	      		<!-- 수입 지출 이체 구분 -->
 	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${fixedCost.classification}">
 	      			<div class="col-4">분류</div>
@@ -65,7 +65,7 @@
 	      		<!-- 세부 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected" th:data-detail-category = "">
       					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
       				<button type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
@@ -77,13 +77,13 @@
 	      		<!-- 내역명 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">내역</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName" th:value = "${fixedCost.fixedCostName}">
 	      		</div>
 	      		
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input type="number" class="inputBottomBorder ml-1 col-7" id="fixedCostCost">
+	      			<input class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:value = "${fixedCost.fixedCost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -91,7 +91,7 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:value = "${fixedCost.memo}"></textarea>
 	      		</div>
 	      		
 	      	</div>
@@ -116,6 +116,11 @@
 	      	<script th:inline="javascript">
 	      		$(document).ready(function(){
 	      			//// 선택된 고정비의 정보
+	      			
+	      			// 세부 카테고리 선택
+	      			let fixedCostDetailCategoryName = $("#detailCategorySelected").data("detail-category");
+	      			$("#detailCategorySelected option:contains("+ fixedCostDetailCategoryName +")").prop("selected", true);
+	      			
 	      			// 카테고리 선택
 	      			let fixedCostCategoryName = $("#categorySelected").data("category");
 	      			$("#categorySelected option:contains("+ fixedCostCategoryName +")").prop("selected", true);
@@ -164,8 +169,11 @@
 	      			}
 	      			
 	      			
-	      			// 완료 버튼 클릭
+	      			//// 완료 버튼 클릭
 	        		$("#submitBtn").on("click", function(){
+	        			
+	        			// fixedCostId
+	        			let fixedCostId = $("#fixedCostDiv").data("fixed-cost-id");
 	        			
 	        			// 분류
 	        			let classification = "";
@@ -183,7 +191,6 @@
 	        			// 주기
 	        			let period = $("#periodSelect :selected").text();
 	        			let finalPeriod = "";
-	        			
 	        			
 	        			if(period == "매월"){
 	      					let Mperiod = $("#periodInput").val();
@@ -231,7 +238,6 @@
 	      				
 	      				// 내역명
 	      				let fixedCostName = $("#fixedCostName").val();
-	      				
 	      				if(fixedCostName == null){
 	      					alert("내역명을 입력해주세요!"); // 유효성 검사
 	      					return ;
@@ -250,6 +256,7 @@
 	      				
 	      				// FormData
 	      				let formData = new FormData();
+	      				formData.append("fixedCostId", fixedCostId)
 	        			formData.append("classification", classification);
 	        			formData.append("period", finalPeriod);
 	        			formData.append("assetsId", assetsId);
@@ -283,7 +290,7 @@
 	        		});
 	      			
 	      			
-	      			// 반복주기에 따라 뒤에 오는 글자를 다르게 하기
+	      			//// 반복주기에 따라 뒤에 오는 글자를 다르게 하기
 	      			$("#periodSelect").change(function(){
 	      				let period = $("#periodSelect :selected").text();
 	      				
@@ -302,7 +309,7 @@
 	      				}
 	      			});
 	      			
-	      			// 버튼 클릭 시 버튼 스타일 변경
+	      			//// 버튼 클릭 시 버튼 스타일 변경
 	      			 // 수입 버튼
 	      			$("#incomeBtn").on("click", function(){
 	      				$("#incomeBtn").removeClass("btn-outline-success");
