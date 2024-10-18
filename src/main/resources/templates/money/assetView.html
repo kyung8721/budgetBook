@@ -10,18 +10,13 @@
     		<div><h3>자산</h3></div>
     		<div class="d-flex col-4 align-items-center justify-content-end">
     			<button id="assetAdd" class="btn btn-light d-flex align-items-center border mr-2 col-4 justify-content-center">
-    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle mr-2" viewBox="0 0 16 16">
-						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-						<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-					</svg>
+    				<i class="bi bi-plus-circle mr-1"></i>
     				<div>자산 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
 	    			<input type="search" class="form-control ">
 	    			<div class="input-group-append">
-		    			<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-search pl-2 input-group-text" viewBox="0 0 16 16">
-							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-						</svg>
+						<span class=" input-group-text"><i class="bi bi-search"></i></span>
 					</div>
     			</div>
     			
@@ -40,47 +35,14 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="assetSummary">
-    					<td>1</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>300,000</td>
+    				<tr id="assetSummary" th:each="assets, assetsStat : ${assetsList}">
+    					<td th:text="${assetsStat.count}">1</td>
+    					<td th:text="${assets.assetsName}">카카오뱅크 생활비 통장</td>
+    					<td th:text="${assets.balance}">300,000</td>
     					<td>지난 달에는 자산이 <span class = "text-danger">100,000</span>원 <span class = "text-danger">감소</span>했어요!</td>
     					<td class = "text-danger">이번 달이 끝나면 200,000원 감소할 예정이에요!</td>
     				</tr>
     				
-    				<!-- 이후로 삭제 예정 -->
-    				
-    				<tr>
-    					<td>2</td>
-    					<td>월급통장</td>
-    					<td>3,000,000</td>
-    					<td>지난 달에는 자산이 <span class = "text-success">200,000</span>원 <span class = "text-success">증가</span>했어요!</td>
-    					<td span class = "text-success">이번 달이 끝나면 500,000원 증가할 예정이에요!</td>
-    				</tr>
-    				
-    				<tr>
-    					<td>3</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>300,000</td>
-    					<td>지난 달에는 자산이 <span class = "text-danger">100,000</span>원 <span class = "text-danger">감소</span>했어요!</td>
-    					<td class = "text-danger">이번 달이 끝나면 200,000원 감소할 예정이에요!</td>
-    				</tr>
-    				
-    				<tr>
-    					<td>4</td>
-    					<td>월급통장</td>
-    					<td>3,000,000</td>
-    					<td>지난 달에는 자산이 <span class = "text-success">200,000</span>원 <span class = "text-success">증가</span>했어요!</td>
-    					<td span class = "text-success">이번 달이 끝나면 500,000원 증가할 예정이에요!</td>
-    				</tr>
-    				
-    				<tr>
-    					<td>5</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>300,000</td>
-    					<td>지난 달에는 자산이 <span class = "text-danger">100,000</span>원 <span class = "text-danger">감소</span>했어요!</td>
-    					<td class = "text-danger">이번 달이 끝나면 200,000원 감소할 예정이에요!</td>
-    				</tr>
     			</tbody>
     		</table>
     	</div>
@@ -96,10 +58,6 @@
 		        </button>
 	        </div>
 	      <div class="modal-body">
-	      </div>
-	      <div class="modal-footer d-flex justify-content-between">
-	        <button type="button" class="btn btn-outline-danger">삭제</button>
-	        <button type="button" class="btn btn-outline-dark">수정</button>
 	      </div>
 	    </div>
 	  </div>

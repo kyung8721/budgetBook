@@ -137,9 +137,13 @@ public class MoneyController {
 	public String assetView(HttpSession session, Model model) {
 		int userId = (Integer)session.getAttribute("userId");
 		
+		// 자산 DTO
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		
 		UserDto userDto = moneyService.callUserData(userId);
 		
 		model.addAttribute("user", userDto);
+		model.addAttribute("assetsList", assetsDtoList);
 		
 		return "money/assetView";
 	}
@@ -147,6 +151,7 @@ public class MoneyController {
 	// 자산 추가 모달 페이지
 	@GetMapping("/assetModal")
 	public String assetModalView() {
+		
 		return "money/assetModal";
 	}
 	

@@ -1,13 +1,22 @@
-
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>자산 추가</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
 	      	<div>
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" >
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="assetsName">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">잔액</div>
-	      			<input type="number" class="inputBottomBorder ml-1 col-7" >
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="assetsBalance" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -20,15 +29,63 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="assetsMemo"></textarea>
 	      		</div>
+	      		
+	      		<div class="d-flex justify-content-end mt-2">
+		      		<!-- <button type="button" class="btn btn-outline-danger">삭제</button> -->
+		        	<button type="button" class="btn btn-outline-dark" id="editBtn">확인</button>
+	        	</div>
 	      		
 	      		
 	      		
 	      	</div>
+	      	<script
+		      src="https://code.jquery.com/jquery-3.7.1.min.js"
+		      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+		      crossorigin="anonymous">
+		    </script>
+    
+    
+		    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+		    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+		    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	      	
 	      	<script>
 	      		$(document).ready(function(){
+	      			// 확인 버튼 클릭
+	      			$("#editBtn").on("click", function(){
+	      				let assetsName = $("#assetsName").val();
+	      				let balance = $("#assetsBalance").val();
+	      				let color = $("#inputColor").val();
+	      				let memo = $("#assetsMemo").val();
+	      				
+	      				let formData = new FormData();
+	      				formData.append("assetsName", assetsName);
+	      				formData.append("balance", balance);
+	      				formData.append("color", color);
+	      				formData.append("memo", memo);
+	      				
+	      				$.ajax({
+	      					type : "post"
+	      					, url : "/budgetBook/money/assets/save"
+	      					, data : formData
+	        				, processData : false
+	                        , contentType : false
+	                        , success : function(data){
+	                        	if(data.result == "success"){
+	                        		location.href = "/budgetBook/money/assets-view"
+	                        	}else{
+	                        		alert("자산 추가 실패!");
+	                        	}
+	                        }
+	      					, error : function(){
+	      						alert("자산 추가 에러!");
+	      					}
+	      				});
+	      			});
+	      			
+	      			
 	      			// 색상 수정하기 클릭 시 컬러피커 나오게 이벤트 설정
 	      			$("#colorPicker").on("click", function(){
 	        			$("#inputColor").click();

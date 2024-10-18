@@ -192,7 +192,17 @@ public class MoneyService {
 	
 	// 자산 추가 및 수정
 	public Assets saveAssets(int userId, String assetsName, int balance, String color, String memo, Integer assetsId) {
-		Assets assets = Assets.builder()
+		Assets assets;
+		if(assetsId == null) {
+			assets = Assets.builder()
+					.userId(userId)
+					.assetsName(assetsName)
+					.balance(balance)
+					.color(color)
+					.memo(memo)
+					.build();
+		}else {
+			assets = Assets.builder()
 					.id(assetsId)
 					.userId(userId)
 					.assetsName(assetsName)
@@ -200,6 +210,8 @@ public class MoneyService {
 					.color(color)
 					.memo(memo)
 					.build();
+		}
+		
 		return assetsRepository.save(assets);
 	}
 	
