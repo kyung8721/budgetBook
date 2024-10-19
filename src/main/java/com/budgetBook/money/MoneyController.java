@@ -1,5 +1,7 @@
 package com.budgetBook.money;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.budgetBook.money.dto.AssetsDto;
+import com.budgetBook.money.dto.BreakdownDto;
 import com.budgetBook.money.dto.CategoryDto;
 import com.budgetBook.money.dto.DetailCategoryDto;
 import com.budgetBook.money.dto.FixedCostDto;
@@ -27,6 +30,7 @@ public class MoneyController {
 		this.moneyService = moneyService;
 	}
 	
+	// 메인 화면
 	@GetMapping("/main-view")
 	public String mainView(HttpSession session, Model model) {
 		int userId = (Integer)session.getAttribute("userId");
@@ -104,12 +108,50 @@ public class MoneyController {
 	
 	// 내역 페이지
 	@GetMapping("/breakdown-view")
-	public String breakdownView(HttpSession session, Model model) {
+	public String breakdownView(HttpSession session, Model model
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth) { // yearMonth : 20241001
 		int userId = (Integer)session.getAttribute("userId");
+		LocalDateTime localDateTime = null; // 선택된 달
+		String NextMonth; // 선택된 달 + 1;
+		LocalDateTime nextMonthlocalDateTime = null; // 다음달 LocalDateTime
+		
+		if(yearMonth == null) {
+			// 선택된 달이 없을 때
+			LocalDateTime now = LocalDateTime.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			yearMonth = Integer.toString(now.getYear()) + "-" + now.getMonthValue() + "-01"; // 2024-10-01
+			
+			if(now.getMonthValue() == 12) {
+				// 12월일 때
+				NextMonth =  Integer.toString(now.getYear() + 1) +"-" + (1) + "-01";
+			}else{
+				NextMonth =  Integer.toString(now.getYear()) +"-" + (now.getMonthValue() + 1) + "-01";
+			}
+			localDateTime = LocalDateTime.parse(yearMonth, formatter);
+			nextMonthlocalDateTime = LocalDateTime.parse(NextMonth, formatter);
+		}else {
+			// 선택된 달이 있을 때
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String yearMonthFormat = yearMonth.substring(0,4) + "-" + yearMonth.substring(4,6) + "-01";
+			String NextMonthFormat;
+			
+			if(Integer.parseInt(yearMonth.substring(4,6)) == 12) {
+				// 12월일 때
+				NextMonthFormat = Integer.toString((Integer.parseInt(yearMonth.substring(0,4))+1)) + "-01" + "-01";
+			}else{
+				NextMonthFormat = yearMonth.substring(0,4) + "-" + Integer.toString((Integer.parseInt(yearMonth.substring(4,6))+1)) + "-01";
+			}
+			
+			localDateTime = LocalDateTime.parse(yearMonthFormat, formatter);
+			nextMonthlocalDateTime = LocalDateTime.parse(NextMonthFormat, formatter);
+		}
+		
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, localDateTime, nextMonthlocalDateTime);
 		
 		UserDto userDto = moneyService.callUserData(userId);
 		
 		model.addAttribute("user", userDto);
+		model.addAttribute("breakdownList", breakdownDtoList);
 		
 		return "money/detailView";
 	}

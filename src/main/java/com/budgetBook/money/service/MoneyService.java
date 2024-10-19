@@ -1,6 +1,7 @@
 package com.budgetBook.money.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
 import com.budgetBook.money.dto.AssetsDto;
+import com.budgetBook.money.dto.BreakdownDto;
 import com.budgetBook.money.dto.CategoryDto;
 import com.budgetBook.money.dto.DetailCategoryDto;
 import com.budgetBook.money.dto.FixedCostDto;
@@ -48,6 +50,7 @@ public class MoneyService {
 		this.detailCategoryRepository = detailCategoryRepository;
 		this.breakdownRepository = breakdownRepository;
 	}
+	
 	
 	// 고정비 저장 및 수정
 	public FixedCost saveFixedCost(FixedCost fixedCostObject) {
@@ -526,5 +529,37 @@ public class MoneyService {
 		}else {
 			return false;
 		}
+	}
+	
+	// 내역 조회(해당 달 정보만)
+	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, LocalDateTime yearMonth, LocalDateTime nextMonthlocalDateTime){
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, 1, yearMonth, nextMonthlocalDateTime);
+		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
+		BreakdownDto breakdownDto;
+		for(Breakdown i : breakdownList) {
+			
+			String localDateTime = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
+			String categoryName = callCategoryDto(i.getCategoryId()).getCategoryName();
+			String detailCategoryName = callDetailCategoryDto(i.getDetailCategoryId()).getDetailCategoryName();
+			
+			breakdownDto = BreakdownDto.builder()
+					.id(i.getId())
+					.userId(userId)
+					.RealTimePrediction(i.getRealTimePrediction())
+					.classification(i.getClassification())
+					.date(localDateTime)
+					.assetsName(assetsName)
+					.categoryName(categoryName)
+					.detailCategoryName(detailCategoryName)
+					.breakdownName(i.getBreakdownName())
+					.cost(i.getCost())
+					.memoImagePath(i.getMemoImagePath())
+					.memo(i.getMemo())
+					.build();
+			breakdownDtoList.add(breakdownDto);
+		}
+		
+		return breakdownDtoList;
 	}
 }
