@@ -14,6 +14,7 @@ public class AssetsDto {
 	private String assetsName;
 	private int balance; // 자산 잔액
 	private Integer lastBalance;
+	private String balanceDifference;
 	private String color;
 	private String memo;
 }

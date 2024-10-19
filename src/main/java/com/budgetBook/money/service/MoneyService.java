@@ -240,12 +240,30 @@ public class MoneyService {
 	public AssetsDto callAssetsDto(int id) {
 		Optional<Assets> optionalAssets = assetsRepository.findById(id);
 		Assets assets = optionalAssets.orElse(null);
+		
+		// 자산 차이 계산
+		String balanceDifference;
+		
+		if(assets.getLastBalance() != null) {
+			int intBalanceDifference = assets.getBalance() - assets.getLastBalance();
+			if(intBalanceDifference < 0) {
+				balanceDifference = "감소" + Math.abs(intBalanceDifference);
+			}else if(intBalanceDifference > 0){
+				balanceDifference = "증가" + intBalanceDifference;
+			}else {
+				balanceDifference = "변함없음";
+			}
+		}else {
+			balanceDifference = null;
+		}
+		
 		AssetsDto assetsDto = AssetsDto.builder()
 				.id(id)
 				.userId(assets.getUserId())
 				.assetsName(assets.getAssetsName())
 				.balance(assets.getBalance())
 				.lastBalance(assets.getLastBalance())
+				.balanceDifference(balanceDifference)
 				.color(assets.getColor())
 				.memo(assets.getMemo())
 				.build();
@@ -256,15 +274,35 @@ public class MoneyService {
 	public List<AssetsDto> callAssetsDtoByUserId(int userId) {
 		List<Assets> assetsList = assetsRepository.findAllByUserId(userId);
 		
+		
+		
 		List<AssetsDto> assetsDtoList = new ArrayList<>();
 		if(assetsList != null) {
 			for(Assets i : assetsList) {
+				
+				// 자산 차이 계산
+				String balanceDifference;
+				
+				if(i.getLastBalance() != null) {
+					int intBalanceDifference = i.getBalance() - i.getLastBalance();
+					if(intBalanceDifference < 0) {
+						balanceDifference = "감소" + Math.abs(intBalanceDifference);
+					}else if(intBalanceDifference > 0){
+						balanceDifference = "증가" + intBalanceDifference;
+					}else {
+						balanceDifference = "변함없음";
+					}
+				}else {
+					balanceDifference = null;
+				}
+				
 				AssetsDto assetsDto = AssetsDto.builder()
 						.id(i.getId())
 						.userId(userId)
 						.assetsName(i.getAssetsName())
 						.balance(i.getBalance())
 						.lastBalance(i.getLastBalance())
+						.balanceDifference(balanceDifference)
 						.color(i.getColor())
 						.memo(i.getMemo())
 						.build();

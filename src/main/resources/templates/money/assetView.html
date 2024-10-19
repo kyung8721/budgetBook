@@ -39,7 +39,22 @@
     					<td th:text="${assetsStat.count}">1</td>
     					<td th:text="${assets.assetsName}">카카오뱅크 생활비 통장</td>
     					<td th:text="${assets.balance}">300,000</td>
-    					<td>지난 달에는 자산이 <span class = "text-danger">100,000</span>원 <span class = "text-danger">감소</span>했어요!</td>
+    					<td>
+    						<div th:if="${assets.balanceDifference} != null">
+    							<span th:if="${#strings.substring(assets.balanceDifference, 0, 2)} == '감소'" >
+    								<span>지난 달보다 </span><span class = "text-danger" th:text="${#strings.substring(assets.balanceDifference, 2)}">100,000</span><span>원 </span><span class = "text-danger">감소</span>했어요!
+    							</span>
+    							
+	    						<span th:if="${#strings.substring(assets.balanceDifference, 0, 2)} == '증가'" >
+    								<span>지난 달보다 </span><span class = "text-success" th:text="${#strings.substring(assets.balanceDifference, 2)}">100,000</span><span>원 </span><span class = "text-success">증가</span>했어요!
+    							</span>
+    							<span th:if="${#strings.substring(assets.balanceDifference, 0, 4)} == '변함없음'" >
+    								<span>지난 달과 변함이 없어요!</span>
+    							</span>
+	    						
+    						</div>
+    						
+   						</td>
     					<td class = "text-danger">이번 달이 끝나면 200,000원 감소할 예정이에요!</td>
     				</tr>
     				
