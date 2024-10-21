@@ -54,7 +54,7 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="detailList" th:each = "breakdown : ${breakdownList}">
+    				<tr id="detailList" th:each = "breakdown : ${breakdownList}" th:data-breakdown-id = "${breakdown.id}">
     					<td><span class="text-danger" th:text = "${breakdown.classification}">지출</span></td>
     					<td th:text="${breakdown.date}">10월 1일</td>
     					<td th:text=${breakdown.assetsName}>카카오뱅크 생활비 통장</td>
@@ -104,7 +104,8 @@
     		
     		// 상세내역 모달 불러오기
     		$("#detailList").on("click", function(){
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal");
+    			let breakdownId = $(this).data("breakdown-id");
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId);
     			$("#detailModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료

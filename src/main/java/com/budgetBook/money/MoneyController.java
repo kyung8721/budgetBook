@@ -137,7 +137,7 @@ public class MoneyController {
 	}
 	
 	// 상세 내역 클릭시 모달
-	@GetMapping("/detailModal")
+	@GetMapping("/detailEditModal")
 	public String detailModalEditView(Model model, HttpSession session
 			, @RequestParam("breakdownId")int breakdownId) {
 		
@@ -153,7 +153,7 @@ public class MoneyController {
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		model.addAttribute("breakdownDto", breakdownDto);
+		model.addAttribute("breakdown", breakdownDto);
 		
 		return "money/detailEditModal";
 	}

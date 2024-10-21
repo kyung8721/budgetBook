@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-	      	<div id="fixedCostDiv" th:data-fixed-cost-id = "${fixedCost.id}">
+	      	<div id="fixedCostDiv" th:data-fixed-cost-id = "${breakdown.id}">
 	      		<!-- 수입 지출 이체 구분 -->
-	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${fixedCost.classification}">
+	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${breakdown.classification}">
 	      			<div class="col-4">분류</div>
 	      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
 	      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
@@ -26,7 +26,7 @@
 	      		<!-- 자산 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assetes = "${fixedCost.assetsName}">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assetes = "${breakdown.assetsName}">
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
       				<button type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
@@ -38,7 +38,7 @@
 	      		<!-- 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
-	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}"  th:data-category = "${fixedCost.categoryName}" id="categorySelected">
+	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}"  th:data-category = "${breakdown.categoryName}" id="categorySelected">
       					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}"></option>
       				</select>
       				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
@@ -62,13 +62,13 @@
 	      		<!-- 내역명 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">내역</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName" th:value = "${fixedCost.fixedCostName}">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName" th:value = "${breakdown.breakdownName}">
 	      		</div>
 	      		
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:value = "${fixedCost.fixedCost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+	      			<input class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:value = "${breakdown.cost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -76,7 +76,7 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:value = "${fixedCost.memo}"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:value = "${breakdown.memo}"></textarea>
 	      		</div>
 	      		
 	      	</div>
