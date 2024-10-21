@@ -129,9 +129,9 @@ public class MoneyController {
 	}
 	
 
-	// 상세 내역 모달
+	// 상세 내역 모달(내역 작성)
 	@GetMapping("/detailModal")
-	public String detailListView(Model model, HttpSession session) {
+	public String detailListView(Model model, HttpSession session, @RequestParam("realTimePrediction")int realTimePrediction) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
@@ -143,6 +143,7 @@ public class MoneyController {
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
+		model.addAttribute("realTimePrediction", realTimePrediction);
 		
 		return "money/detail";
 	}

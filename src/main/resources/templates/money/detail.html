@@ -2,13 +2,13 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>고정비 추가</title>
+<title>내역 추가</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 <link rel="stylesheet" href="/static/css/style.css">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-	      	<div>
+	      	<div id="detailDiv" th:data-real-time-prediction = "${realTimePrediction}">
 	      		<!-- 수입 지출 이체 구분 -->
 	      		<div class="d-flex align-items-center modalText" >
 	      			<div class="col-4">분류</div>
@@ -111,6 +111,9 @@
 		      		// 완료 버튼 클릭
 	        		$("#submitBtn").on("click", function(){
 	        			
+	        			// 실제 사용내역인지, 예측 사용 내역인지 구별
+	        			let realTimePrediction = $("#detailDiv").data("real-time-prediction");
+	        			
 	        			// 분류
 	        			let classification = "";
 	        			if($("#incomeBtn").hasClass("btn-success")){
@@ -173,7 +176,7 @@
 	      				
 	      				// FormData
 	      				let formData = new FormData();
-	      				formData.append("realTimePrediction", 1);
+	      				formData.append("realTimePrediction", realTimePrediction);
 	        			formData.append("classification", classification);
 	        			formData.append("date", date);
 	        			formData.append("assetsId", assetsId);

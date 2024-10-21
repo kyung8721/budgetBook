@@ -104,7 +104,7 @@
     	$(document).ready(function(){
     		// 내역추가 버튼 클릭
     		$("#detailAdd").on("click", function(){
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal");
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal?realTimePrediction=1");
     			$("#detailModal").modal("show");
     		});
     		
