@@ -54,8 +54,14 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="detailList" th:each = "breakdown : ${breakdownList}" th:data-breakdown-id = "${breakdown.id}">
-    					<td><span class="text-danger" th:text = "${breakdown.classification}">지출</span></td>
+    				<tr th:id="|breakdown${breakdown.id}|" th:each = "breakdown : ${breakdownList}" th:data-breakdown-id = "${breakdown.id}">
+    					<td>
+    						<th:block th:switch="${breakdown.classification}">
+    							<span th:case = "지출" class="text-danger" th:text = "${breakdown.classification}"></span>
+    							<span th:case = "수입" class="text-success" th:text = "${breakdown.classification}">지출</span>
+    							<span th:case = "이체" th:text = "${breakdown.classification}">지출</span>
+   							</th:block>
+   						</td>
     					<td th:text="${breakdown.date}">10월 1일</td>
     					<td th:text=${breakdown.assetsName}>카카오뱅크 생활비 통장</td>
     					<td th:text="${breakdown.categoryName}">주거/통신비</td>
@@ -103,7 +109,7 @@
     		});
     		
     		// 상세내역 모달 불러오기
-    		$("#detailList").on("click", function(){
+    		$("[id^='breakdown']").on("click", function(){
     			let breakdownId = $(this).data("breakdown-id");
     			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId);
     			$("#detailModal").modal("show");

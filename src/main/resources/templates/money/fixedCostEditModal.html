@@ -91,7 +91,7 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:value = "${fixedCost.memo}"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:text = "${fixedCost.memo}"></textarea>
 	      		</div>
 	      		
 	      	</div>
@@ -286,7 +286,7 @@
 	        			formData.append("detailCategoryId", detailCategoryId);
 	        			formData.append("fixedCostName", fixedCostName);
 	        			formData.append("fixedCost", fixedCostCost);
-	        			formData.append("memo", null);
+	        			formData.append("memo", memo);
 	        			
 	        			
 	        			

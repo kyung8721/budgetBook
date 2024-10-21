@@ -677,4 +677,22 @@ public class MoneyService {
 		
 		return breakdownDtoList;
 	}
+	
+	//// 총 수입 지출 이체 계산
+	// 수입
+	public int incomeSumService(int userId) {
+		// userId, classification("수입"), 날짜(해당 월)
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAnd
+		
+	}
+	
+	// 지출
+	public int outGoingSumService() {
+		
+	}
+	
+	// 이체
+	public int transferSumService() {
+		
+	}
 }

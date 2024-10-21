@@ -105,9 +105,16 @@ public class MoneyController {
 			, @RequestParam(value = "yearMonth", required = false)String yearMonth) { // yearMonth : 20241001
 		int userId = (Integer)session.getAttribute("userId");
 		
+		// 내역
 		List<BreakdownDto> breakdownDtoList = moneyService.distinguishMonth(userId, yearMonth);
 		
+		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);
+		
+		// 총 수입 지출 이체 계산
+		int IncomeSum = moneyService.incomeSumService();
+		int outGoingSum = moneyService.outGoingSumService();
+		int transferSum = moneyService.transferSumService();
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
