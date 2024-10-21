@@ -136,6 +136,28 @@ public class MoneyController {
 		return "money/detail";
 	}
 	
+	// 상세 내역 클릭시 모달
+	@GetMapping("/detailModal")
+	public String detailModalEditView(Model model, HttpSession session
+			, @RequestParam("breakdownId")int breakdownId) {
+		
+		int userId = (Integer)session.getAttribute("userId");
+		
+		// 내역 불러오기
+		BreakdownDto breakdownDto = moneyService.callBreakdownById(userId, breakdownId);
+		
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
+		
+		model.addAttribute("assetsList", assetsDtoList);
+		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("detailCategoryList", detailCategoryDtoList);
+		model.addAttribute("breakdownDto", breakdownDto);
+		
+		return "money/detailEditModal";
+	}
+	
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
 	public String budgetPredictionView(HttpSession session, Model model) {

@@ -581,6 +581,57 @@ public class MoneyService {
 		return breakdownDtoList;
 	}
 	
+	// 내역 DTO id로 조회
+	public BreakdownDto callBreakdownById(int userId, int breakdownId) {
+		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
+		Breakdown breakdown = optionalBreakdown.orElse(null);
+		BreakdownDto breakdownDto;
+		
+		if(userId == breakdown.getUserId()){
+			// 사용자와 예산 카테고리 작성자의 id가 동일하면 진행
+			String date = breakdown.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			String assetsName =  callAssetsDto(breakdown.getAssetsId()).getAssetsName();
+			
+			// 카테고리명
+			String categoryName;
+			if(breakdown.getCategoryId() != null) {
+				CategoryDto categoryDto = callCategoryDto(breakdown.getCategoryId());
+				categoryName = categoryDto.getCategoryName();
+			}else {
+				categoryName = null;
+			}
+			
+			
+			// 세부 카테고리명
+			String detailCategoryName;
+			if(breakdown.getDetailCategoryId() != null) {
+				DetailCategoryDto detailCategoryDto = callDetailCategoryDto(breakdown.getDetailCategoryId());
+				detailCategoryName = detailCategoryDto.getDetailCategoryName();
+			}else {
+				detailCategoryName = null;
+			}
+			
+			breakdownDto = BreakdownDto.builder()
+					.id(breakdown.getId())
+					.userId(userId)
+					.realTimePrediction(breakdown.getRealTimePrediction())
+					.classification(breakdown.getClassification())
+					.date(date)
+					.assetsName(assetsName)
+					.categoryName(categoryName)
+					.detailCategoryName(detailCategoryName)
+					.breakdownName(breakdown.getBreakdownName())
+					.cost(breakdown.getCost())
+					.memoImagePath(breakdown.getMemoImagePath())
+					.memo(breakdown.getMemo())
+					.build();
+		}else {
+			breakdownDto = null;
+		}
+		
+		return breakdownDto;
+	}
+	
 	// 내역 - 해당 월 구분
 	public List<BreakdownDto> distinguishMonth(int userId, String yearMonth){
 		
