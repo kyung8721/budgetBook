@@ -1,6 +1,8 @@
 package com.budgetBook.money;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,18 +108,22 @@ public class MoneyController {
 		int userId = (Integer)session.getAttribute("userId");
 		
 		// 내역
-		List<BreakdownDto> breakdownDtoList = moneyService.distinguishMonth(userId, yearMonth);
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);
 		
-		// 총 수입 지출 이체 계산
-		int IncomeSum = moneyService.incomeSumService();
-		int outGoingSum = moneyService.outGoingSumService();
-		int transferSum = moneyService.transferSumService();
+		// 총 수입 지출 차액 계산
+		int incomeSum = moneyService.incomeSumService(userId, yearMonth);
+		int outGoingSum = moneyService.outGoingSumService(userId, yearMonth);
+		int difference = incomeSum - outGoingSum;
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
+		model.addAttribute("incomeSum", incomeSum);
+		model.addAttribute("outGoingSum", outGoingSum);
+		model.addAttribute("difference", difference);
 		
 		return "money/detailView";
 	}

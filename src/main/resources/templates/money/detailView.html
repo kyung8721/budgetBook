@@ -16,9 +16,9 @@
 				
 				<!-- 사용금액 총합 -->
 				<div class="d-flex">
-					<div class="text-success ml-2 mr-2">수입 2,000,000</div>
-					<div class="text-danger ml-2 mr-2">지출 4,500</div>
-					<div class="ml-2">차액 1,995,500</div>
+					<div class="text-success ml-2 mr-2">수입 <span th:text="${incomeSum}">2,000,000</span></div>
+					<div class="text-danger ml-2 mr-2">지출 <span th:text="${outGoingSum}">4,500</span></div>
+					<div class="ml-2">차액 <span th:text = "${difference}">1,995,500</span></div>
 				</div>
     		</div>
     		

@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -633,7 +635,7 @@ public class MoneyService {
 	}
 	
 	// 내역 - 해당 월 구분
-	public List<BreakdownDto> distinguishMonth(int userId, String yearMonth){
+	public Map<String, LocalDateTime> distinguishMonth(int userId, String yearMonth){
 		
 		LocalDateTime selectMonth = null; // 선택된 달
 		String NextMonthString = null; // 선택된 달 + 1;
@@ -673,26 +675,57 @@ public class MoneyService {
 			nextMonth = LocalDate.parse(NextMonthString, formatter).atStartOfDay();
 		}
 		
-		List<BreakdownDto> breakdownDtoList = callBreakdownDtoByUserIdAndYearMonth(userId, selectMonth, nextMonth);
+		Map<String, LocalDateTime> distinguishMonthMap = new HashMap<>();
+		distinguishMonthMap.put("selectMonth", selectMonth);
+		distinguishMonthMap.put("nextMonth", nextMonth);
 		
-		return breakdownDtoList;
+		return distinguishMonthMap;
 	}
 	
 	//// 총 수입 지출 이체 계산
 	// 수입
-	public int incomeSumService(int userId) {
-		// userId, classification("수입"), 날짜(해당 월)
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAnd
+	public int incomeSumService(int userId, String yearMonth) {
+		// 해당 월 첫째날~마지막날 계산
+		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
+		// 조건 : userId, classification("수입"), 첫째날~마지막날
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "수입",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		// 합계 계산
+		int incomeSum = 0;
+		for(Breakdown i : breakdownList) {
+			incomeSum += i.getCost();
+		}
+		return incomeSum;
 		
 	}
 	
 	// 지출
-	public int outGoingSumService() {
+	public int outGoingSumService(int userId, String yearMonth) {
+		// 해당 월 첫째날~마지막날 계산
+		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
+		// 조건 : userId, classification("지출"), 첫째날~마지막날
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "지출",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
+		// 합계 계산
+		int outgoingSum = 0;
+		for(Breakdown i : breakdownList) {
+			outgoingSum += i.getCost();
+		}
+		return outgoingSum;
 	}
 	
 	// 이체
-	public int transferSumService() {
+	public int transferSumService(int userId,  String yearMonth) {
+		// 해당 월 첫째날~마지막날 계산
+		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
+		// 조건 : userId, classification("이체"), 첫째날~마지막날
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "이체",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
+		// 합계 계산
+		int transferSum = 0;
+		for(Breakdown i : breakdownList) {
+			transferSum += i.getCost();
+		}
+		return transferSum;
 	}
 }
