@@ -1,6 +1,8 @@
 package com.budgetBook.money;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -253,9 +255,9 @@ public class MoneyRestController {
 	// 내역 작성 및 수정(실제 사용내역 및 예측 사용내역)
 	@PostMapping("/breakdown/create")
 	public Map<String, String> breakdownSave(
-			@RequestParam("RealTimePrediction") int RealTimePrediction
+			@RequestParam("realTimePrediction") int realTimePrediction
 			, @RequestParam("classification") String classification
-			, @RequestParam("date") LocalDateTime date
+			, @RequestParam("date") String date
 			, @RequestParam("assetsId") int assetsId
 			, @RequestParam(value = "categoryId", required = false)Integer categoryId
 			, @RequestParam(value = "detailCategoryId", required = false)Integer detailCategoryId
@@ -268,7 +270,20 @@ public class MoneyRestController {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Breakdown result = moneyService.saveBreakdown(userId, RealTimePrediction, classification, date, assetsId, categoryId, detailCategoryId, breakdownName, cost, memo, memoImagePath, breakdownId);
+		// 날짜 String to LocalDate
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // LocalDate 날짜 패턴 지정
+		LocalDateTime selectDate = LocalDate.parse(date, formatter).atStartOfDay();
+		
+		// 0으로 들어온 id를 null로 바꿔주기
+		if(categoryId == 0) {
+			categoryId = null;
+		}
+		
+		if(detailCategoryId == 0) {
+			detailCategoryId = null;
+		}
+		
+		Breakdown result = moneyService.saveBreakdown(userId, realTimePrediction, classification, selectDate, assetsId, categoryId, detailCategoryId, breakdownName, cost, memo, memoImagePath, breakdownId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		

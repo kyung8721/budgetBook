@@ -1,5 +1,6 @@
 package com.budgetBook.money.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -486,7 +487,7 @@ public class MoneyService {
 		if(breakdownId == null) {
 			breakdown = Breakdown.builder()
 					.userId(userId)
-					.RealTimePrediction(RealTimePrediction)
+					.realTimePrediction(RealTimePrediction)
 					.classification(classification)
 					.date(date)
 					.assetsId(assetsId)
@@ -501,7 +502,7 @@ public class MoneyService {
 			breakdown = Breakdown.builder()
 					.id(breakdownId)
 					.userId(userId)
-					.RealTimePrediction(RealTimePrediction)
+					.realTimePrediction(RealTimePrediction)
 					.classification(classification)
 					.date(date)
 					.assetsId(assetsId)
@@ -532,23 +533,40 @@ public class MoneyService {
 	}
 	
 	// 내역 조회(해당 달 정보만)
-	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, LocalDateTime yearMonth, LocalDateTime nextMonthlocalDateTime){
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, 1, yearMonth, nextMonthlocalDateTime);
+	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, LocalDateTime yearMonth, LocalDateTime nextMonth){
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, 1, yearMonth, nextMonth);
 		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
 		BreakdownDto breakdownDto;
 		for(Breakdown i : breakdownList) {
 			
-			String localDateTime = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			String date = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
 			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
-			String categoryName = callCategoryDto(i.getCategoryId()).getCategoryName();
-			String detailCategoryName = callDetailCategoryDto(i.getDetailCategoryId()).getDetailCategoryName();
+			
+			// 카테고리명
+			String categoryName;
+			if(i.getCategoryId() != null) {
+				CategoryDto categoryDto = callCategoryDto(i.getCategoryId());
+				categoryName = categoryDto.getCategoryName();
+			}else {
+				categoryName = null;
+			}
+			
+			
+			// 세부 카테고리명
+			String detailCategoryName;
+			if(i.getDetailCategoryId() != null) {
+				DetailCategoryDto detailCategoryDto = callDetailCategoryDto(i.getDetailCategoryId());
+				detailCategoryName = detailCategoryDto.getDetailCategoryName();
+			}else {
+				detailCategoryName = null;
+			}
 			
 			breakdownDto = BreakdownDto.builder()
 					.id(i.getId())
 					.userId(userId)
-					.RealTimePrediction(i.getRealTimePrediction())
+					.realTimePrediction(i.getRealTimePrediction())
 					.classification(i.getClassification())
-					.date(localDateTime)
+					.date(date)
 					.assetsName(assetsName)
 					.categoryName(categoryName)
 					.detailCategoryName(detailCategoryName)
@@ -559,6 +577,52 @@ public class MoneyService {
 					.build();
 			breakdownDtoList.add(breakdownDto);
 		}
+		
+		return breakdownDtoList;
+	}
+	
+	// 내역 - 해당 월 구분
+	public List<BreakdownDto> distinguishMonth(int userId, String yearMonth){
+		
+		LocalDateTime selectMonth = null; // 선택된 달
+		String NextMonthString = null; // 선택된 달 + 1;
+		LocalDateTime nextMonth = null; // 다음달 LocalDateTime
+		
+		if(yearMonth == null) {
+			// 선택된 달이 없을 때
+			LocalDateTime now = LocalDateTime.now(); // 현재 날짜
+			String selectMonthString = Integer.toString(now.getYear()) + "-" + Integer.toString(now.getMonthValue()) + "-01";
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // LocalDate 날짜 패턴 지정
+			
+			if(now.getMonthValue() == 12) {
+				// 현재 날짜가 12월일 때
+				NextMonthString =  Integer.toString(now.getYear() + 1) +"-01-01"; // 현재 날짜의 내년 1월 : 2025-01-01
+			}else{
+				// 현재 날짜가 12월이 아닐 때
+				NextMonthString =  Integer.toString(now.getYear()) +"-" + Integer.toString(now.getMonthValue() + 1) + "-01"; // 현재 날짜의 다음 달 : 2024-11-01
+			}
+			// 만든 날짜를 LocalDateTime으로 변형
+			selectMonth = LocalDate.parse(selectMonthString, formatter).atStartOfDay();
+			nextMonth = LocalDate.parse(NextMonthString, formatter).atStartOfDay();
+		}else {
+			// 선택된 달이 있을 때
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // 날짜 패턴 지정
+			String yearMonthString = yearMonth.substring(0,4) + "-" + yearMonth.substring(4,6) + "-01"; // 선택한 날짜의 달을 지정
+			
+			if(Integer.parseInt(yearMonth.substring(4,6)) == 12) {
+				// 선택된 달이 12월일 때
+				NextMonthString = Integer.toString((Integer.parseInt(yearMonth.substring(0,4))+1)) + "-01" + "-01";
+			}else{
+				// 선택된 달이 12월이 아닐 떄
+				NextMonthString = yearMonth.substring(0,4) + "-" + Integer.toString((Integer.parseInt(yearMonth.substring(4,6))+1)) + "-01";
+			}
+			
+			// 만든 날짜를 LocalDateTime으로 변형
+			selectMonth = LocalDate.parse(yearMonthString, formatter).atStartOfDay();
+			nextMonth = LocalDate.parse(NextMonthString, formatter).atStartOfDay();
+		}
+		
+		List<BreakdownDto> breakdownDtoList = callBreakdownDtoByUserIdAndYearMonth(userId, selectMonth, nextMonth);
 		
 		return breakdownDtoList;
 	}

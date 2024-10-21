@@ -32,8 +32,8 @@ public class Breakdown {
 	@Column(name="userId")
 	private int userId;
 	
-	@Column(name="RealTimePrediction")
-	private int RealTimePrediction;
+	@Column(name="realTimePrediction")
+	private int realTimePrediction;
 	
 	private String classification;
 	private LocalDateTime date;
@@ -42,10 +42,10 @@ public class Breakdown {
 	private int assetsId;
 	
 	@Column(name="categoryId")
-	private int categoryId;
+	private Integer categoryId;
 	
 	@Column(name="detailCategoryId")
-	private int detailCategoryId;
+	private Integer detailCategoryId;
 	
 	@Column(name="breakdownName")
 	private String breakdownName;

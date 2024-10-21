@@ -1,7 +1,5 @@
 package com.budgetBook.money.dto;
 
-import java.time.LocalDateTime;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +10,7 @@ import lombok.Setter;
 public class BreakdownDto {
 	private int id;
 	private int userId;
-	private int RealTimePrediction;
+	private int realTimePrediction;
 	private String classification;
 	private String date;
 	private String assetsName;
