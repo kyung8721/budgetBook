@@ -120,7 +120,7 @@
     		// 상세내역 모달 불러오기
     		$("[id^='breakdown']").on("click", function(){
     			let breakdownId = $(this).data("breakdown-id");
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId);
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId + "&realTimePrediction=1");
     			$("#detailModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료

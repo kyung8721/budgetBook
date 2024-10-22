@@ -157,44 +157,28 @@
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="detailList">
-    					<td><span class="text-danger">지출</span></td>
-    					<td>매월 1일</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>주거/통신비</td>
-    					<td>월세</td>
-    					<td></td>
-    					<td><span class="text-danger">-500,000</span></td>
+    				<tr th:id="|breakdown${breakdown.id}|" th:each = "breakdown : ${breakdownList}" th:data-breakdown-id = "${breakdown.id}">
+    					<td>
+    						<th:block th:switch="${breakdown.classification}">
+    							<span th:case = "지출" class="text-danger" th:text = "${breakdown.classification}"></span>
+    							<span th:case = "수입" class="text-success" th:text = "${breakdown.classification}">지출</span>
+    							<span th:case = "이체" th:text = "${breakdown.classification}">지출</span>
+   							</th:block>
+   						</td>
+    					<td th:text="${breakdown.listDate}">10월 1일</td>
+    					<td th:text=${breakdown.assetsName}>카카오뱅크 생활비 통장</td>
+    					<td th:text="${breakdown.categoryName}">주거/통신비</td>
+    					<td th:text="${breakdown.detailCategoryName}">월세</td>
+    					<td th:text="${breakdown.breakdownName}"></td>
+    					<td>
+    						<span th:if = "${breakdown.classification} == '지출'" class="text-danger">-</span>
+    						<th:block th:switch="${breakdown.classification}">
+    							<span th:case = "지출" class="text-danger" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							<span th:case = "수입" class="text-success" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							<span th:case = "이체" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    						</th:block>
+   						</td>
     				</tr>
-    				<!-- 이후로 삭제 예정 -->
-    				<tr>
-    					<td><span class="text-danger">지출</span></td>
-    					<td>매월 1일</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>주거/통신비</td>
-    					<td>월세</td>
-    					<td></td>
-    					<td><span class="text-danger">-500,000</span></td>
-    				</tr>
-    				<tr>
-    					<td><span class="text-danger">지출</span></td>
-    					<td>매월 1일</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>주거/통신비</td>
-    					<td>월세</td>
-    					<td></td>
-    					<td><span class="text-danger">-500,000</span></td>
-    				</tr>
-    				<tr>
-    					<td><span class="text-danger">지출</span></td>
-    					<td>매월 1일</td>
-    					<td>카카오뱅크 생활비 통장</td>
-    					<td>주거/통신비</td>
-    					<td>월세</td>
-    					<td></td>
-    					<td><span class="text-danger">-500,000</span></td>
-    				</tr>
-    				
     			</tbody>
     		</table>
     	</div>
@@ -211,10 +195,6 @@
 	        </div>
 	      <div class="modal-body">
 	      </div>
-	      <div class="modal-footer d-flex justify-content-between">
-	        <button type="button" class="btn btn-outline-danger">삭제</button>
-	        <button type="button" class="btn btn-outline-dark">수정</button>
-	      </div>
 	    </div>
 	  </div>
 	</div>
@@ -229,10 +209,6 @@
 		        </button>
 	        </div>
 	      <div class="modal-body">
-	      </div>
-	      <div class="modal-footer d-flex justify-content-between">
-	        <button type="button" class="btn btn-outline-danger">삭제</button>
-	        <button type="button" class="btn btn-outline-dark">수정</button>
 	      </div>
 	    </div>
 	  </div>
@@ -260,13 +236,14 @@
     		
     		// 내역추가 버튼 클릭
     		$("#detailAdd").on("click", function(){
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal");
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal?realTimePrediction=2");
     			$("#detailModal").modal("show");
     		});
     		
     		// 상세내역 모달 불러오기
-    		$("#detailList").on("click", function(){
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal");
+    		$("[id^='breakdown']").on("click", function(){
+    			let breakdownId = $(this).data("breakdown-id");
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId + "&realTimePrediction=2");
     			$("#detailModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료

@@ -109,7 +109,7 @@ public class MoneyController {
 		
 		// 내역
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);
@@ -151,7 +151,8 @@ public class MoneyController {
 	// 상세 내역 클릭시 모달
 	@GetMapping("/detailEditModal")
 	public String detailModalEditView(Model model, HttpSession session
-			, @RequestParam("breakdownId")int breakdownId) {
+			, @RequestParam("breakdownId")int breakdownId
+			, @RequestParam("realTimePrediction")int realTimePrediction) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
@@ -166,18 +167,29 @@ public class MoneyController {
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("breakdown", breakdownDto);
+		model.addAttribute("realTimePrediction", realTimePrediction);
 		
 		return "money/detailEditModal";
 	}
 	
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
-	public String budgetPredictionView(HttpSession session, Model model) {
+	public String budgetPredictionView(HttpSession session, Model model
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth) {
 		int userId = (Integer)session.getAttribute("userId");
 		
 		UserDto userDto = moneyService.callUserData(userId);
 		
 		model.addAttribute("user", userDto);
+		
+		
+		// 내역
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		
+		model.addAttribute("user", userDto);
+		model.addAttribute("breakdownList", breakdownDtoList);
 		
 		return "money/budgetPrediction";
 	}

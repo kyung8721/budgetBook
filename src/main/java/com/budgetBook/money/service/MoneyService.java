@@ -535,8 +535,8 @@ public class MoneyService {
 	}
 	
 	// 내역 조회(해당 달 정보만)
-	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, LocalDateTime yearMonth, LocalDateTime nextMonth){
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, 1, yearMonth, nextMonth);
+	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, int realTimePrediction, LocalDateTime yearMonth, LocalDateTime nextMonth){
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, realTimePrediction, yearMonth, nextMonth);
 		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
 		BreakdownDto breakdownDto;
 		for(Breakdown i : breakdownList) {

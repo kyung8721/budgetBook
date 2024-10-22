@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
-	      	<div id="breakdownDiv" th:data-breakdown-id = "${breakdown.id}">
+	      	<div id="breakdownDiv" th:data-breakdown-id = "${breakdown.id}" th:data-real-time-prediction = "${realTimePrediction}">
 	      		<!-- 수입 지출 이체 구분 -->
 	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${breakdown.classification}">
 	      			<div class="col-4">분류</div>
@@ -161,6 +161,9 @@
 	        			// breakdownId
 	        			let breakdownId = $("#breakdownDiv").data("breakdown-id");
 	        			
+	        			// 실제 사용내역인지, 예측 사용 내역인지 구별
+	        			let realTimePrediction = $("#breakdownDiv").data("real-time-prediction");
+	        			
 	        			// 분류
 	        			let classification = "";
 	        			if($("#incomeBtn").hasClass("btn-success")){
@@ -211,7 +214,8 @@
 	      				}
 	      				
 	      				// 금액
-	      				let breakdownCost = $("#breakdownCost").val();
+	      				let breakdownCostString = $("#breakdownCost").val();
+	      				let breakdownCost = breakdownCostString.replace(/,/g, "");
 	      				if(breakdownCost == null){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;
@@ -224,7 +228,7 @@
 	      				// FormData
 	      				let formData = new FormData();
 	      				formData.append("breakdownId", breakdownId);
-	      				formData.append("realTimePrediction", 1);
+	      				formData.append("realTimePrediction", realTimePrediction);
 	        			formData.append("classification", classification);
 	        			formData.append("date", date);
 	        			formData.append("assetsId", assetsId);
@@ -244,7 +248,7 @@
 	                        , contentType : false
 	                        , success : function(data){
 	                        	if(data.result == "success"){
-	                        		location.href = "/budgetBook/money/breakdown-view";
+	                        		location.reload();
 	                        	}else{
 	                        		alert("내역 수정 실패!");
 	                        	}

@@ -149,7 +149,8 @@
 	      				}
 	      				
 	      				// 금액
-	      				let breakdownCost = $("#breakdownCost").val();
+	      				let breakdownCostString = $("#breakdownCost").val();
+	      				let breakdownCost = breakdownCostString.replace(/,/g, "");
 	      				if(breakdownCost == null){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;
@@ -181,7 +182,7 @@
 	                        , contentType : false
 	                        , success : function(data){
 	                        	if(data.result == "success"){
-	                        		location.href = "/budgetBook/money/breakdown-view";
+	                        		location.reload();
 	                        	}else{
 	                        		alert("내역 추가 실패!");
 	                        	}
