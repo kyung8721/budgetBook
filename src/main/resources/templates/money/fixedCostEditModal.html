@@ -41,7 +41,7 @@
 	      		<!-- 자산 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assetes = "${fixedCost.assetsName}">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assets = "${fixedCost.assetsName}">
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
       				<button type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">

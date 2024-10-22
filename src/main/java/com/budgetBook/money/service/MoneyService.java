@@ -541,7 +541,8 @@ public class MoneyService {
 		BreakdownDto breakdownDto;
 		for(Breakdown i : breakdownList) {
 			
-			String date = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			String date = i.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			String listDate = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
 			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
 			
 			// 카테고리명
@@ -569,6 +570,7 @@ public class MoneyService {
 					.realTimePrediction(i.getRealTimePrediction())
 					.classification(i.getClassification())
 					.date(date)
+					.listDate(listDate)
 					.assetsName(assetsName)
 					.categoryName(categoryName)
 					.detailCategoryName(detailCategoryName)
@@ -591,7 +593,8 @@ public class MoneyService {
 		
 		if(userId == breakdown.getUserId()){
 			// 사용자와 예산 카테고리 작성자의 id가 동일하면 진행
-			String date = breakdown.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			String date = breakdown.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			String listDate = breakdown.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
 			String assetsName =  callAssetsDto(breakdown.getAssetsId()).getAssetsName();
 			
 			// 카테고리명
@@ -619,6 +622,7 @@ public class MoneyService {
 					.realTimePrediction(breakdown.getRealTimePrediction())
 					.classification(breakdown.getClassification())
 					.date(date)
+					.listDate(listDate)
 					.assetsName(assetsName)
 					.categoryName(categoryName)
 					.detailCategoryName(detailCategoryName)

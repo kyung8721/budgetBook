@@ -13,6 +13,7 @@ public class BreakdownDto {
 	private int realTimePrediction;
 	private String classification;
 	private String date;
+	private String listDate;
 	private String assetsName;
 	private String categoryName;
 	private String detailCategoryName;
