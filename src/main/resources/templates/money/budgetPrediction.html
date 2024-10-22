@@ -73,41 +73,45 @@
     		<!-- 오른쪽 -->
     		<div class="d-flex col-4 align-items-center justify-content-end">
     			<button id="categoryAdd" class="btn btn-light d-flex align-items-center border mr-2 col-4 justify-content-center">
-    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle mr-2" viewBox="0 0 16 16">
-						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-						<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-					</svg>
+    				<i class="bi bi-plus-circle mr-1"></i>
     				<div>예산 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
 	    			<input type="search" class="form-control ">
 	    			<div class="input-group-append">
-		    			<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-search pl-2 input-group-text" viewBox="0 0 16 16">
-							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-						</svg>
+		    			<div class="input-group-append">
+							<span class=" input-group-text"><i class="bi bi-search"></i></span>
+						</div>
 					</div>
     			</div>
     			
     		</div>
     	</div>
     	
-    	<!-- 예산 예측 내역 -->
+    	<!-- 예산 카테고리 -->
     	<div class="detailSection mt-2">
     		<table class="table detailTable text-center table-hover">
     			<thead class="table-secondary">
     				<tr>
     					<th>No.</th>
+    					<th>분류</th>
     					<th>카테고리</th>
     					<th>금액</th>
    					</tr>
     			</thead>
     			<tbody>
-    				<tr id="categoryList">
-    					<td>1</td>
-    					<td>생활비</td>
-    					<td>600,000</td>
+    				<tr th:id="|categoryList${category.id}|" th:each="category, categoryStat : ${categoryList}" th:data-category-id = "${category.id}">
+    					<td th:text="${categoryStat.count}">1</td>
+    					<td>
+    						<th:block th:switch="${category.classification}">
+    							<span th:case = "지출" class="text-danger" th:text="${category.classification}"></span>
+    							<span th:case = "수입" class="text-success" th:text="${category.classification}"></span>
+    							<span th:case = "이체" th:text="${category.classification}"></span>
+    						</th:block>
+    					</td>
+    					<td th:text = "${category.categoryName}">생활비</td>
+    					<td  th:text="${#numbers.formatInteger(category.amount, 3, 'COMMA')}">600,000</td>
     				</tr>
-    				<!-- 이후로 삭제 예정 -->
     			</tbody>
     		</table>
     	</div>
@@ -125,18 +129,15 @@
     		<!-- 오른쪽 -->
     		<div class="d-flex col-4 align-items-center justify-content-end">
     			<button id="detailAdd" class="btn btn-light d-flex align-items-center border mr-2 col-4 justify-content-center">
-    				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle mr-2" viewBox="0 0 16 16">
-						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-						<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-					</svg>
+    				<i class="bi bi-plus-circle mr-1"></i>
     				<div>내역 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
 	    			<input type="search" class="form-control ">
 	    			<div class="input-group-append">
-		    			<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-search pl-2 input-group-text" viewBox="0 0 16 16">
-							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-						</svg>
+		    			<div class="input-group-append">
+							<span class=" input-group-text"><i class="bi bi-search"></i></span>
+						</div>
 					</div>
     			</div>
     			
@@ -228,9 +229,10 @@
     			$("#categoryModal").modal("show");
     		});
     		
-    		// 카테고리 모달 불러오기
-    		$("#categoryList").on("click", function(){
-    			$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+    		// 카테고리 내역 모달 불러오기
+    		$("[id^='categoryList']").on("click", function(){
+    			let cateogoryId = $(this).data("category-id");
+    			$("#categoryModal .modal-body").load("/budgetBook/money/categoryEditModal?categoryId=" + cateogoryId);
     			$("#categoryModal").modal("show");
     		}); // 상세내역 모달 불러오기 이벤트 종료
     		

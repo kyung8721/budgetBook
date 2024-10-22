@@ -182,14 +182,17 @@ public class MoneyController {
 		
 		model.addAttribute("user", userDto);
 		
+		// 카테고리
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		
-		// 내역
+		// 예측 내역
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
 		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
+		model.addAttribute("categoryList", categoryDtoList);
 		
 		return "money/budgetPrediction";
 	}
@@ -198,6 +201,21 @@ public class MoneyController {
 	@GetMapping("/categoryModal")
 	public String categoryModalView() {
 		return "money/categoryModal";
+	}
+	
+	// 카테고리 내역 클릭 시 나오는 모달
+	@GetMapping("/categoryEditModal")
+	public String categoryEditModalView(Model model, HttpSession session
+			, @RequestParam("categoryId")int categoryId) {
+		int userId = (Integer)session.getAttribute("userId");
+		
+		// 카테고리 내역 불러오기
+		CategoryDto cateogoryDto = moneyService.callCategoryDto(categoryId);
+		
+		model.addAttribute("category", cateogoryDto);
+		
+		
+		return "money/categoryEditModal";
 	}
 	
 	// 자산 페이지
