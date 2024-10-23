@@ -387,6 +387,8 @@ public class MoneyService {
 		
 		if(categoryList != null) {
 			for(Category i : categoryList) {
+				
+				// DTO에 저장
 				CategoryDto categoryDto = CategoryDto.builder()
 						.id(i.getId())
 						.userId(userId)
@@ -404,6 +406,19 @@ public class MoneyService {
 		}
 		
 		return categoryDtoList;
+	}
+	
+	// 카테고리 DTO userId로 불러오기 - proportion(사용한 내역 / 카테고리 예산 비율)
+	public List<CategoryDto> callCategoryDtoByUserIdAndRealTimePredictionAndDate(int userId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth){
+		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
+		
+		for(CategoryDto i : categoryDtoList) {
+			float proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth);
+			i.setProportion(proportion);
+		}
+		
+		return categoryDtoList;
+		
 	}
 	
 	// 세부 예산 카테고리 작성 및 수정
@@ -564,6 +579,8 @@ public class MoneyService {
 				detailCategoryName = null;
 			}
 			
+			
+			// DTO에 저장
 			breakdownDto = BreakdownDto.builder()
 					.id(i.getId())
 					.userId(userId)
@@ -686,6 +703,28 @@ public class MoneyService {
 		return distinguishMonthMap;
 	}
 	
+	// 카테고리 별 전체 사용내역 금액 계산
+	public float categoryProportion(int categoryId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth) {
+		// 내역 리스트 불러오기(조건 : 카테고리 아이디, 실제 사용내역인지 예측인지, 정해진 달만)
+		List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(categoryId, realTimePrediction, selectMonth, nextMonth);
+		
+		// 카테고리 예산 불러오기
+		Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+		Category category = optionalCategory.orElse(null);
+		
+		// 내역 저장
+		int breakdownSum = 0; // 예산을 저장할 변수 초기화
+		for(Breakdown i : breakdownList) {
+			breakdownSum += i.getCost();
+		}
+		
+		// 내역 / 카테고리 예산
+		float proportion = breakdownSum / (float)category.getAmount();
+		
+		return proportion;
+	}
+	
+	
 	//// 총 수입 지출 이체 계산
 	// 수입
 	public int incomeSumService(int userId, String yearMonth) {
@@ -732,4 +771,6 @@ public class MoneyService {
 		}
 		return transferSum;
 	}
+	
+	
 }

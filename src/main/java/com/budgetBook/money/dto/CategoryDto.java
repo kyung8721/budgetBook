@@ -13,6 +13,7 @@ public class CategoryDto {
 	private String classification;
 	private String categoryName;
 	private int amount; // 예산금액
+	private float proportion; // 예산금액 / 카테고리 예산
 	private String color;
 	private String memo;
 }

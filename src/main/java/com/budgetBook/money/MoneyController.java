@@ -182,12 +182,13 @@ public class MoneyController {
 		
 		model.addAttribute("user", userDto);
 		
-		// 카테고리
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		
 		// 예측 내역
-		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		// 카테고리
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		
 		model.addAttribute("user", userDto);
