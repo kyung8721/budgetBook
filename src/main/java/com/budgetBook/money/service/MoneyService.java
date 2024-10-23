@@ -421,6 +421,41 @@ public class MoneyService {
 		
 	}
 	
+	// 예산(카테고리) 합계, 내역 합계, 둘 사이의 비율 계산
+	public Map<String, Float> allProportion(int userId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth){
+		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
+		
+		// 예산 합계
+		float categorySum = 0;
+		for(CategoryDto i : categoryDtoList) {
+			categorySum += i.getAmount();
+		}
+		
+		// 내역 합계
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, realTimePrediction, selectMonth, nextMonth);
+		float breakdownSum = 0;
+		for(Breakdown i : breakdownList) {
+			breakdownSum += i.getCost();
+		}
+		
+		// 비율
+		float proportion = (float) ((breakdownSum / (float)categorySum) * 100.0);
+		
+		// 차이
+		float CategoryMinusBreakdown = categorySum - breakdownSum;
+		
+		// map에 저장
+		Map<String, Float> resultMap = new HashMap<>();
+		resultMap.put("categorySum", categorySum);
+		resultMap.put("breakdownSum", breakdownSum);
+		resultMap.put("proportion", proportion);
+		resultMap.put("CMB", CategoryMinusBreakdown);
+		
+		return resultMap;
+		
+		
+	}
+	
 	// 세부 예산 카테고리 작성 및 수정
 	public DetailCategory saveDetailCategory(int userId, int categoryId, String detailCategoryName, String memo, Integer detailCategoryId) {
 		DetailCategory detailCategory;

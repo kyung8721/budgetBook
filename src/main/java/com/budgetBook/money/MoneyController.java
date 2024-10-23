@@ -190,10 +190,13 @@ public class MoneyController {
 		// 카테고리
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
+		// 전체 예산 대비 내역 비율
+		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("allProportion", allProportionCategory);
 		
 		return "money/budgetPrediction";
 	}
