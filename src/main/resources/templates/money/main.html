@@ -65,7 +65,7 @@
     								<button th:if="${fixedCost.categoryName == ''}" class="btn dropdown-toggle" data-toggle="dropdown" value="category" th:style="|background-color : ${fixedCost.categoryColor}|">주거/통신비</button>
     								<button th:unless="${fixedCost.categoryName == ''}" class="btn dropdown-toggle" data-toggle="dropdown" value="category" th:text="${fixedCost.categoryName}" th:style="|background-color : ${fixedCost.categoryColor}|">주거/통신비</button>
 	    							<ul class="dropdown-menu">
-									    <li th:each="category : ${categoryList}"><a class="dropdown-item" href="#" th:text="${category.categoryName}" th:data-category-fixed-cost-id = "${fixedCost.id}" >하나은행</a></li>
+									    <li th:each="category : ${categoryList}"><a class="dropdown-item" href="#" th:data-fixed-cost-category-id = "${category.id}" th:data-category-fixed-cost-id = "${fixedCost.id}" th:text="${category.categoryName}" th:id="|fixedCostCategoryId${category.id}|">하나은행</a></li>
 									 </ul>
     							</td>
     						</tr>
@@ -103,14 +103,14 @@
     							<td class="dropdown">
     								<button class="btn dropdown-toggle" data-toggle="dropdown" value="bank" th:text="${breakdown.assetsName}" th:style = "|background-color : ${breakdown.assetsColor}|">카카오뱅크</button>
 	    							<ul class="dropdown-menu">
-									    <li th:each="assets : ${assetsList}"><a class="dropdown-item" href="#" th:text="${assets.assetsName}">하나은행</a></li>
+									    <li th:each="assets : ${assetsList}"><a class="dropdown-item" href="#" th:text="${assets.assetsName}" th:id="|breakdownAssetsId${assets.id}|" th:data-breakdown-assets-id = "${assets.id}" th:data-assets-breakdown-id = "${breakdown.id}">하나은행</a></li>
 									 </ul>
     							</td>
     							<td class="dropdown">
     								<button th:if="${breakdown.categoryName == ''}" class="btn dropdown-toggle" data-toggle="dropdown" value="category" th:style="|background-color : ${breakdown.categoryColor}|">주거/통신비</button>
     								<button th:unless="${breakdown.categoryName == ''}" class="btn dropdown-toggle" data-toggle="dropdown" value="category" th:text="${breakdown.categoryName}" th:style="|background-color : ${breakdown.categoryColor}|">주거/통신비</button>
 	    							<ul class="dropdown-menu">
-									    <li th:each="category : ${categoryList}"><a class="dropdown-item" href="#" th:text="${category.categoryName}">하나은행</a></li>
+									    <li th:each="category : ${categoryList}"><a class="dropdown-item" href="#" th:text="${category.categoryName}" th:id="|breakdownCategoryId${category.id}|" th:data-breakdown-category-id = "${category.id}" th:data-category-breakdown-id = "${breakdown.id}">하나은행</a></li>
 									 </ul>
     							</td>
     							
@@ -173,6 +173,35 @@
     			$("#detailModal").modal("show");
     		});
     		
+    		// 고정비 카테고리 수정
+    		$("[id^='fixedCostCategoryId']").on("click", function(){
+    			let categoryId = $(this).data("fixed-cost-category-id");
+    			let fixedCostId = $(this).data("category-fixed-cost-id");
+    			
+  				// FormData
+  				let formData = new FormData();
+  				formData.append("categoryId", categoryId);
+    			formData.append("fixedCostId", fixedCostId);
+    			
+    			$.ajax({
+    				type : "put"
+    				, url : "/budgetBook/money/fixedCost/category/update"
+    				, data : formData
+    				, processData : false
+                    , contentType : false
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		location.reload();
+                    	}else{
+                    		alert("고정비 카테고리 수정 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("고정비 카테고리 수정 에러!");
+    				}
+    			});
+    		});
+    		
     		// 고정비 자산 수정
     		$("[id^='fixedCostAssetsId']").on("click", function(){
     			let assetsId = $(this).data("fixed-cost-assets-id");
@@ -198,6 +227,35 @@
                     }
     				, error : function(){
     					alert("고정비 자산 수정 에러!");
+    				}
+    			});
+    		});
+    		
+    		// 내역 카테고리 수정
+    		$("[id^='breakdownCategoryId']").on("click", function(){
+    			let categoryId = $(this).data("breakdown-category-id");
+    			let breakdownId = $(this).data("category-breakdown-id");
+    			
+  				// FormData
+  				let formData = new FormData();
+  				formData.append("categoryId", categoryId);
+    			formData.append("breakdownId", breakdownId);
+    			
+    			$.ajax({
+    				type : "put"
+    				, url : "/budgetBook/money/breakdown/category/update"
+    				, data : formData
+    				, processData : false
+                    , contentType : false
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		location.reload();
+                    	}else{
+                    		alert("내역 카테고리 수정 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("내역 카테고리 수정 에러!");
     				}
     			});
     		});

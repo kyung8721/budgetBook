@@ -182,13 +182,26 @@ public class MoneyService {
 		
 	}
 	
-	// 내역 수정 - 자산
+	// 고정비 수정 - 자산
 	public FixedCost saveFixedCostbyAssetsId(int userId, int fixedCostId, int assetsId){
 		Optional<FixedCost> optionalfixedCost = fixedCostRepository.findById(fixedCostId);
 		FixedCost fixedCost = optionalfixedCost.orElse(null);
 		
 		if(fixedCost != null && fixedCost.getUserId() == userId) {
 			fixedCost.setAssetsId(assetsId);
+			return fixedCostRepository.save(fixedCost);
+		}else {
+			return null;
+		}
+	}
+	
+	// 고정비 수정 - 카테고리
+	public FixedCost saveFixedCostbyCategoryId(int userId, int fixedCostId, int categoryId){
+		Optional<FixedCost> optionalFixedCost = fixedCostRepository.findById(fixedCostId);
+		FixedCost fixedCost = optionalFixedCost.orElse(null);
+		
+		if(fixedCost != null && fixedCost.getUserId() == userId) {
+			fixedCost.setCategoryId(categoryId);
 			return fixedCostRepository.save(fixedCost);
 		}else {
 			return null;
@@ -794,6 +807,19 @@ public class MoneyService {
 		
 		if(breakdown != null && breakdown.getUserId() == userId) {
 			breakdown.setAssetsId(assetsId);
+			return breakdownRepository.save(breakdown);
+		}else {
+			return null;
+		}
+	}
+	
+	// 내역 수정 - 카테고리
+	public Breakdown saveBreakdownbyCategoryId(int userId, int breakdownId, int categoryId){
+		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
+		Breakdown breakdown = optionalBreakdown.orElse(null);
+		
+		if(breakdown != null && breakdown.getUserId() == userId) {
+			breakdown.setCategoryId(categoryId);
 			return breakdownRepository.save(breakdown);
 		}else {
 			return null;

@@ -338,6 +338,27 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
+	// 내역 예측 수정 - 카테고리
+	@PutMapping("/breakdown/category/update")
+	public Map<String, String> breakdownCategoryUpdate(
+			@RequestParam("categoryId") int categoryId
+			, @RequestParam("breakdownId") int breakdownId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		Breakdown breakdown = moneyService.saveBreakdownbyCategoryId(userId, breakdownId, categoryId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(breakdown != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
 	// 고정비 예측 수정 - 자산
 	@PutMapping("/fixedCost/assets/update")
 	public Map<String, String> fixedCostAssetsUpdate(
@@ -347,6 +368,27 @@ public class MoneyRestController {
 		int userId = (Integer)session.getAttribute("userId");
 		
 		FixedCost fixedCost = moneyService.saveFixedCostbyAssetsId(userId, fixedCostId, assetsId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(fixedCost != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 고정비 예측 수정 - 카테고리
+	@PutMapping("/fixedCost/category/update")
+	public Map<String, String> fixedCostCategoryUpdate(
+			@RequestParam("categoryId") int categoryId
+			, @RequestParam("fixedCostId") int fixedCostId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		FixedCost fixedCost = moneyService.saveFixedCostbyCategoryId(userId, fixedCostId, categoryId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 
