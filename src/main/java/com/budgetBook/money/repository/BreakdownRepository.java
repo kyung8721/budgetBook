@@ -9,8 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.budgetBook.money.domain.Breakdown;
 
 public interface BreakdownRepository extends JpaRepository<Breakdown, Integer>{
-	List<Breakdown> findAllByUserIdAndRealTimePredictionAndDateBetween(int userId, int RealTimePrediction, LocalDateTime startDate, LocalDateTime endDate);
+	List<Breakdown> findAllByUserIdAndRealTimePredictionAndDateBetweenOrderByDate(int userId, int RealTimePrediction, LocalDateTime startDate, LocalDateTime endDate);
 	List<Breakdown> findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(int userId, int realTimePrediction, String classification, LocalDateTime startDate, LocalDateTime endDate);
 	List<Breakdown> findAllByCategoryIdAndRealTimePredictionAndDateBetween(int categoryId, int realTimePrediction, LocalDateTime startDate, LocalDateTime endDate);
 	List<Breakdown> findAllByUserIdAndClassificationAndRealTimePredictionAndDateBetween(int userId, String classification, int RealTimePrediction, LocalDateTime startDate, LocalDateTime endDate);
+	
 }

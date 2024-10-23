@@ -446,8 +446,17 @@ public class MoneyService {
 		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
 		
 		for(CategoryDto i : categoryDtoList) {
+			// 카테고리 내역 사용 비율
 			double proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth);
 			i.setProportion(proportion);
+			
+			// 카테고리 내역 지출 합계
+			int categoryCost = 0;
+			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(i.getId(), realTimePrediction, selectMonth, nextMonth);
+			for(Breakdown j : breakdownList) {
+				categoryCost += j.getCost();
+			}
+			i.setCategoryCost(categoryCost);
 		}
 		
 		return categoryDtoList;
@@ -620,7 +629,7 @@ public class MoneyService {
 	
 	// 내역 조회(해당 달 정보만)
 	public List<BreakdownDto> callBreakdownDtoByUserIdAndYearMonth(int userId, int realTimePrediction, LocalDateTime yearMonth, LocalDateTime nextMonth){
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, realTimePrediction, yearMonth, nextMonth);
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetweenOrderByDate(userId, realTimePrediction, yearMonth, nextMonth);
 		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
 		BreakdownDto breakdownDto;
 		for(Breakdown i : breakdownList) {

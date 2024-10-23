@@ -14,6 +14,7 @@ public class CategoryDto {
 	private String categoryName;
 	private int amount; // 예산금액
 	private double proportion; // 예산금액 / 카테고리 예산
+	private int categoryCost; // 카테고리별 지출
 	private String color;
 	private String memo;
 }
