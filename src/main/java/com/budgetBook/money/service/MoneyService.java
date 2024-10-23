@@ -413,7 +413,7 @@ public class MoneyService {
 		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
 		
 		for(CategoryDto i : categoryDtoList) {
-			float proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth);
+			double proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth);
 			i.setProportion(proportion);
 		}
 		
@@ -704,7 +704,7 @@ public class MoneyService {
 	}
 	
 	// 카테고리 별 전체 사용내역 금액 계산
-	public float categoryProportion(int categoryId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth) {
+	public double categoryProportion(int categoryId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth) {
 		// 내역 리스트 불러오기(조건 : 카테고리 아이디, 실제 사용내역인지 예측인지, 정해진 달만)
 		List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(categoryId, realTimePrediction, selectMonth, nextMonth);
 		
@@ -719,7 +719,7 @@ public class MoneyService {
 		}
 		
 		// 내역 / 카테고리 예산
-		float proportion = breakdownSum / (float)category.getAmount();
+		double proportion = (breakdownSum / (double)category.getAmount()) * 100.0;
 		
 		return proportion;
 	}
