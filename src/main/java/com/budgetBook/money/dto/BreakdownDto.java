@@ -15,7 +15,9 @@ public class BreakdownDto {
 	private String date;
 	private String listDate;
 	private String assetsName;
+	private String assetsColor;
 	private String categoryName;
+	private String categoryColor;
 	private String detailCategoryName;
 	private String breakdownName;
 	private int cost;

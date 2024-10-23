@@ -124,11 +124,16 @@ public class MoneyService {
 		AssetsDto assetsDto = callAssetsDto(i.getAssetsId());
 		String assetsName = assetsDto.getAssetsName();
 		
-		// 카테고리명
+		// 자산 색
+		String assetsColor = assetsDto.getColor();
+		
+		// 카테고리명, 카테고리 색
 		String categoryName;
+		String categoryColor = "#00BFFF";
 		if(i.getCategoryId() != null) {
 			CategoryDto categoryDto = callCategoryDto(i.getCategoryId());
 			categoryName = categoryDto.getCategoryName();
+			categoryColor = categoryDto.getColor();
 		}else {
 			categoryName = null;
 		}
@@ -150,7 +155,9 @@ public class MoneyService {
 				.classification(i.getClassification())
 				.period(period)
 				.assetsName(assetsName)
+				.assetsColor(assetsColor)
 				.categoryName(categoryName)
+				.categoryColor(categoryColor)
 				.detailCategoryName(detailCategoryName)
 				.fixedCostName(i.getFixedCostName())
 				.fixedCost(i.getFixedCost())
@@ -173,6 +180,19 @@ public class MoneyService {
 			return null;
 		}
 		
+	}
+	
+	// 내역 수정 - 자산
+	public FixedCost saveFixedCostbyAssetsId(int userId, int fixedCostId, int assetsId){
+		Optional<FixedCost> optionalfixedCost = fixedCostRepository.findById(fixedCostId);
+		FixedCost fixedCost = optionalfixedCost.orElse(null);
+		
+		if(fixedCost != null && fixedCost.getUserId() == userId) {
+			fixedCost.setAssetsId(assetsId);
+			return fixedCostRepository.save(fixedCost);
+		}else {
+			return null;
+		}
 	}
 	
 	
@@ -423,16 +443,17 @@ public class MoneyService {
 	
 	// 예산(카테고리) 합계, 내역 합계, 둘 사이의 비율 계산
 	public Map<String, Float> allProportion(int userId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth){
-		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
+		// 카테고리 불러오기
+		List<Category> categoryList = categoryRepository.findAllByUserIdAndClassification(userId, "지출");
 		
-		// 예산 합계
+		// 예산 합계(지출만)
 		float categorySum = 0;
-		for(CategoryDto i : categoryDtoList) {
+		for(Category i : categoryList) {
 			categorySum += i.getAmount();
 		}
 		
-		// 내역 합계
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetween(userId, realTimePrediction, selectMonth, nextMonth);
+		// 내역 합계(지출만)
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndRealTimePredictionAndDateBetween(userId, "지출", realTimePrediction, selectMonth, nextMonth);
 		float breakdownSum = 0;
 		for(Breakdown i : breakdownList) {
 			breakdownSum += i.getCost();
@@ -593,13 +614,18 @@ public class MoneyService {
 			
 			String date = i.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 			String listDate = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
-			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
 			
-			// 카테고리명
+			// 자산 명, 자산 색
+			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
+			String assetsColor = callAssetsDto(i.getAssetsId()).getColor();
+			
+			// 카테고리명, 색
 			String categoryName;
+			String categoryColor = "#00BFFF";
 			if(i.getCategoryId() != null) {
 				CategoryDto categoryDto = callCategoryDto(i.getCategoryId());
 				categoryName = categoryDto.getCategoryName();
+				categoryColor = categoryDto.getColor();
 			}else {
 				categoryName = null;
 			}
@@ -624,7 +650,9 @@ public class MoneyService {
 					.date(date)
 					.listDate(listDate)
 					.assetsName(assetsName)
+					.assetsColor(assetsColor)
 					.categoryName(categoryName)
+					.categoryColor(categoryColor)
 					.detailCategoryName(detailCategoryName)
 					.breakdownName(i.getBreakdownName())
 					.cost(i.getCost())
@@ -759,14 +787,27 @@ public class MoneyService {
 		return proportion;
 	}
 	
+	// 내역 수정 - 자산
+	public Breakdown saveBreakdownbyAssetsId(int userId, int breakdownId, int assetsId){
+		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
+		Breakdown breakdown = optionalBreakdown.orElse(null);
+		
+		if(breakdown != null && breakdown.getUserId() == userId) {
+			breakdown.setAssetsId(assetsId);
+			return breakdownRepository.save(breakdown);
+		}else {
+			return null;
+		}
+	}
+	
 	
 	//// 총 수입 지출 이체 계산
 	// 수입
-	public int incomeSumService(int userId, String yearMonth) {
+	public int incomeSumService(int userId, String yearMonth, int realTimePrediction) {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("수입"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "수입",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "수입",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 합계 계산
 		int incomeSum = 0;
@@ -778,11 +819,11 @@ public class MoneyService {
 	}
 	
 	// 지출
-	public int outGoingSumService(int userId, String yearMonth) {
+	public int outGoingSumService(int userId, String yearMonth, int realTimePrediction) {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("지출"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "지출",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "지출",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 합계 계산
 		int outgoingSum = 0;
@@ -793,11 +834,11 @@ public class MoneyService {
 	}
 	
 	// 이체
-	public int transferSumService(int userId,  String yearMonth) {
+	public int transferSumService(int userId,  String yearMonth, int realTimePrediction) {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("이체"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndClassificationAndDateBetween(userId, "이체",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "이체",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 합계 계산
 		int transferSum = 0;

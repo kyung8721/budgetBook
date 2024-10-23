@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -308,6 +309,48 @@ public class MoneyRestController {
 		Map<String, String> resultMap = new HashMap<>();
 
 		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 내역 예측 수정 - 자산
+	@PutMapping("/breakdown/assets/update")
+	public Map<String, String> breakdownAssetsUpdate(
+			@RequestParam("assetsId") int assetsId
+			, @RequestParam("breakdownId") int breakdownId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		Breakdown breakdown = moneyService.saveBreakdownbyAssetsId(userId, breakdownId, assetsId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(breakdown != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 고정비 예측 수정 - 자산
+	@PutMapping("/fixedCost/assets/update")
+	public Map<String, String> fixedCostAssetsUpdate(
+			@RequestParam("assetsId") int assetsId
+			, @RequestParam("fixedCostId") int fixedCostId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		FixedCost fixedCost = moneyService.saveFixedCostbyAssetsId(userId, fixedCostId, assetsId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+
+		if(fixedCost != null) {
 			resultMap.put("result", "success");
 		}else {
 			resultMap.put("result", "fail");

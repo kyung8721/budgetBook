@@ -70,6 +70,7 @@
 .fixedCostAndbudgetPrediction{
 	width : 33.333%;
 	height : 100%;
+	overflow : scroll;
 }
 
 .downSection{

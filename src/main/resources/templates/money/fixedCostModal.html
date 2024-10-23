@@ -47,7 +47,7 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
-      					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}"></option>
+      					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
       				</select>
       				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
@@ -148,7 +148,7 @@
 	      				// 카테고리 - 비어있어도 됨
 	      				let categoryId = "";
 						if($("#categorySelected").length > 0){
-							categoryId = $("#categorySelected : selected").val();
+							categoryId = $("#categorySelected :selected").val();
 	      				}else{
 	      					categoryId = 0;
 	      				};
@@ -157,7 +157,7 @@
 	      				// 세부 카테고리 - 비어있어도 됨
 	      				let detailCategoryId = "";
 						if(document.getElementById("detailCategorySelected") != null){
-							detailCategoryId = $("#detailCategorySelected : selected").val();
+							detailCategoryId = $("#detailCategorySelected :selected").val();
 	      				}else{
 	      					detailCategoryId = 0;
 	      				}

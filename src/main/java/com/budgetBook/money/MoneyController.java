@@ -34,10 +34,34 @@ public class MoneyController {
 	@GetMapping("/main-view")
 	public String mainView(HttpSession session, Model model) {
 		int userId = (Integer)session.getAttribute("userId");
+		String yearMonth = null;
 		
 		UserDto userDto = moneyService.callUserData(userId);
 		
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
+		// 카테고리
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		// 자산
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		
+		// 전체 예산 대비 내역 비율
+		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		// 고정비 내역 불러오기
+		List<FixedCostDto> fixedCostDtoList = moneyService.callFixedCost(userId);
+		
+		// 예측 내역
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		
 		model.addAttribute("user", userDto);
+		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("assetsList", assetsDtoList);
+		model.addAttribute("allProportion", allProportionCategory);
+		model.addAttribute("fixedCostList", fixedCostDtoList);
+		model.addAttribute("breakdownList", breakdownDtoList);
+		
 		return "money/main";
 	}
 	
@@ -115,8 +139,8 @@ public class MoneyController {
 		UserDto userDto = moneyService.callUserData(userId);
 		
 		// 총 수입 지출 차액 계산
-		int incomeSum = moneyService.incomeSumService(userId, yearMonth);
-		int outGoingSum = moneyService.outGoingSumService(userId, yearMonth);
+		int incomeSum = moneyService.incomeSumService(userId, yearMonth, 1);
+		int outGoingSum = moneyService.outGoingSumService(userId, yearMonth, 1);
 		int difference = incomeSum - outGoingSum;
 		
 		model.addAttribute("user", userDto);

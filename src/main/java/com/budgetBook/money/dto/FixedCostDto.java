@@ -14,7 +14,9 @@ public class FixedCostDto {
 	private String classification;
 	private String period;
 	private String assetsName;
+	private String assetsColor;
 	private String categoryName;
+	private String categoryColor;
 	private String detailCategoryName;
 	private String fixedCostName;
 	private int fixedCost;
