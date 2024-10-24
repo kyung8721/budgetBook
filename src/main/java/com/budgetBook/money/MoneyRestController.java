@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -403,12 +404,20 @@ public class MoneyRestController {
 	
 	// 차트 데이터 보내기
 	@PostMapping("/chart/data")
-	public Map<String, Integer> chartData(HttpSession session
+	public Map<String, List<Map<String, Object>>> chartData(HttpSession session
 			, @RequestParam("categoryId")Integer categoryId){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		Map<String, Integer> resultMap = moneyService.chartDataService(categoryId);
+		List<Map<String, Object>> resultList = moneyService.chartDataService(categoryId, userId);
 		
+		Map<String, List<Map<String, Object>>> resultMap = new HashMap<>();
+		if(resultList != null) {
+			resultMap.put("result", resultList);
+		}else {
+			resultMap.put("result", null);
+		}
+		
+		return resultMap;
 	}
 }
 

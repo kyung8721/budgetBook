@@ -283,7 +283,8 @@ public class MoneyController {
 	// 통계 - 지출 페이지
 	@GetMapping("/statics/outgoing-view")
 	public String staticOutGoingView(HttpSession session, Model model
-			, @RequestParam(value = "yearMonth", required = false) String yearMonth) {
+			, @RequestParam(value = "yearMonth", required = false) String yearMonth
+			, @RequestParam(value = "categoryId", required = false)Integer categoryId) {
 		int userId = (Integer)session.getAttribute("userId");
 		
 		UserDto userDto = moneyService.callUserData(userId);
@@ -292,9 +293,17 @@ public class MoneyController {
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
+		if(categoryId == null) {
+			categoryId = 0;
+		}
+
+		// 지출 내역 가져오기
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "지출", 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), categoryId);
+		
 		model.addAttribute("user", userDto);
 		model.addAttribute("categoryList", categoryDtoList);
-		
+		model.addAttribute("categoryId", categoryId);
+		model.addAttribute("breakdownList", breakdownDtoList);
 		return "money/staticOutGoingView";
 	}
 	

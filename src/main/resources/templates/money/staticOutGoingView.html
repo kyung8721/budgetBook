@@ -17,7 +17,7 @@
     	</div>
     	
     	<div class="d-flex">
-    		<div class="col-3 borderSection">
+    		<div class="col-3 borderSection" style="max-height : 80vh; overflow : auto">
     			<h3 class="mt-2">카테고리 별 지출</h3>
     			<canvas id="pieChart" style = "width : 100%; height : 400px;"></canvas>
     			<div style = "font-size : 20px;">전체</div>
@@ -38,35 +38,52 @@
     			</table>
     		</div>
     		
-    		<div class="ml-2 col-9 borderSection">
-    			<h3 class="mt-2">카테고리 별 지출 비교</h3>
+    		<div class="ml-2 col-9 borderSection" style="max-height : 80vh; overflow : auto">
+    			<h3 class="mt-2" id="categorySectionDiv" th:data-category-null-or-id = "${categoryId}">카테고리 별 지출 비교</h3>
 				<canvas id="barChart" style = "width : 100%; height : 400px;"></canvas>
-				<div style = "font-size : 20px;">주거/통신비</div>
-				<table class="table detailTable text-center table-hover">
-	    			<thead class="table-secondary">
-	    				<tr>
-	    					<th>분류</th>
-	    					<th>날짜</th>
-	    					<th>자산</th>
-	    					<th>카테고리</th>
-	    					<th>세부 카테고리</th>
-	    					<th>내역</th>
-	    					<th>금액</th>
-	   					</tr>
-	    			</thead>
-	    			<tbody>
-	    				<tr id="detailList">
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>10월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
-	    				
-	    			</tbody>
-	    		</table>
+				
+				
+				<div class="dropstart">
+					<div data-toggle="dropdown" style = "font-size : 20px;" id="categoryName">주거/통신비</div>
+					<ul class="dropdown-menu">
+						<li th:id = "categoryId0" class="dropdown-item d-flex justify-content-center align-items-center" th:text="전체" th:data-category-id = 0>프로필 수정</li>
+					    <li th:id = "|categoryId${category.id}|" th:each = "category : ${categoryList}" class="dropdown-item d-flex justify-content-center align-items-center" th:text="${category.categoryName}" th:data-category-id = ${category.id}>프로필 수정</li>
+					</ul>
+				</div>
+				<div>
+					<table class="table detailTable text-center table-hover">
+		    			<thead class="table-secondary">
+		    				<tr>
+		    					<th>분류</th>
+		    					<th>날짜</th>
+		    					<th>자산</th>
+		    					<th>카테고리</th>
+		    					<th>세부 카테고리</th>
+		    					<th>내역</th>
+		    					<th>금액</th>
+		   					</tr>
+		    			</thead>
+		    			<tbody>
+		    				<tr th:id="|detailList${breakdown.id}|" th:each="breakdown : ${breakdownList}">
+		    					<td><span class="text-danger">지출</span></td>
+		    					<td th:text="${breakdown.listDate}">10월 1일</td>
+		    					<td th:text=${breakdown.assetsName}>카카오뱅크 생활비 통장</td>
+		    					<td th:text="${breakdown.categoryName}">주거/통신비</td>
+		    					<td th:text="${breakdown.detailCategoryName}">월세</td>
+		    					<td th:text="${breakdown.breakdownName}"></td>
+		    					<td>
+		    						<span th:if = "${breakdown.classification} == '지출'" class="text-danger">-</span>
+		    						<th:block th:switch="${breakdown.classification}">
+		    							<span th:case = "지출" class="text-danger" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+		    							<span th:case = "수입" class="text-success" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+		    							<span th:case = "이체" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+		    						</th:block>
+		   						</td>
+		    				</tr>
+		    				
+		    			</tbody>
+		    		</table>
+	    		</div>
 			</div>
     	</div>
     	
@@ -95,26 +112,54 @@
     
     	$(document).ready(function(){
     		
-    		let categoryColor = [];
+    		var categoryColorList = [];
+    		var categoryDataList = [];
+    		var categoryNameList = [];
+    		var categoryId = $("#categorySectionDiv").data("category-null-or-id");
     		
-    		// 
-    		/* $.ajax({
-    			
-    		}); */
+    		$.ajax({
+    			type : "post"	
+    			, url : "/budgetBook/money/chart/data"
+    			, data : {"categoryId" : categoryId}
+    			, async : false // 이걸 추가함으로서 변수에 값을 저장해서 전달할 수 있게 됨
+    			, success: function(data){
+    				if(data.result != null){
+    					for(let i = 0 ; i < data.result.length ; i++ ){
+    						let categoryColor = data.result[i].color;
+    						let categoryData = data.result[i].cost;
+    						let categoryName = data.result[i].categoryName;
+    						
+    						categoryColorList.push(categoryColor);
+        					categoryDataList.push(categoryData);
+        					categoryNameList.push(categoryName);
+        					
+    					}
+    				}else{
+    					categoryColorList = null;
+    					categoryDataList = null;
+    					categoryNameList = null;
+    				}
+    				
+    			}
+    			, error : function(){
+    				alert("차트 데이터 받아오기 오류!");
+    			} 
+    		});
+    		
     		
     		// 차트 데이터
     		var dataset = {
    			    label: "자산",
-   			    backgroundColor: ['#ffd950', '#02bc77', '#28c3d7', '#FF6384'],//라벨별 컬러설정
-   			    data: [50, 45, 75, 40],
+   			    backgroundColor: categoryColorList,//라벨별 컬러설정
+   			    data: categoryDataList,
    			 	borderWidth: 1,
 	   			 datalabels: {
 	   		       align: 'end',
 	   		       anchor: 'end',
 	   		     }
-   			}
+   			};
 
-   			var labels=['주거/통신비','생활비','교육비','기타']; 
+   			var labels = categoryNameList; 
    			  
    			var datasets={ datasets:[dataset], labels:labels }
     		
@@ -138,7 +183,7 @@
    	   			        }
    			          }
    			     }
-   			 }
+   			 };
 			
 			new Chart(ctx, config);
     		
@@ -155,9 +200,23 @@
 							}
 						}
 					}
-				}
+				};
     		
     		new Chart(ctx2, config);
+    		
+    		
+    		// 카테고리 id 저장
+    		$("[id^='categoryId']").on("click", function(){
+    			categoryId = $(this).data("category-id");
+    			location.href = "/budgetBook/money/statics/outgoing-view?categoryId=" + categoryId;
+    		});
+    		
+    		// 정보를 받아온 카테고리명 표시
+    		if(categoryNameList.length > 1){
+    			$("#categoryName").text("전체");
+    		}else{
+    			$("#categoryName").text(categoryNameList[0]);
+    		}
     		
     		// 상세내역 모달 불러오기
     		$("#detailList").on("click", function(){

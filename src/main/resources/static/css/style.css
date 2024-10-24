@@ -97,9 +97,25 @@ body::-webkit-scrollbar-thumb {
     border-radius: 10px;
 }
 
-body::-webkit-scrollbar-track {
+div::-webkit-scrollbar-track {
     background: #e2e2e2;  /*스크롤바 뒷 배경 색상*/
 }
+
+div::-webkit-scrollbar {
+    width: 5px;  /* 스크롤바의 너비 */
+}
+
+div::-webkit-scrollbar-thumb {
+    height: 10%; /* 스크롤바의 길이 */
+    background: #c0c0c0; /* 스크롤바의 색상 */
+    
+    border-radius: 10px;
+}
+
+div::-webkit-scrollbar-track {
+    background: #e2e2e2;  /*스크롤바 뒷 배경 색상*/
+}
+
 .budgetPredictionDetailList tr:hover{
 	background: #e2e2e2;
 }

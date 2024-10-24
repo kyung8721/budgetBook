@@ -687,6 +687,69 @@ public class MoneyService {
 		return breakdownDtoList;
 	}
 	
+	// // 내역 조회(해당 달 정보만, 해당 카테고리 id만)
+	public List<BreakdownDto> callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(int userId, String classification, int realTimePrediction, LocalDateTime yearMonth, LocalDateTime nextMonth, int categoryId){
+		if(categoryId == 0) {
+			
+		}
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndCategoryIdAndDateBetweenOrderByDate(userId, realTimePrediction, classification, categoryId, yearMonth, nextMonth);
+		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
+		BreakdownDto breakdownDto;
+		for(Breakdown i : breakdownList) {
+			
+			String date = i.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			String listDate = i.getDate().format(DateTimeFormatter.ofPattern("MM월 dd일"));
+			
+			// 자산 명, 자산 색
+			String assetsName =  callAssetsDto(i.getAssetsId()).getAssetsName();
+			String assetsColor = callAssetsDto(i.getAssetsId()).getColor();
+			
+			// 카테고리명, 색
+			String categoryName;
+			String categoryColor = "#00BFFF";
+			if(i.getCategoryId() != null) {
+				CategoryDto categoryDto = callCategoryDto(i.getCategoryId());
+				categoryName = categoryDto.getCategoryName();
+				categoryColor = categoryDto.getColor();
+			}else {
+				categoryName = null;
+			}
+			
+			
+			// 세부 카테고리명
+			String detailCategoryName;
+			if(i.getDetailCategoryId() != null) {
+				DetailCategoryDto detailCategoryDto = callDetailCategoryDto(i.getDetailCategoryId());
+				detailCategoryName = detailCategoryDto.getDetailCategoryName();
+			}else {
+				detailCategoryName = null;
+			}
+			
+			
+			// DTO에 저장
+			breakdownDto = BreakdownDto.builder()
+					.id(i.getId())
+					.userId(userId)
+					.realTimePrediction(i.getRealTimePrediction())
+					.classification(i.getClassification())
+					.date(date)
+					.listDate(listDate)
+					.assetsName(assetsName)
+					.assetsColor(assetsColor)
+					.categoryName(categoryName)
+					.categoryColor(categoryColor)
+					.detailCategoryName(detailCategoryName)
+					.breakdownName(i.getBreakdownName())
+					.cost(i.getCost())
+					.memoImagePath(i.getMemoImagePath())
+					.memo(i.getMemo())
+					.build();
+			breakdownDtoList.add(breakdownDto);
+		}
+		
+		return breakdownDtoList;
+	}
+	
 	// 내역 DTO id로 조회
 	public BreakdownDto callBreakdownById(int userId, int breakdownId) {
 		Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(breakdownId);
@@ -836,16 +899,56 @@ public class MoneyService {
 	}
 	
 	// 차트 데이터 받아오기
-	public Map<String, Integer> chartDataService(Integer categoryId){
-		Map<String, Integer> resultMap = new HashMap<>();
+	public List<Map<String, Object>> chartDataService(Integer categoryId, int userId){
+		
+		List<Map<String, Object>> resultList = new ArrayList<>();
+		
+		String yearMonth = null;
+		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth); // 월 구별
+		
 		if(categoryId == 0) {
-			categoryId = null;
-			
+			// 카테고리 아이디가 없으면 전체 카테고리 내역 받아가기
+			// [{"categoryName" : 카테고리명}, {"cost" : 지출액}, {"color" : 컬러} ]
+			// 카테고리
+			List<CategoryDto> categoryDtoList = callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			for(CategoryDto i : categoryDtoList) {
+				String name = i.getCategoryName(); // 카테고리명
+				int cost = i.getCategoryCost(); // 지출액
+				String color = i.getColor(); // 컬러
+				
+				Map<String, Object> map = new HashMap<>();
+				map.put("categoryName", name);
+				map.put("cost", cost);
+				map.put("color", color);
+				
+				resultList.add(map);
+			}
 			
 		}else {
+			// 카테고리 아이디가 있으면 해당 카테고리 내역만 받아가기
+			// [{"categoryName" : 카테고리명}, {"cost" : 지출액}, {"color" : 컬러} ]
+			Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+			Category category = optionalCategory.orElse(null);
+			String name = category.getCategoryName(); // 카테고리명
+			String color = category.getColor(); // 컬러
 			
+			// 카테고리 사용 내역 합계
+			int categoryCost = 0;
+			 	// 카테고리 Id에 해당하는 지출 내역 불러오기(현재 달만)
+			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(categoryId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			for(Breakdown j : breakdownList) {
+				categoryCost += j.getCost();
+			}
+			
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("categoryName", name);
+			map.put("cost", categoryCost);
+			map.put("color", color);
+			
+			resultList.add(map);
 		}
-		return resultMap;
+		return resultList;
 		
 	}
 	
