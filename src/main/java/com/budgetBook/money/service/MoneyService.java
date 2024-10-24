@@ -835,6 +835,19 @@ public class MoneyService {
 		}
 	}
 	
+	// 차트 데이터 받아오기
+	public Map<String, Integer> chartDataService(Integer categoryId){
+		Map<String, Integer> resultMap = new HashMap<>();
+		if(categoryId == 0) {
+			categoryId = null;
+			
+			
+		}else {
+			
+		}
+		return resultMap;
+		
+	}
 	
 	//// 총 수입 지출 이체 계산
 	// 수입
@@ -882,6 +895,7 @@ public class MoneyService {
 		}
 		return transferSum;
 	}
+
 	
 	
 }

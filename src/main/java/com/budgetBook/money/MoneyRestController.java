@@ -400,5 +400,15 @@ public class MoneyRestController {
 		
 		return resultMap;
 	}
+	
+	// 차트 데이터 보내기
+	@PostMapping("/chart/data")
+	public Map<String, Integer> chartData(HttpSession session
+			, @RequestParam("categoryId")Integer categoryId){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		Map<String, Integer> resultMap = moneyService.chartDataService(categoryId);
+		
+	}
 }
 
