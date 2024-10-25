@@ -441,22 +441,42 @@ public class MoneyService {
 		return categoryDtoList;
 	}
 	
-	// 카테고리 DTO userId로 불러오기 - proportion(사용한 내역 / 카테고리 예산 비율)
-	public List<CategoryDto> callCategoryDtoByUserIdAndRealTimePredictionAndDate(int userId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth){
-		List<CategoryDto> categoryDtoList = callCategoryDtoByUserId(userId);
+	// 카테고리 DTO userId 및 classification로 불러오기 - proportion(사용한 내역 / 카테고리 예산 비율)
+	public List<CategoryDto> callCategoryDtoByUserIdAndRealTimePredictionAndDate(int userId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth, String classification){
 		
-		for(CategoryDto i : categoryDtoList) {
-			// 카테고리 내역 사용 비율
-			double proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth);
-			i.setProportion(proportion);
-			
-			// 카테고리 내역 지출 합계
-			int categoryCost = 0;
-			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(i.getId(), realTimePrediction, selectMonth, nextMonth);
-			for(Breakdown j : breakdownList) {
-				categoryCost += j.getCost();
+		List<Category> categoryList = categoryRepository.findAllByUserIdAndClassification(userId, classification);
+		List<CategoryDto> categoryDtoList = new ArrayList<>();
+		
+		if(categoryList != null) {
+			for(Category i : categoryList) {
+				
+				// 카테고리 내역 사용 비율
+				double proportion = categoryProportion(i.getId(), realTimePrediction, selectMonth, nextMonth, classification);
+				
+				// 카테고리 내역 수입 합계
+				int categoryCost = 0;
+				List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndClassificationAndDateBetween(i.getId(), realTimePrediction, classification, selectMonth, nextMonth);
+				for(Breakdown j : breakdownList) {
+					categoryCost += j.getCost();
+				}
+				
+				// DTO에 저장
+				CategoryDto categoryDto = CategoryDto.builder()
+						.id(i.getId())
+						.userId(userId)
+						.classification(i.getClassification())
+						.categoryName(i.getCategoryName())
+						.amount(i.getAmount())
+						.color(i.getColor())
+						.memo(i.getMemo())
+						.proportion(proportion)
+						.categoryCost(categoryCost)
+						.build();
+				categoryDtoList.add(categoryDto);
 			}
-			i.setCategoryCost(categoryCost);
+			
+		}else {
+			categoryDtoList = null;
 		}
 		
 		return categoryDtoList;
@@ -862,9 +882,9 @@ public class MoneyService {
 	}
 	
 	// 카테고리 별 전체 사용내역 금액 계산
-	public double categoryProportion(int categoryId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth) {
-		// 내역 리스트 불러오기(조건 : 카테고리 아이디, 실제 사용내역인지 예측인지, 정해진 달만)
-		List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(categoryId, realTimePrediction, selectMonth, nextMonth);
+	public double categoryProportion(int categoryId, int realTimePrediction, LocalDateTime selectMonth, LocalDateTime nextMonth, String classification) {
+		// 내역 리스트 불러오기(조건 : 카테고리 아이디, 실제 사용내역인지 예측인지, 지출/수출, 정해진 달만)
+		List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndClassificationAndDateBetween(categoryId, realTimePrediction, classification, selectMonth, nextMonth);
 		
 		// 카테고리 예산 불러오기
 		Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
@@ -909,7 +929,7 @@ public class MoneyService {
 	}
 	
 	// 차트 데이터 받아오기
-	public List<Map<String, Object>> chartDataService(Integer categoryId, int userId){
+	public List<Map<String, Object>> chartDataService(Integer categoryId, int userId, String classification){
 		
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		
@@ -920,7 +940,7 @@ public class MoneyService {
 			// 카테고리 아이디가 없으면 전체 카테고리 내역 받아가기
 			// [{"categoryName" : 카테고리명}, {"cost" : 지출액}, {"color" : 컬러} ]
 			// 카테고리
-			List<CategoryDto> categoryDtoList = callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			List<CategoryDto> categoryDtoList = callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), classification);
 			for(CategoryDto i : categoryDtoList) {
 				String name = i.getCategoryName(); // 카테고리명
 				int cost = i.getCategoryCost(); // 지출액
@@ -944,8 +964,8 @@ public class MoneyService {
 			
 			// 카테고리 사용 내역 합계
 			int categoryCost = 0;
-			 	// 카테고리 Id에 해당하는 지출 내역 불러오기(현재 달만)
-			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndDateBetween(categoryId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			 	// 카테고리 Id에 해당하는 수입/지출 내역 불러오기(현재 달만)
+			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndClassificationAndDateBetween(categoryId, 1, classification, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 			for(Breakdown j : breakdownList) {
 				categoryCost += j.getCost();
 			}

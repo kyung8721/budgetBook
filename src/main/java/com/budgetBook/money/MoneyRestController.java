@@ -405,10 +405,11 @@ public class MoneyRestController {
 	// 차트 데이터 보내기
 	@PostMapping("/chart/data")
 	public Map<String, List<Map<String, Object>>> chartData(HttpSession session
-			, @RequestParam("categoryId")Integer categoryId){
+			, @RequestParam("categoryId")Integer categoryId
+			, @RequestParam("classification")String classification){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		List<Map<String, Object>> resultList = moneyService.chartDataService(categoryId, userId);
+		List<Map<String, Object>> resultList = moneyService.chartDataService(categoryId, userId, classification);
 		
 		Map<String, List<Map<String, Object>>> resultMap = new HashMap<>();
 		if(resultList != null) {

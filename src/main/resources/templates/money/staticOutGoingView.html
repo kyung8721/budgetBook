@@ -126,7 +126,7 @@
     		$.ajax({
     			type : "post"	
     			, url : "/budgetBook/money/chart/data"
-    			, data : {"categoryId" : categoryId}
+    			, data : {"categoryId" : categoryId, "classification" : "지출"}
     			, async : false // 이걸 추가함으로서 변수에 값을 저장해서 전달할 수 있게 됨
     			, success: function(data){
     				if(data.result != null){
