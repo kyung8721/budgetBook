@@ -688,11 +688,21 @@ public class MoneyService {
 	}
 	
 	// // 내역 조회(해당 달 정보만, 해당 카테고리 id만)
-	public List<BreakdownDto> callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(int userId, String classification, int realTimePrediction, LocalDateTime yearMonth, LocalDateTime nextMonth, int categoryId){
+	public List<BreakdownDto> callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(int userId, String classification, int realTimePrediction, LocalDateTime yearMonth, LocalDateTime nextMonth, Integer categoryId){
+		
+		// 저장 리스트 초기화
+		List<Breakdown> breakdownList = new ArrayList<>();
+		
+		// 카테고리 아이디 유무에 따라 내역 받아오기
 		if(categoryId == 0) {
-			
+			// 카테고리 아이디가 0이면 전체 지출이나 수입 내역 받아오기
+			breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetweenOrderByDate(userId, realTimePrediction, classification, yearMonth, nextMonth);
+		}else {
+			// 카테고리 아이디가 있으면 해당 지출이나 수입 내역 받아오기
+			breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndCategoryIdAndDateBetweenOrderByDate(userId, realTimePrediction, classification, categoryId, yearMonth, nextMonth);
 		}
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndCategoryIdAndDateBetweenOrderByDate(userId, realTimePrediction, classification, categoryId, yearMonth, nextMonth);
+		
+		// 받아온 내역을 categoryDto로 저장
 		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
 		BreakdownDto breakdownDto;
 		for(Breakdown i : breakdownList) {

@@ -42,14 +42,20 @@
     			<h3 class="mt-2" id="categorySectionDiv" th:data-category-null-or-id = "${categoryId}">카테고리 별 지출 비교</h3>
 				<canvas id="barChart" style = "width : 100%; height : 400px;"></canvas>
 				
-				
-				<div class="dropstart">
-					<div data-toggle="dropdown" style = "font-size : 20px;" id="categoryName">주거/통신비</div>
+				<!-- 카테고리 메뉴 드롭다운 -->
+				<div class="dropstart d-flex align-items-center" style = "font-size : 20px;" >
+					<div class="d-flex" data-toggle="dropdown">
+						<div id="categoryName">주거/통신비</div>
+						<i class="bi bi-chevron-down"></i>
+					</div>
 					<ul class="dropdown-menu">
-						<li th:id = "categoryId0" class="dropdown-item d-flex justify-content-center align-items-center" th:text="전체" th:data-category-id = 0>프로필 수정</li>
+						<li><a  class="dropdown-item d-flex justify-content-center align-items-center" href="/budgetBook/money/statics/outgoing-view">전체</a></li>
 					    <li th:id = "|categoryId${category.id}|" th:each = "category : ${categoryList}" class="dropdown-item d-flex justify-content-center align-items-center" th:text="${category.categoryName}" th:data-category-id = ${category.id}>프로필 수정</li>
 					</ul>
+					
 				</div>
+					
+				
 				<div>
 					<table class="table detailTable text-center table-hover">
 		    			<thead class="table-secondary">

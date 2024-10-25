@@ -296,7 +296,6 @@ public class MoneyController {
 		if(categoryId == null) {
 			categoryId = 0;
 		}
-
 		// 지출 내역 가져오기
 		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "지출", 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), categoryId);
 		
