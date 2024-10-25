@@ -124,6 +124,10 @@ div::-webkit-scrollbar-track {
 	background: #c3c3c3;
 }
 
+.dotClick :active{
+	background: #c3c3c3;
+}
+
 .detailSection{
 	width : 100%;
 	

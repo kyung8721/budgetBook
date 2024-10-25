@@ -52,7 +52,10 @@ public class MoneyController {
 		List<FixedCostDto> fixedCostDtoList = moneyService.callFixedCost(userId);
 		
 		// 예측 내역
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<BreakdownDto> breakdownDtoPreList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		// 내역
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		
 		model.addAttribute("user", userDto);
@@ -60,6 +63,7 @@ public class MoneyController {
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("allProportion", allProportionCategory);
 		model.addAttribute("fixedCostList", fixedCostDtoList);
+		model.addAttribute("breakdownPreList", breakdownDtoPreList);
 		model.addAttribute("breakdownList", breakdownDtoList);
 		
 		return "money/main";
