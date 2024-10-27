@@ -56,7 +56,45 @@ public class MoneyService {
 	
 	
 	// 고정비 저장 및 수정
-	public FixedCost saveFixedCost(FixedCost fixedCostObject) {
+	public FixedCost saveFixedCost(int userId, String classification, String period, int assetsId, Integer categoryId, Integer detailCategoryId, String fixedCostName, int fixedCost, String memo, Integer fixedCostId) {
+		FixedCost fixedCostObject;
+		
+		// period에 들어온 문자가 M05가 아닌 M3이런 식일 때
+		if(period.startsWith("M") && period.substring(1).length() < 2) {
+			String periodNum = period.substring(1);
+			
+			period = "M0" + periodNum;
+		}
+		
+		if(fixedCostId == null) {
+			// 고정비 작성
+			fixedCostObject = FixedCost.builder()
+					.userId(userId)
+					.classification(classification)
+					.period(period)
+					.assetsId(assetsId)
+					.categoryId(categoryId)
+					.detailCategoryId(detailCategoryId)
+					.fixedCostName(fixedCostName)
+					.fixedCost(fixedCost)
+					.memo(memo)
+					.build();
+		}else {
+			// 고정비 수정
+			fixedCostObject = FixedCost.builder()
+					.id(fixedCostId)
+					.userId(userId)
+					.classification(classification)
+					.period(period)
+					.assetsId(assetsId)
+					.categoryId(categoryId)
+					.detailCategoryId(detailCategoryId)
+					.fixedCostName(fixedCostName)
+					.fixedCost(fixedCost)
+					.memo(memo)
+					.build();
+		}
+		
 		return fixedCostRepository.save(fixedCostObject);
 	}
 	

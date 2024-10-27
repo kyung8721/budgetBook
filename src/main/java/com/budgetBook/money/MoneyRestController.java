@@ -55,38 +55,8 @@ public class MoneyRestController {
 		if(detailCategoryId == 0) {
 			detailCategoryId = null;
 		}
-		FixedCost result;
+		FixedCost result = moneyService.saveFixedCost(userId, classification, period, assetsId, categoryId, detailCategoryId, fixedCostName, fixedCost, memo, fixedCostId);
 		
-		if(fixedCostId == null) {
-			// 고정비 작성
-			FixedCost fixedCostObject = FixedCost.builder()
-					.userId(userId)
-					.classification(classification)
-					.period(period)
-					.assetsId(assetsId)
-					.categoryId(categoryId)
-					.detailCategoryId(detailCategoryId)
-					.fixedCostName(fixedCostName)
-					.fixedCost(fixedCost)
-					.memo(memo)
-					.build();
-			result = moneyService.saveFixedCost(fixedCostObject);
-		}else {
-			// 고정비 수정
-			FixedCost fixedCostObject = FixedCost.builder()
-					.id(fixedCostId)
-					.userId(userId)
-					.classification(classification)
-					.period(period)
-					.assetsId(assetsId)
-					.categoryId(categoryId)
-					.detailCategoryId(detailCategoryId)
-					.fixedCostName(fixedCostName)
-					.fixedCost(fixedCost)
-					.memo(memo)
-					.build();
-			result = moneyService.saveFixedCost(fixedCostObject);
-		}
 		
 		
 		Map<String, String> resultMap = new HashMap<>();
