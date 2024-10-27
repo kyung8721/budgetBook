@@ -720,6 +720,21 @@ public class MoneyService {
 				detailCategoryName = null;
 			}
 			
+			// 남은 금액 저장
+			int selectCostSum = 0;
+			List<Breakdown> selectBreakdownList = breakdownRepository.findAllBySelectBreakdown(i.getId());
+			for(Breakdown BD : selectBreakdownList) {
+				if(BD.getClassification().equals("수입")) {
+					// 수입 시 예산이 늘어나게
+					selectCostSum -= BD.getCost();
+				}else if(BD.getClassification().equals("지출")) {
+					// 지출 시 예산이 줄어들게
+					selectCostSum += BD.getCost();
+				}
+				
+			}
+			int remainCost = i.getCost() - selectCostSum;
+			
 			
 			// DTO에 저장
 			breakdownDto = BreakdownDto.builder()
@@ -738,6 +753,8 @@ public class MoneyService {
 					.cost(i.getCost())
 					.memoImagePath(i.getMemoImagePath())
 					.memo(i.getMemo())
+					.remainCost(remainCost)
+					.selectBreakdown(i.getSelectBreakdown())
 					.build();
 			breakdownDtoList.add(breakdownDto);
 		}
@@ -1065,6 +1082,27 @@ public class MoneyService {
 			transferSum += i.getCost();
 		}
 		return transferSum;
+	}
+	
+	//DB에 내역 예측에서 선택된 사용 완료한 내역 저장 
+	public boolean partUseSave(int[] selectBreakdowns, int breakdownId){
+		
+		for(int i : selectBreakdowns) {
+			Optional<Breakdown> optionalBreakdown = breakdownRepository.findById(i);
+			Breakdown breakdown = optionalBreakdown.orElse(null);
+			
+			if(breakdown != null) {
+				breakdown.setSelectBreakdown(breakdownId);
+				
+				// 다시 저장
+				breakdownRepository.save(breakdown);
+			}else {
+				return false;
+			}
+		}
+		
+		return true;
+		
 	}
 
 	

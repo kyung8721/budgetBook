@@ -69,6 +69,24 @@ public class MoneyController {
 		return "money/main";
 	}
 	
+	// 메인 - 일부사용 모달
+	@GetMapping("/main/detailModal-view")
+	public String mainDetailModalView(HttpSession session, Model model
+			, @RequestParam("breakdownId")int breakdownId) {
+		int userId = (Integer)session.getAttribute("userId");
+		String yearMonth = null; // null을 넣으면 현재 달 선택
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
+		
+		// 내역
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		
+		
+		model.addAttribute("breakdownList", breakdownDtoList);
+		model.addAttribute("selectBreakdownId", breakdownId);
+		
+		return "money/maindetailModal";
+	}
+	
 	// 고정비 작성 페이지
 	@GetMapping("/fixedCost-view")
 	public String fixedCostView(HttpSession session, Model model) {

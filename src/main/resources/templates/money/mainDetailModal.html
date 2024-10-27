@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+				
+				<table class="table detailTable text-center table-hover" th:id="selectBreakdownDiv" th:data-select-id = "${selectBreakdownId}">
+	    			<thead class="table-secondary">
+	    				<tr>
+	    					<th>분류</th>
+	    					<th>날짜</th>
+	    					<th>자산</th>
+	    					<th>카테고리</th>
+	    					<th>세부 카테고리</th>
+	    					<th>내역</th>
+	    					<th>금액</th>
+	   					</tr>
+	    			</thead>
+	    			<tbody>
+	    				<tr th:id="|breakdownTrId${breakdown.id}|" th:each = "breakdown : ${breakdownList}" th:data-breakdown-modal-id = "${breakdown.id}">
+	    					<td>
+	    						<th:block th:switch="${breakdown.classification}">
+	    							<span th:case = "지출" class="text-danger" th:text = "${breakdown.classification}"></span>
+	    							<span th:case = "수입" class="text-success" th:text = "${breakdown.classification}">지출</span>
+	    							<span th:case = "이체" th:text = "${breakdown.classification}">지출</span>
+	   							</th:block>
+	   						</td>
+	    					<td th:text="${breakdown.listDate}">10월 1일</td>
+	    					<td th:text=${breakdown.assetsName}>카카오뱅크 생활비 통장</td>
+	    					<td th:text="${breakdown.categoryName}">주거/통신비</td>
+	    					<td th:text="${breakdown.detailCategoryName}">월세</td>
+	    					<td th:text="${breakdown.breakdownName}"></td>
+	    					<td>
+	    						<span th:if = "${breakdown.classification} == '지출'" class="text-danger">-</span>
+	    						<th:block th:switch="${breakdown.classification}">
+	    							<span th:case = "지출" class="text-danger" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+	    							<span th:case = "수입" class="text-success" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+	    							<span th:case = "이체" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+	    						</th:block>
+	   						</td>
+	    				</tr>
+	    			</tbody>
+	    		</table>
+	    		
+	    		<div class="d-flex justify-content-between">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+			        <button type="button" class="btn btn-primary" th:id="|selectBtn${selectBreakdownId}|">확인</button>
+			    </div>
+			    
+			    <script>
+		      		$(document).ready(function(){
+		      			var selects = []; // 선택된 tr의 breakdown id
+		      			
+		      			$("[id^='breakdownTrId']").on("click", function(){
+		      				let breakdownId = $(this).data("breakdown-modal-id");
+		      				if($(this).hasClass("selectTr")){
+		      					$(this).removeClass("selectTr");
+		      					// 해당 breakdownId 삭제
+		      					selects = selects.filter(e => e != breakdownId);
+		      				}else{
+		      					$(this).addClass("selectTr");
+		      					selects.push($(this).data("breakdown-modal-id"));
+		      				}
+		      				
+		      			});
+		      			
+		      			
+		      			$("[id^='selectBtn']").on("click", function(){
+		      				let selectId = $("#selectBreakdownDiv").data("select-id");
+		      				// FormData
+		      				let formData = new FormData();
+		        			formData.append("selectBreakdowns", selects);
+		        			formData.append("breakdownId", selectId);
+		        			
+		        			$.ajax({
+		        				type : "post"
+		        				, url : "/budgetBook/money/breakdown/select"
+	        					, data : formData
+		        				, processData : false
+		                        , contentType : false
+		                        , traditional : true
+		                        , success : function(data){
+		                        	if(data.result == "success"){
+		                        		location.reload();
+		                        	}else{
+		                        		alert("일부 사용 선택 실패!");
+		                        	}
+		                        }
+		        				, error : function(){
+		        					alert("일부 사용 선택 에러!");
+		        				}
+		        			});
+		        			
+		      			});
+		      			
+		      			
+		      		});
+	      		</script>

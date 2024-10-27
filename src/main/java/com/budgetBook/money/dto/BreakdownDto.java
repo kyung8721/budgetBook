@@ -21,6 +21,8 @@ public class BreakdownDto {
 	private String detailCategoryName;
 	private String breakdownName;
 	private int cost;
+	private int remainCost;
+	private Integer selectBreakdown;
 	private String memoImagePath;
 	private String memo;
 }

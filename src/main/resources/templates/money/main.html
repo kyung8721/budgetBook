@@ -76,6 +76,14 @@
 									    <li th:each="category : ${categoryList}"><a class="dropdown-item" href="#" th:data-fixed-cost-category-id = "${category.id}" th:data-category-fixed-cost-id = "${fixedCost.id}" th:text="${category.categoryName}" th:id="|fixedCostCategoryId${category.id}|">하나은행</a></li>
 									 </ul>
     							</td>
+    							<td class=" dotClick">
+    								<i class="bi bi-three-dots-vertical" data-toggle="dropdown"></i>
+    								<ul class="dropdown-menu">
+									    <li><a class="dropdown-item" th:id = "|fixedCostDetail${fixedCost.id}|" th:data-fixed-cost-id = "${fixedCost.id}">수정</a></li>
+									    <li><hr class="dropdown-divider"></li>
+									    <li><a class="dropdown-item text-danger" th:id = "|fixedCostDelete${fixedCost.id}|" th:data-fixed-cost-delete-id = "${fixedCost.id}" href="#">삭제</a></li>
+									 </ul>
+    							</td>
     						</tr>
     						
     					</table>
@@ -94,7 +102,7 @@
     								
     							</td>
     							<td>
-    								<div th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}">500,000</div>
+    								<div th:text="${#numbers.formatInteger(breakdown.remainCost, 3, 'COMMA')}">500,000</div>
     							</td>
     							<td>
     								<button class="btn btn-sm dropdown-toggle" data-toggle="dropdown" value="bank" th:text="${breakdown.assetsName}" th:style = "|background-color : ${breakdown.assetsColor}|">카카오뱅크</button>
@@ -114,9 +122,9 @@
     								<ul class="dropdown-menu">
 									    <li><a class="dropdown-item" href="#">수정</a></li>
 									    <li><hr class="dropdown-divider"></li>
-									    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+									    <li><a class="dropdown-item text-danger" th:id = "|breakdownDelete${breakdown.id}|" th:data-breakdown-delete-id = "${breakdown.id}">삭제</a></li>
 									    <li><hr class="dropdown-divider"></li>
-									    <li id="partUse"><a class="dropdown-item" href="#">일부 사용</a></li>
+									    <li><a class="dropdown-item" th:id="|partUseId${breakdown.id}|" th:data-breakdown-piece-id = "${breakdown.id}">일부 사용</a></li>
 									 </ul>
     							</td>
     						</tr>
@@ -131,7 +139,7 @@
     				<div>
     					<!-- 실제 내역 리스트 -->
     					<table class="table table-sm text-center" id="budgetPredictionDetailList">
-    						<tr  class="dropdown" th:each="breakdown : ${breakdownList}">
+    						<tr class="dropdown" th:each="breakdown : ${breakdownList}" >
     							<td>
     								<span th:if="${breakdown.breakdownName.length > 3 }" th:text="|${#strings.substring(breakdown.breakdownName, 0, 3)}···|"></span>
     								<span th:unless="${breakdown.breakdownName.length > 3 }" th:text="${breakdown.breakdownName}"></span>
@@ -157,9 +165,9 @@
     							<td class=" dotClick">
     								<i class="bi bi-three-dots-vertical" data-toggle="dropdown"></i>
     								<ul class="dropdown-menu">
-									    <li><a class="dropdown-item" href="#">수정</a></li>
+									    <li><a class="dropdown-item" th:id = "|breakdownSelect${breakdown.id}|" th:data-breakdown-id = "${breakdown.id}">수정</a></li>
 									    <li><hr class="dropdown-divider"></li>
-									    <li><a class="dropdown-item text-danger" href="#">삭제</a></li>
+									    <li><a class="dropdown-item text-danger"  th:id = "|breakdownDelete${breakdown.id}|" th:data-breakdown-delete-id = "${breakdown.id}">삭제</a></li>
 									 </ul>
     							</td>
     						</tr>
@@ -175,35 +183,28 @@
     		</div>
     	</div>
     	
-    	<!-- Modal -->
-		<div class="modal fade" id="detailModal"  aria-hidden="true">
+    	<!-- 일부 사용 Modal -->
+		<div class="modal fade" id="partUseModal"  aria-hidden="true">
 		  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable ">
 		    <div class="modal-content p-3">
 		      <div class="modal-body">
-		      	<table class="table detailTable text-center table-hover">
-	    			<thead class="table-secondary">
-	    				<tr>
-	    					<th>분류</th>
-	    					<th>날짜</th>
-	    					<th>자산</th>
-	    					<th>카테고리</th>
-	    					<th>세부 카테고리</th>
-	    					<th>내역</th>
-	    					<th>금액</th>
-	   					</tr>
-	    			</thead>
-	    			<tbody>
-	    				<tr id="detailList">
-	    					<td><span class="text-danger">지출</span></td>
-	    					<td>매월 1일</td>
-	    					<td>카카오뱅크 생활비 통장</td>
-	    					<td>주거/통신비</td>
-	    					<td>월세</td>
-	    					<td></td>
-	    					<td><span class="text-danger">-500,000</span></td>
-	    				</tr>
-	    			</tbody>
-	    		</table>
+		      	
+    		  </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- 내역, 예측 내역 Modal -->
+		<div class="modal fade" id="detailModal"  aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content p-3">
+		    	<div class=" d-flex justify-content-end">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+		        </div>
+		        
+		      <div class="modal-body">
 		      </div>
 		    </div>
 		  </div>
@@ -218,10 +219,70 @@
     
     	$(document).ready(function(){
     		
+    		// 예측 내역 및 실제 사용 내역 삭제 버튼 클릭
+  			$("[id^='breakdownDelete']").on("click", function(){
+  				// breakdownId
+    			let breakdownId = $(this).data("breakdown-delete-id");
+  				
+  				$.ajax({
+  					type : "delete"
+  					, url : "/budgetBook/money/breakdown/delete"
+  					, data : {"breakdownId" : breakdownId}
+  					, success : function(data){
+  						if(data.result = "success"){
+  							location.reload();
+  						}else{
+  							alert("내역 삭제 실패!");
+  						}
+  					}
+  					, error : function(){
+  						alert("내역 삭제 에러!");
+  					}
+  				});
+  			});
     		
-    		$("#partUse").on("click", function(){
+    		// 고정비 삭제 버튼 클릭
+  			$("[id^='fixedCostDelete']").on("click", function(){
+  				// fixedCostId
+    			let fixedCostId = $(this).data("fixed-cost-delete-id");
+  				
+  				$.ajax({
+  					type : "delete"
+  					, url : "/budgetBook/money/fixedCost/delete"
+  					, data : {"fixedCostId" : fixedCostId}
+  					, success : function(data){
+  						if(data.result = "success"){
+  							location.reload();
+  						}else{
+  							alert("고정비 삭제 실패!");
+  						}
+  					}
+  					, error : function(){
+  						alert("고정비 삭제 에러!");
+  					}
+  				});
+  			});
+    		
+    		// 고정비 모달 불러오기
+    		$("[id^='fixedCostDetail']").on("click", function(){
+    			let fixedCostId = $(this).data("fixed-cost-id");
+    			$("#detailModal .modal-body").load("/budgetBook/money/fixedCostEditModal?fixedCostId=" + fixedCostId);
     			$("#detailModal").modal("show");
+    		}); // 고정비 모달 불러오기 이벤트 종료
+    		
+    		// 일부 사용 시 사용한 내역 선택할 수 있게 하는 모달 띄우기
+    		$("[id^='partUseId']").on("click", function(){
+    			let breakdownId = $(this).data("breakdown-piece-id");
+    			$("#partUseModal .modal-body").load("/budgetBook/money/main/detailModal-view?breakdownId=" + breakdownId);
+    			$("#partUseModal").modal("show");
     		});
+    		
+    		// 상세내역 모달 불러오기
+    		$("[id^='breakdownSelect']").on("click", function(){
+    			let breakdownId = $(this).data("breakdown-id");
+    			$("#detailModal .modal-body").load("/budgetBook/money/detailEditModal?breakdownId=" + breakdownId + "&realTimePrediction=1");
+    			$("#detailModal").modal("show");
+    		}); // 상세내역 모달 불러오기 이벤트 종료
     		
     		// 고정비 카테고리 수정
     		$("[id^='fixedCostCategoryId']").on("click", function(){

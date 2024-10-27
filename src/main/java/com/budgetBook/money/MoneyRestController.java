@@ -351,6 +351,26 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
+	// DB에 내역 예측에서 선택된 사용 완료한 내역 저장 
+	@PostMapping("/breakdown/select")
+	public Map<String, String> breakdownSelect(
+			@RequestParam("selectBreakdowns")int[] selectBreakdowns
+			, @RequestParam("breakdownId")int breakdownId){
+		
+		boolean result = moneyService.partUseSave(selectBreakdowns, breakdownId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		
+		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
 	// 고정비 예측 수정 - 카테고리
 	@PutMapping("/fixedCost/category/update")
 	public Map<String, String> fixedCostCategoryUpdate(

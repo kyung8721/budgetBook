@@ -70,7 +70,7 @@
 .fixedCostAndbudgetPrediction{
 	width : 33.333%;
 	height : 100%;
-	overflow : scroll;
+	overflow : auto;
 }
 
 .downSection{
@@ -121,6 +121,10 @@ div::-webkit-scrollbar-track {
 }
 
 .budgetPredictionDetailList tr:active{
+	background: #c3c3c3;
+}
+
+.selectTr{
 	background: #c3c3c3;
 }
 

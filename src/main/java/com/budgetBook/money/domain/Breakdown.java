@@ -57,6 +57,9 @@ public class Breakdown {
 	
 	private String memo;
 	
+	@Column(name="selectBreakdown")
+	private Integer selectBreakdown;
+	
 	@Column(name="createdAt")
 	@CreationTimestamp
 	private LocalDateTime createdAt;
