@@ -55,9 +55,9 @@
     					<td>
     						<span th:if = "${FC.classification} == '지출'" class="text-danger">-</span>
     						<th:block th:switch="${FC.classification}">
-    							<span th:case = "지출" class="text-danger" th:text="${FC.fixedCost}"></span>
-    							<span th:case = "수입" class="text-success" th:text="${FC.fixedCost}"></span>
-    							<span th:case = "이체" th:text="${FC.fixedCost}"></span>
+    							<span th:case = "지출" class="text-danger" th:text="${#numbers.formatInteger(FC.fixedCost, 3, 'COMMA')}" ></span>
+    							<span th:case = "수입" class="text-success" th:text="${#numbers.formatInteger(FC.fixedCost, 3, 'COMMA')}"></span>
+    							<span th:case = "이체" th:text="${#numbers.formatInteger(FC.fixedCost, 3, 'COMMA')}"></span>
     						</th:block>
    						</td>
     				</tr>

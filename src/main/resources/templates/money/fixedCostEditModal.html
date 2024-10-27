@@ -76,7 +76,7 @@
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:value = "${fixedCost.fixedCost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+	      			<input class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:data-cost-value = "${fixedCost.fixedCost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -99,6 +99,10 @@
 	      	<script th:inline="javascript">
 	      		$(document).ready(function(){
 	      			//// 선택된 고정비의 정보
+	      			
+	      			// 금액에 쉼표 붙이기
+	      			let costData = $("#fixedCostCost").data("cost-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+	      			$("#fixedCostCost").val(costData);
 	      			
 	      			// 세부 카테고리 선택
 	      			let fixedCostDetailCategoryName = $("#detailCategorySelected").data("detail-category");
@@ -249,7 +253,8 @@
 	      				}
 	      				
 	      				// 금액
-	      				let fixedCostCost = $("#fixedCostCost").val();
+	      				let fixedCostString = $("#fixedCostCost").val();
+	      				let fixedCostCost = fixedCostString.replace(/,/g, "");
 	      				if(fixedCostCost == null){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;

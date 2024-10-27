@@ -76,7 +76,7 @@
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input type="number" class="inputBottomBorder ml-1 col-7" id="fixedCostCost">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostCost"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -172,7 +172,8 @@
 	      				}
 	      				
 	      				// 금액
-	      				let fixedCostCost = $("#fixedCostCost").val();
+	      				let fixedCostString = $("#fixedCostCost").val();
+	      				let fixedCostCost = fixedCostString.replace(/,/g, "");
 	      				if(fixedCostCost == null){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;
