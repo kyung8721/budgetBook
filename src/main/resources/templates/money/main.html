@@ -120,7 +120,7 @@
     							<td class=" dotClick">
     								<i class="bi bi-three-dots-vertical" data-toggle="dropdown"></i>
     								<ul class="dropdown-menu">
-									    <li><a class="dropdown-item" href="#">수정</a></li>
+									    <li><a class="dropdown-item" th:id = "|breakdownSelect${breakdown.id}|" th:data-breakdown-id = "${breakdown.id}">수정</a></li>
 									    <li><hr class="dropdown-divider"></li>
 									    <li><a class="dropdown-item text-danger" th:id = "|breakdownDelete${breakdown.id}|" th:data-breakdown-delete-id = "${breakdown.id}">삭제</a></li>
 									    <li><hr class="dropdown-divider"></li>
