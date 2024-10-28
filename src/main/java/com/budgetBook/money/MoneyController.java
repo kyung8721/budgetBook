@@ -40,7 +40,7 @@ public class MoneyController {
 		
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		// 카테고리
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), "지출");
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		
 		// 자산
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
@@ -150,12 +150,20 @@ public class MoneyController {
 	// 내역 페이지
 	@GetMapping("/breakdown-view")
 	public String breakdownView(HttpSession session, Model model
-			, @RequestParam(value = "yearMonth", required = false)String yearMonth) { // yearMonth : 20241001
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth  // yearMonth : 20241001
+			, @RequestParam(value = "inputKeyword", required = false)String inputKeyword) {
 		int userId = (Integer)session.getAttribute("userId");
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		
-		// 내역
-		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth);
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		// BreakdownDto List 초기화
+		List<BreakdownDto> breakdownDtoList;
+		if(inputKeyword != null) {
+			// 검색 키워드가 있으면 검색 결과 출력
+			breakdownDtoList = moneyService.searchBreakdown(userId, 1, inputKeyword , distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		}else{
+			// 검색 키워드가 없으면 전체 내역 출력
+			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		}
 		
 		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);

@@ -1107,6 +1107,22 @@ public class MoneyService {
 		
 	}
 
+	// 검색 기능 구현 - breakdown
+	public List<BreakdownDto> searchBreakdown(int userId, int RTP, String inputKeyword , LocalDateTime selectMonth, LocalDateTime nextMonth){
+		List<Breakdown> breakdownList = breakdownRepository.findByUserIdAndRealTimePredictionAndBreakdownNameContainingAndDateBetween(userId, RTP, inputKeyword, selectMonth, nextMonth);
+		List<BreakdownDto> breakdownDtoList = new ArrayList<>();
+		if(breakdownList != null) {
+			BreakdownDto breakdownDto;
+			for(Breakdown i : breakdownList) {
+				breakdownDto = callBreakdownById(userId, i.getId());
+				breakdownDtoList.add(breakdownDto);
+			}
+		}else {
+			breakdownDtoList = null;
+		}
+		
+		return breakdownDtoList;
+	}
 	
 	
 }

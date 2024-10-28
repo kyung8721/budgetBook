@@ -16,4 +16,5 @@ public interface BreakdownRepository extends JpaRepository<Breakdown, Integer>{
 	List<Breakdown> findAllByUserIdAndRealTimePredictionAndClassificationAndCategoryIdAndDateBetweenOrderByDate(int userId, int realTimePrediction, String classification, int categoryId, LocalDateTime startDate, LocalDateTime endDate);
 	List<Breakdown> findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetweenOrderByDate(int userId, int realTimePrediction, String classification, LocalDateTime startDate, LocalDateTime endDate);
 	List<Breakdown> findAllBySelectBreakdown(int id);
+	List<Breakdown> findByUserIdAndRealTimePredictionAndBreakdownNameContainingAndDateBetween(int userId, int realTimePrediction, String inputKeyword, LocalDateTime startDate, LocalDateTime endDate);
 }
