@@ -51,8 +51,8 @@
     				<div>예산 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
-	    			<input type="search" class="form-control ">
-	    			<div class="input-group-append">
+	    			<input type="search" class="form-control" id="searchCategoryInput">
+	    			<div class="input-group-append" id="searchCategoryBtn">
 		    			<div class="input-group-append">
 							<span class=" input-group-text"><i class="bi bi-search"></i></span>
 						</div>
@@ -107,8 +107,8 @@
     				<div>내역 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
-	    			<input type="search" class="form-control ">
-	    			<div class="input-group-append">
+	    			<input type="search" class="form-control" id="searchBreakdowntInput">
+	    			<div class="input-group-append" id="searchBreakdownBtn">
 		    			<div class="input-group-append">
 							<span class=" input-group-text"><i class="bi bi-search"></i></span>
 						</div>
@@ -194,6 +194,33 @@
     <script layout:fragment="script">
     
     	$(document).ready(function(){
+    		
+    		// 예측 사용 내역 검색 기능
+  			$("#searchBreakdownBtn").on("click", function(){
+  				let searchInput = $("#searchBreakdowntInput").val();
+  				
+  				// 유효성 검사
+  				if(searchInput == ""){
+  					alert("검색어를 입력하세요!");
+  					return ;
+  				}
+  				
+  				location.href = "/budgetBook/money/budgetPrediction-view?breakdownInputKeyword=" + searchInput;
+  			});
+    		
+    		
+    		// 카테고리 검색 기능
+  			$("#searchCategoryBtn").on("click", function(){
+  				let searchInput = $("#searchCategoryInput").val();
+  				
+  				// 유효성 검사
+  				if(searchInput == ""){
+  					alert("검색어를 입력하세요!");
+  					return ;
+  				}
+  				
+  				location.href = "/budgetBook/money/budgetPrediction-view?categoryInputKeyword=" + searchInput;
+  			});
     		
     		
     		

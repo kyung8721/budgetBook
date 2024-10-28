@@ -1,6 +1,7 @@
 package com.budgetBook.money;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -235,20 +236,37 @@ public class MoneyController {
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
 	public String budgetPredictionView(HttpSession session, Model model
-			, @RequestParam(value = "yearMonth", required = false)String yearMonth) {
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth
+			, @RequestParam(value="categoryInputKeyword", required=false)String categoryInputKeyword
+			, @RequestParam(value="breakdownInputKeyword", required=false)String breakdownInputKeyword) {
 		int userId = (Integer)session.getAttribute("userId");
-		
 		UserDto userDto = moneyService.callUserData(userId);
-		
 		model.addAttribute("user", userDto);
 		
-		
-		// 예측 내역
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
-		// 카테고리
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		// 리스트 초기화
+		List<CategoryDto> categoryDtoList;
+		List<BreakdownDto> breakdownDtoList;
+		
+		// 검색 - 카테고리
+		if(categoryInputKeyword != null) {
+			// 카테고리 검색 키워드가 있으면 해당 리스트 출력
+			categoryDtoList = moneyService.searchCategory(userId, categoryInputKeyword);
+		}else{
+			// 카테고리 검색 키워드가 없으면 전체 카테고리 리스트 출력
+			categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		}
+		
+		// 검색 - 예측 사용 내역
+		if(breakdownInputKeyword != null) {
+			// 검색 키워드가 있으면 검색 결과 출력
+			breakdownDtoList = moneyService.searchBreakdown(userId, 2, breakdownInputKeyword , distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		}else{
+			// 검색 키워드가 없으면 전체 내역 출력
+			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		}
+		
 		
 		// 전체 예산 대비 내역 비율
 		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));

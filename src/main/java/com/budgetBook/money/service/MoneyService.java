@@ -435,19 +435,25 @@ public class MoneyService {
 		}
 	}
 	
+	// Category -> CategoryDto
+	public CategoryDto CategoryToDto(Category i) {
+		CategoryDto categoryDto = CategoryDto.builder()
+				.id(i.getId())
+				.userId(i.getUserId())
+				.classification(i.getClassification())
+				.categoryName(i.getCategoryName())
+				.amount(i.getAmount())
+				.color(i.getColor())
+				.memo(i.getMemo())
+				.build();
+		return categoryDto;
+	}
+	
 	// 예산 카테고리 Dto 불러오기
 	public CategoryDto callCategoryDto(int id) {
 		Optional<Category> optionalCategory = categoryRepository.findById(id);
 		Category category = optionalCategory.orElse(null);
-		CategoryDto categoryDto = CategoryDto.builder()
-				.id(id)
-				.userId(category.getUserId())
-				.classification(category.getClassification())
-				.categoryName(category.getCategoryName())
-				.amount(category.getAmount())
-				.color(category.getColor())
-				.memo(category.getMemo())
-				.build();
+		CategoryDto categoryDto = CategoryToDto(category);
 		return categoryDto;
 	}
 	
@@ -460,15 +466,7 @@ public class MoneyService {
 			for(Category i : categoryList) {
 				
 				// DTO에 저장
-				CategoryDto categoryDto = CategoryDto.builder()
-						.id(i.getId())
-						.userId(userId)
-						.classification(i.getClassification())
-						.categoryName(i.getCategoryName())
-						.amount(i.getAmount())
-						.color(i.getColor())
-						.memo(i.getMemo())
-						.build();
+				CategoryDto categoryDto = CategoryToDto(i);
 				categoryDtoList.add(categoryDto);
 			}
 			
@@ -1139,8 +1137,23 @@ public class MoneyService {
 		}
 		
 		return fixedCostDtoList;
+	}
+	
+	//
+	public List<CategoryDto> searchCategory(int userId, String categoryInputKeyword){
+		List<Category> categoryList = categoryRepository.findAllByUserIdAndCategoryNameContaining(userId, categoryInputKeyword);
 		
+		// 초기화
+		List<CategoryDto> categoryDtoList = new ArrayList<>();
+		CategoryDto categoryDto;
 		
+		// Category -> CategoryDto
+		for(Category i : categoryList) {
+			categoryDto = CategoryToDto(i); 
+			categoryDtoList.add(categoryDto);
+		}
+		
+		return categoryDtoList;
 	}
 	
 	
