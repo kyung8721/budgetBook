@@ -1124,5 +1124,24 @@ public class MoneyService {
 		return breakdownDtoList;
 	}
 	
+	// 검색 기능 구현 - fixedCost
+	public List<FixedCostDto> searchFixedCost(int userId, String inputKeyword){
+		List<FixedCost> fixedCostList = fixedCostRepository.findAllByUserIdAndFixedCostNameContaining(userId, inputKeyword);
+		
+		// 초기화
+		List<FixedCostDto> fixedCostDtoList = new ArrayList<>();
+		FixedCostDto fixedCostDto;
+		
+		// FixedCost -> FixedCostDto
+		for(FixedCost i : fixedCostList) {
+			fixedCostDto = fixedCostToDto(i);
+			fixedCostDtoList.add(fixedCostDto);
+		}
+		
+		return fixedCostDtoList;
+		
+		
+	}
+	
 	
 }

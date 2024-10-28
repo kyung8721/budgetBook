@@ -14,8 +14,8 @@
     				<div>내역 추가</div>
     			</button>
     			<div class="d-flex align-items-center input-group">
-	    			<input type="search" class="form-control ">
-	    			<div class="input-group-append">
+	    			<input type="search" class="form-control" id="searchFixedCostInput">
+	    			<div class="input-group-append" id="searchFixedCostBtn">
 						<span class=" input-group-text"><i class="bi bi-search"></i></span>
 					</div>
     			</div>
@@ -86,6 +86,20 @@
     <script layout:fragment="script">
     
     	$(document).ready(function(){
+    		
+    		// 검색 기능
+  			$("#searchFixedCostBtn").on("click", function(){
+  				let searchInput = $("#searchFixedCostInput").val();
+  				
+  				// 유효성 검사
+  				if(searchInput == ""){
+  					alert("검색어를 입력하세요!");
+  					return ;
+  				}
+  				
+  				location.href = "/budgetBook/money/fixedCost-view?inputKeyword=" + searchInput;
+  			});
+    		
      		// 내역추가 버튼 클릭
     		$("#fixedCostModalAdd").on("click", function(){
     			$("#fixedCostModal .modal-body").load("/budgetBook/money/fixedCostModal");

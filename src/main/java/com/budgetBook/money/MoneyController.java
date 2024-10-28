@@ -89,14 +89,20 @@ public class MoneyController {
 	
 	// 고정비 작성 페이지
 	@GetMapping("/fixedCost-view")
-	public String fixedCostView(HttpSession session, Model model) {
+	public String fixedCostView(HttpSession session, Model model, @RequestParam(value="inputKeyword", required=false)String inputKeyword) {
 		int userId = (Integer)session.getAttribute("userId");
 		
+		// 고정비 DTO 리스트 초기화
+		List<FixedCostDto> fixedCostDtoList;
+		if(inputKeyword != null) {
+			// 검색어가 있으면 해당하는 리스트만 출력
+			fixedCostDtoList = moneyService.searchFixedCost(userId, inputKeyword);
+		}else {
+			// 검색어가 없으면 전체 고정비 리스트 출력
+			fixedCostDtoList = moneyService.callFixedCost(userId);
+		}
 		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);
-		
-		// 고정비 내역 불러오기
-		List<FixedCostDto> fixedCostDtoList = moneyService.callFixedCost(userId);
 		
 		
 		model.addAttribute("user", userDto);
