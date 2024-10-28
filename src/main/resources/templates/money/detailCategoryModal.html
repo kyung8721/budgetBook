@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+	      	<div>
+	      		
+	      		
+	      		<!-- 카테고리 -->
+	      		<div class="d-flex align-items-center mt-3 modalText">
+	      			<div class="col-4">카테고리</div>
+	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="detailCategoryCategorySelected">
+      					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      				</select>
+      				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="categoryAdd btn btn-outline-secondary btn-sm d-flex align-items-center">
+     					<i class="bi bi-plus-circle mr-2"></i>
+     					카테고리 추가하기
+     				</button>
+	      		</div>
+	      		
+	      		<!-- 세부 카테고리 -->
+	      		<div class="d-flex align-items-center mt-3 modalText">
+	      			<div class="col-4">세부 카테고리</div>
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="detailCategoryName">
+	      		</div>
+	      		
+	      		
+	      		<!-- 메모 -->
+	      		<div class="d-flex align-items-center mt-3 modalText">
+	      			<div class="col-4">메모</div>
+	      		</div>
+	      		<div class="d-flex justify-content-center">
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="detailCategorymemo"></textarea>
+	      		</div>
+	      		
+	      		
+	      	</div>
+	      	
+	      	<div class="d-flex justify-content-end mt-2">
+	        	<button type="button" class="btn btn-outline-dark" id="detailCategorySubmitBtn">완료</button>
+	      	</div>
+	      	
+	      	
+	      	<script th:inline="javascript">
+	      		$(document).ready(function(){
+	      			
+	      			
+		      		// 완료 버튼 클릭
+	        		$("#detailCategorySubmitBtn").on("click", function(){
+	        			
+	        			
+	      				// 카테고리
+	      				let categoryId = "";
+						if($("#detailCategoryCategorySelected").length > 0){
+							categoryId = $("#detailCategoryCategorySelected :selected").val();
+	      				}else{
+	      					categoryId = 0;
+	      				};
+	      				
+	      				
+	      				// 세부 카테고리
+	      				let detailCategoryName = $("#detailCategoryName").val();
+	      				
+	      				if(detailCategoryName == null){
+	      					alert("세부 카테고리명을 입력해주세요!"); // 유효성 검사
+	      					return ;
+	      				}
+	      				
+	      				// 메모 - 비어있어도 됨
+	      				let memo = $("#detailCategorymemo").val();
+	      				
+	      				
+	      				// FormData
+	      				let formData = new FormData();
+	      				formData.append("categoryId", categoryId);
+	        			formData.append("detailCategoryName", detailCategoryName);
+	        			formData.append("memo", memo);
+	        			
+	        			
+	        			
+	        			$.ajax({
+	        				type : "post"
+	        				, url : "/budgetBook/money/detailCategory/create"
+	        				, data : formData
+	        				, processData : false
+	                        , contentType : false
+	                        , success : function(data){
+	                        	if(data.result == "success"){
+	                        		$("#detailCategoryModal").modal("hide");
+	                        	}else{
+	                        		alert("세부 카테고리 추가 실패!");
+	                        	}
+	                        }
+	        				, error : function(){
+	        					alert("세부 카테고리 추가 에러!");
+	        				}
+	        			});
+	      				
+	      				
+	        		});
+	      			
+	      		});
+	      	</script>
+	      

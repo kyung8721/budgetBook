@@ -3,9 +3,9 @@
 	      	<div id="categoryDiv" th:data-category-id = "${category.id}">
 	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${category.classification}">
 	      			<div class="col-4">분류</div>
-	      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
-	      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
-	      			<button type="button" id="transferBtn" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1 ">이체</button>
+	      			<button type="button" id="categoryIncomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
+	      			<button type="button" id = "categoryOutgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
+	      			<button type="button" id="categoryTransferBtn" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1 ">이체</button>
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -23,21 +23,21 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">색상</div>
 	      			<div id="colorPicker" class="pl-3 pr-3">색상 수정하기</div>
-	      			<input id="inputColor" type="color" class="d-none" th:value="${category.color}">
+	      			<input id="categoryInputColor" type="color" class="d-none" th:value="${category.color}">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:text="${category.memo}"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="categoryMemo" th:text="${category.memo}"></textarea>
 	      		</div>
 	      		
 	      	</div>
 	      	
 	      	<div class="d-flex justify-content-between mt-2">
-	      		<button type="button" class="btn btn-outline-danger" id="deleteBtn">삭제</button>
-	        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
+	      		<button type="button" class="btn btn-outline-danger" id="categoryDeleteBtn">삭제</button>
+	        	<button type="button" class="btn btn-outline-dark" id="categorySubmitBtn">완료</button>
 	      	</div>
 	      	
 	      	<script>
@@ -45,7 +45,7 @@
 	      			
 	      			
 	      			// 색상 수정하기 배경 색 저장된 대로 바꾸기
-      				let color = $("#inputColor").val();
+      				let color = $("#categoryInputColor").val();
       				$("#colorPicker").attr("style", "background-color : " + color);
 	      			
 	      			// 금액에 쉼표 붙이기
@@ -55,20 +55,20 @@
 	      			// 분류
 	      			let fixedCostClassification = $("#classification").data("classification");
 	      			if(fixedCostClassification == "지출"){
-	      				$("#outgoingBtn").removeClass("btn-outline-danger");
-	      				$("#outgoingBtn").addClass("btn-danger");
+	      				$("#categoryOutgoingBtn").removeClass("btn-outline-danger");
+	      				$("#categoryOutgoingBtn").addClass("btn-danger");
 	      			}else if(fixedCostClassification == "수입"){
-	      				$("#incomeBtn").removeClass("btn-outline-success");
-	      				$("#incomeBtn").addClass("btn-success");
+	      				$("#categoryIncomeBtn").removeClass("btn-outline-success");
+	      				$("#categoryIncomeBtn").addClass("btn-success");
 	      				
 	      			}else{
-	      				$("#transferBtn").removeClass("btn-outline-secondary");
-	      				$("#transferBtn").addClass("btn-secondary");
+	      				$("#categoryTransferBtn").removeClass("btn-outline-secondary");
+	      				$("#categoryTransferBtn").addClass("btn-secondary");
 	      			}
 	      			
 	      			
 	      			// 삭제 버튼 클릭
-      				$("#deleteBtn").on("click", function(){
+      				$("#categoryDeleteBtn").on("click", function(){
       					let categoryId = $("#categoryDiv").data("category-id");
       					
       					$.ajax({
@@ -89,17 +89,17 @@
       				});
 	      			
 	      			// 완료버튼 클릭 시 저장
-	      			$("#submitBtn").on("click", function(){
+	      			$("#categorySubmitBtn").on("click", function(){
 	      				// 카테고리Id
 	      				let categoryId = $("#categoryDiv").data("category-id");
 	      				
 	      				// 분류
 	      				let classification = "";
-	        			if($("#incomeBtn").hasClass("btn-success")){
+	        			if($("#categoryIncomeBtn").hasClass("btn-success")){
 	        				classification = "수입";
-	        			}else if($("#outgoingBtn").hasClass("btn-danger")){
+	        			}else if($("#categoryOutgoingBtn").hasClass("btn-danger")){
 	        				classification = "지출";
-	        			}else if($("#transferBtn").hasClass("btn-secondary")){
+	        			}else if($("#categoryTransferBtn").hasClass("btn-secondary")){
 	        				classification = "이체";
 	        			}else{
 	        				alert("분류를 선택해주세요!"); // 유효성 검사
@@ -118,10 +118,10 @@
 	      				}
 	      				
 	      				// 색상
-	      				let color = $("#inputColor").val();
+	      				let color = $("#categoryInputColor").val();
 	      				
 	      				//메모
-	      				let memo = $("#memo").val();
+	      				let memo = $("#categoryMemo").val();
 	      				
 	      				// formData
 	      				let formData = new FormData();
@@ -155,46 +155,46 @@
 	      			
 	      			//// 버튼 클릭 시 버튼 스타일 변경
 	      			 // 수입 버튼
-	      			$("#incomeBtn").on("click", function(){
-	      				$("#incomeBtn").removeClass("btn-outline-success");
-	      				$("#incomeBtn").addClass("btn-success");
+	      			$("#categoryIncomeBtn").on("click", function(){
+	      				$("#categoryIncomeBtn").removeClass("btn-outline-success");
+	      				$("#categoryIncomeBtn").addClass("btn-success");
 	      				
-	      				$("#outgoingBtn").removeClass("btn-danger");
-	      				$("#outgoingBtn").addClass("btn-outline-danger");
-	      				$("#transferBtn").removeClass("btn-secondary");
-	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      				$("#categoryOutgoingBtn").removeClass("btn-danger");
+	      				$("#categoryOutgoingBtn").addClass("btn-outline-danger");
+	      				$("#categoryTransferBtn").removeClass("btn-secondary");
+	      				$("#categoryTransferBtn").addClass("btn-outline-secondary");
 	      			});
 	      			// 지출 버튼
-	      			$("#outgoingBtn").on("click", function(){
-	      				$("#outgoingBtn").removeClass("btn-outline-danger");
-	      				$("#outgoingBtn").addClass("btn-danger");
+	      			$("#categoryOutgoingBtn").on("click", function(){
+	      				$("#categoryOutgoingBtn").removeClass("btn-outline-danger");
+	      				$("#categoryOutgoingBtn").addClass("btn-danger");
 	      				
-	      				$("#incomeBtn").removeClass("btn-success");
-	      				$("#incomeBtn").addClass("btn-outline-success");
-	      				$("#transferBtn").removeClass("btn-secondary");
-	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      				$("#categoryIncomeBtn").removeClass("btn-success");
+	      				$("#categoryIncomeBtn").addClass("btn-outline-success");
+	      				$("#categoryTransferBtn").removeClass("btn-secondary");
+	      				$("#categoryTransferBtn").addClass("btn-outline-secondary");
 	      			}); 
 	      			// 이체 버튼
-	      			$("#transferBtn").on("click", function(){
-	      				$("#transferBtn").removeClass("btn-outline-secondary");
-	      				$("#transferBtn").addClass("btn-secondary");
+	      			$("#categoryTransferBtn").on("click", function(){
+	      				$("#categoryTransferBtn").removeClass("btn-outline-secondary");
+	      				$("#categoryTransferBtn").addClass("btn-secondary");
 	      				
-	      				$("#outgoingBtn").removeClass("btn-danger");
-	      				$("#outgoingBtn").addClass("btn-outline-danger");
-	      				$("#incomeBtn").removeClass("btn-success");
-	      				$("#incomeBtn").addClass("btn-outline-success");
+	      				$("#categoryOutgoingBtn").removeClass("btn-danger");
+	      				$("#categoryOutgoingBtn").addClass("btn-outline-danger");
+	      				$("#categoryIncomeBtn").removeClass("btn-success");
+	      				$("#categoryIncomeBtn").addClass("btn-outline-success");
 	      			}); 
 		      		
 	      			
 	      			// 색상 수정하기 클릭 시 컬러피커 나오게 이벤트 설정
 	      			$("#colorPicker").on("click", function(){
-	        			$("#inputColor").click();
+	        			$("#categoryInputColor").click();
 	        			
 	        		});
 	      			
 	      			// 컬러피커 값이 변하면 나오는 이벤트
-	      			$("#inputColor").change(function(){
-	      				let color = $("#inputColor").val();
+	      			$("#categoryInputColor").change(function(){
+	      				let color = $("#categoryInputColor").val();
 	      				$("#colorPicker").attr("style", "background-color : " + color);
 	      			});
 	      		});

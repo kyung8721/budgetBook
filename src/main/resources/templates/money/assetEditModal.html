@@ -15,7 +15,7 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">색상</div>
 	      			<div id="colorPicker" class="pl-3 pr-3">색상 수정하기</div>
-	      			<input id="inputColor" type="color" class="d-none" th:value="${assets.color}">
+	      			<input id="assetsInputColor" type="color" class="d-none" th:value="${assets.color}">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -26,8 +26,8 @@
 	      		</div>
 	      		
 	      		<div class="d-flex justify-content-between mt-2">
-		      		<button type="button" class="btn btn-outline-danger" id="deleteBtn">삭제</button>
-		        	<button type="button" class="btn btn-outline-dark" id="editBtn">확인</button>
+		      		<button type="button" class="btn btn-outline-danger" id="assetsDeleteBtn">삭제</button>
+		        	<button type="button" class="btn btn-outline-dark" id="assetsEditBtn">확인</button>
 	        	</div>
 	      		
 	      		
@@ -39,11 +39,11 @@
 	      		$(document).ready(function(){
 	      			
 	      			// 색상 수정하기 배경 색 저장된 대로 바꾸기
-      				let color = $("#inputColor").val();
+      				let color = $("#assetsInputColor").val();
       				$("#colorPicker").attr("style", "background-color : " + color);
       				
       				// 삭제 버튼 클릭
-      				$("#deleteBtn").on("click", function(){
+      				$("#assetsDeleteBtn").on("click", function(){
       					let assetsId = $("#assetsDiv").data("assets-id");
       					
       					$.ajax({
@@ -64,11 +64,11 @@
       				});
 	      			
 	      			// 확인 버튼 클릭
-	      			$("#editBtn").on("click", function(){
+	      			$("#assetsEditBtn").on("click", function(){
 	      				let assetsId = $("#assetsDiv").data("assets-id");
 	      				let assetsName = $("#assetsName").val();
 	      				let balance = $("#assetsBalance").val();
-	      				let color = $("#inputColor").val();
+	      				let color = $("#assetsInputColor").val();
 	      				let memo = $("#assetsMemo").val();
 	      				
 	      				let formData = new FormData();
@@ -100,13 +100,13 @@
 	      			
 	      			// 색상 수정하기 클릭 시 컬러피커 나오게 이벤트 설정
 	      			$("#colorPicker").on("click", function(){
-	        			$("#inputColor").click();
+	        			$("#assetsInputColor").click();
 	        			
 	        		});
 	      			
 	      			// 컬러피커 값이 변하면 나오는 이벤트
-	      			$("#inputColor").change(function(){
-	      				let color = $("#inputColor").val();
+	      			$("#assetsInputColor").change(function(){
+	      				let color = $("#assetsInputColor").val();
 	      				$("#colorPicker").attr("style", "background-color : " + color);
 	      			});
 	      		});

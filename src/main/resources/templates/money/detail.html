@@ -20,36 +20,44 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected">
+      					<option value="" selected disabled hidden>선택해주세요</option>
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button id="breakdownAssetAddBtnLong" type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					자산 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="breakdownAssetAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
-      					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option value="" selected disabled hidden>선택해주세요</option>
+      					<option class="d-none" th:id = "|breakdownOutgoingCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '지출'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option class="d-none" th:id = "|breakdownIncomeCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '수입'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option class="d-none" th:id = "|breakdownTransferCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '이체'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button type="button" id="breakdownCategoryAddBtnLong" th:unless="${not #lists.isEmpty(categoryList)}" class="categoryAdd btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					카테고리 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="breakdownCategoryAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 세부 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected">
+      					<option value="" selected disabled hidden>선택해주세요</option>
       					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button id="breakdownDetailCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class=" btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					세부 카테고리 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="breakdownDetailCategoryAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 내역명 -->
@@ -79,6 +87,40 @@
 	        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
 	      	</div>
 	      	
+	      	<!--세부 카테고리추가 Modal -->
+			<div class="modal fade" id="detailCategoryModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			    	<div class=" d-flex justify-content-end">
+			        </div>
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!--카테고리추가 Modal -->
+			<div class="modal fade" id="categoryModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			    	<div class=" d-flex justify-content-end">
+			        </div>
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!-- 자산 추가 Modal -->
+			<div class="modal fade" id="assetModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
+	      	
 	      	
 	      	
 	      	<script th:inline="javascript">
@@ -92,6 +134,25 @@
 	  					, changeMonth : true
 	  					
 	  				});
+	      			
+	      			// 자산추가 버튼 클릭
+	        		$("#breakdownAssetAddBtn" || "#breakdownAssetAddBtnLong").on("click", function(){
+	        			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+	        			$("#assetModal").modal("show");
+	        		});
+	      			
+	      			// 카테고리 추가
+	      			$("#breakdownCategoryAddBtn" || "#breakdownCategoryAddBtnLong").on("click", function(){
+	      				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+	        			$("#categoryModal").modal("show");
+	      			});      			
+	      			
+	      			// 세부 카테고리추가 버튼 클릭
+	        		$("#breakdownDetailCategoryAddBtn" || "#breakdownDetailCategoryAddBtnLong").on("click", function(){
+	        			$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+	        			$("#detailCategoryModal").modal("show");
+	        		});
+	      			
 	      			
 		      		// 완료 버튼 클릭
 	        		$("#submitBtn").on("click", function(){
@@ -133,8 +194,11 @@
 	      				
 	      				// 세부 카테고리 - 비어있어도 됨
 	      				let detailCategoryId = "";
-						if(document.getElementById("detailCategorySelected") != null){
+						if($("#detailCategorySelected").length > 0){
 							detailCategoryId = $("#detailCategorySelected :selected").val();
+							if(detailCategoryId == ""){
+								detailCategoryId = 0;
+							}
 	      				}else{
 	      					detailCategoryId = 0;
 	      				}
@@ -204,6 +268,11 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
+
+	      				$("[id^='breakdownIncomeCategorySelect']").removeClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
+	      				
 	      			}); // 수입 버튼
 	      			$("#outgoingBtn").on("click", function(){
 	      				$("#outgoingBtn").removeClass("btn-outline-danger");
@@ -213,6 +282,10 @@
 	      				$("#incomeBtn").addClass("btn-outline-success");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      				
+	      				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").removeClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
 	      			}); // 지출 버튼
 	      			$("#transferBtn").on("click", function(){
 	      				$("#transferBtn").removeClass("btn-outline-secondary");
@@ -222,6 +295,10 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#incomeBtn").removeClass("btn-success");
 	      				$("#incomeBtn").addClass("btn-outline-success");
+	      				
+	      				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").removeClass("d-none");
 	      			}); // 이체 버튼
 	      		});
 	      	</script>

@@ -234,7 +234,7 @@ public class MoneyController {
 		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
 		// 카테고리
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), "지출");
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		
 		// 전체 예산 대비 내역 비율
 		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
@@ -266,6 +266,18 @@ public class MoneyController {
 		
 		
 		return "money/categoryEditModal";
+	}
+	
+	// 세부 카테고리 추가 모달
+	@GetMapping("/detailCategoryModal")
+	public String detailCategoryModalView(Model model, HttpSession session) {
+		
+		int userId = (Integer)session.getAttribute("userId");
+		
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		model.addAttribute("categoryList", categoryDtoList);
+		
+		return "money/detailCategoryModal";
 	}
 	
 	// 자산 페이지

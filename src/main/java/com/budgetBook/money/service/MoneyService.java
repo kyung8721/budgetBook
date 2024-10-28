@@ -577,7 +577,8 @@ public class MoneyService {
 					.build();
 		}
 		
-		return detailCategory;
+		
+		return detailCategoryRepository.save(detailCategory);
 	}
 	
 	// 세부 예산 카테고리 삭제
@@ -618,11 +619,12 @@ public class MoneyService {
 		DetailCategoryDto detailCategoryDto;
 		
 		if(detailCategoryList != null) {
-			for(DetailCategoryDto i : detailCategoryDtoList) {
+			for(DetailCategory i : detailCategoryList) {
+				
 				detailCategoryDto = DetailCategoryDto.builder()
 						.id(i.getId())
 						.userId(userId)
-						.categoryName(i.getCategoryName())
+						.categoryId(i.getCategoryId())
 						.detailCategoryName(i.getDetailCategoryName())
 						.memo(i.getMemo())
 						.build();
