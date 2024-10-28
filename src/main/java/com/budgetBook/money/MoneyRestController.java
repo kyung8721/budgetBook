@@ -412,6 +412,19 @@ public class MoneyRestController {
 		return resultMap;
 	}
 	
+	// 달력에 표시할 수입, 지출 내역
+	@PostMapping("/calendar/dayList")
+	public List<Map<String, String>> dayList(HttpSession session
+			, @RequestParam("yearMonth")String yearMonth){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
+		
+		List<Map<String, String>> result = moneyService.calculateDayList();
+		
+		
+	}
+	
 
 	
 }

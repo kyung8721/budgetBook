@@ -1156,5 +1156,9 @@ public class MoneyService {
 		return assetsDtoList;
 	}
 	
+	public List<Map<String, String>> calculateDayList(){
+		
+	}
+	
 	
 }
