@@ -9,7 +9,7 @@
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">잔액</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" th:value="${assets.balance}" id="assetsBalance" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" th:data-balance-value="${assets.balance}" id="assetsBalance"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -37,6 +37,10 @@
 	      	
 	      	<script>
 	      		$(document).ready(function(){
+	      			
+	      			// 금액에 쉼표 붙이기
+	      			let balanceData = $("#assetsBalance").data("balance-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+	      			$("#assetsBalance").val(balanceData);
 	      			
 	      			// 색상 수정하기 배경 색 저장된 대로 바꾸기
       				let color = $("#assetsInputColor").val();
@@ -67,7 +71,10 @@
 	      			$("#assetsEditBtn").on("click", function(){
 	      				let assetsId = $("#assetsDiv").data("assets-id");
 	      				let assetsName = $("#assetsName").val();
+	      				
 	      				let balance = $("#assetsBalance").val();
+	      				balance = balance.replace(/,/g, "");
+	      				
 	      				let color = $("#assetsInputColor").val();
 	      				let memo = $("#assetsMemo").val();
 	      				

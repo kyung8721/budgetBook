@@ -314,11 +314,19 @@ public class MoneyController {
 	
 	// 자산 페이지
 	@GetMapping("/assets-view")
-	public String assetView(HttpSession session, Model model) {
+	public String assetView(HttpSession session, Model model
+			, @RequestParam(value="inputKeyword", required=false)String inputKeyword) {
 		int userId = (Integer)session.getAttribute("userId");
 		
-		// 자산 DTO
-		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		// 초기화
+		List<AssetsDto> assetsDtoList;
+		// 검색어
+		if(inputKeyword != null) {
+			// 검색어가 있다면 해당 리스트 출력
+			assetsDtoList = moneyService.searchAssets(userId, inputKeyword);
+		}else {
+			assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		}
 		
 		UserDto userDto = moneyService.callUserData(userId);
 		

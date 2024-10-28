@@ -313,16 +313,13 @@ public class MoneyService {
 		}
 	}
 	
-	// 자산 DTO로 불러오기
-	public AssetsDto callAssetsDto(int id) {
-		Optional<Assets> optionalAssets = assetsRepository.findById(id);
-		Assets assets = optionalAssets.orElse(null);
-		
+	// Assets -> AssetsDto
+	public AssetsDto AssetsToDto(Assets i) {
 		// 자산 차이 계산
 		String balanceDifference;
 		
-		if(assets.getLastBalance() != null) {
-			int intBalanceDifference = assets.getBalance() - assets.getLastBalance();
+		if(i.getLastBalance() != null) {
+			int intBalanceDifference = i.getBalance() - i.getLastBalance();
 			if(intBalanceDifference < 0) {
 				balanceDifference = "감소" + Math.abs(intBalanceDifference);
 			}else if(intBalanceDifference > 0){
@@ -335,15 +332,26 @@ public class MoneyService {
 		}
 		
 		AssetsDto assetsDto = AssetsDto.builder()
-				.id(id)
-				.userId(assets.getUserId())
-				.assetsName(assets.getAssetsName())
-				.balance(assets.getBalance())
-				.lastBalance(assets.getLastBalance())
+				.id(i.getId())
+				.userId(i.getUserId())
+				.assetsName(i.getAssetsName())
+				.balance(i.getBalance())
+				.lastBalance(i.getLastBalance())
 				.balanceDifference(balanceDifference)
-				.color(assets.getColor())
-				.memo(assets.getMemo())
+				.color(i.getColor())
+				.memo(i.getMemo())
 				.build();
+		return assetsDto;
+	}
+	
+	// 자산 DTO로 불러오기
+	public AssetsDto callAssetsDto(int id) {
+		Optional<Assets> optionalAssets = assetsRepository.findById(id);
+		Assets assets = optionalAssets.orElse(null);
+		
+		
+		AssetsDto assetsDto = AssetsToDto(assets);
+		
 		return assetsDto;
 	}
 	
@@ -357,32 +365,7 @@ public class MoneyService {
 		if(assetsList != null) {
 			for(Assets i : assetsList) {
 				
-				// 자산 차이 계산
-				String balanceDifference;
-				
-				if(i.getLastBalance() != null) {
-					int intBalanceDifference = i.getBalance() - i.getLastBalance();
-					if(intBalanceDifference < 0) {
-						balanceDifference = "감소" + Math.abs(intBalanceDifference);
-					}else if(intBalanceDifference > 0){
-						balanceDifference = "증가" + intBalanceDifference;
-					}else {
-						balanceDifference = "변함없음";
-					}
-				}else {
-					balanceDifference = null;
-				}
-				
-				AssetsDto assetsDto = AssetsDto.builder()
-						.id(i.getId())
-						.userId(userId)
-						.assetsName(i.getAssetsName())
-						.balance(i.getBalance())
-						.lastBalance(i.getLastBalance())
-						.balanceDifference(balanceDifference)
-						.color(i.getColor())
-						.memo(i.getMemo())
-						.build();
+				AssetsDto assetsDto = AssetsToDto(i);
 				assetsDtoList.add(assetsDto);
 			}
 			
@@ -1154,6 +1137,23 @@ public class MoneyService {
 		}
 		
 		return categoryDtoList;
+	}
+	
+	public List<AssetsDto> searchAssets(int userId, String inputKeyword){
+		List<Assets> assetsList = assetsRepository.findAllByUserIdAndAssetsNameContaining(userId, inputKeyword);
+		
+		// 초기화
+		List<AssetsDto> assetsDtoList = new ArrayList<>();
+		AssetsDto assetsDto;
+		
+		// Category -> CategoryDto
+		for(Assets i : assetsList) {
+			assetsDto = AssetsToDto(i); 
+			assetsDtoList.add(assetsDto);
+		}
+		
+		
+		return assetsDtoList;
 	}
 	
 	

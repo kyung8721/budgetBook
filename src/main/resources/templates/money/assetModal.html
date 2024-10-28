@@ -9,7 +9,7 @@
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">잔액</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="assetsBalance" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="assetsBalance"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
 	      		
 	      		<div class="d-flex align-items-center mt-3 modalText">
@@ -40,7 +40,10 @@
 	      			// 확인 버튼 클릭
 	      			$("#assetsEditBtn").on("click", function(){
 	      				let assetsName = $("#assetsName").val();
+	      				
 	      				let balance = $("#assetsBalance").val();
+	      				balance = balance.replace(/,/g, "");
+	      				
 	      				let color = $("#assetsInputColor").val();
 	      				let memo = $("#assetsMemo").val();
 	      				
