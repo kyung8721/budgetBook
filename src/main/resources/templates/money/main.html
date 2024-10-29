@@ -12,6 +12,7 @@
 		var calendar = new FullCalendar.Calendar(calendarEl, {
 			initialView: 'dayGridMonth'
 			, eventsource : [
+				
 				$.ajax({
 					type : "post"
 					, url : "/budgetBook/money/calendar/dayList"
@@ -45,11 +46,68 @@
 		calendar.setOption('height', "100%");
 		
 		$(".fc-next-button").on("click", function() {
-			var date = calendar.getDate();
+			var nextDate = calendar.getDate();
+			ajaxevent = [];
+			$.ajax({
+				type : "post"
+				, url : "/budgetBook/money/calendar/dayList"
+				, data : {"date" : nextDate}
+				, async : false
+				, success : function(data){
+					for(let i = 0 ; data.length >= i ; i++){
+						let title = data[i]?.title;
+						let start = data[i]?.start;
+						let backgroundColor = data[i]?.backgroundColor;
+						let borderColor = data[i]?.borderColor;
+						let textColor = data[i]?.textColor;
+						ajaxevent.push({
+							"title" : title
+							, "start" : start
+							, "backgroundColor" : backgroundColor
+							, "borderColor" : borderColor
+							, "textColor" : textColor
+						});
+					};
+				}
+				, error : function() {
+					alert("달력 데이터 받아오기 에러!")
+				}
+			})
+			
+			alert(JSON.stringify(ajaxevent));
+			calendar.refetchEvents();
 	    });
 		
 		$(".fc-prev-button").on("click", function() {
-			var date = calendar.getDate();
+			var prevDate = calendar.getDate();
+			ajaxevent = [];
+			$.ajax({
+				type : "post"
+				, url : "/budgetBook/money/calendar/dayList"
+				, data : {"date" : prevDate}
+				, async : false
+				, success : function(data){
+					for(let i = 0 ; data.length >= i ; i++){
+						let title = data[i]?.title;
+						let start = data[i]?.start;
+						let backgroundColor = data[i]?.backgroundColor;
+						let borderColor = data[i]?.borderColor;
+						let textColor = data[i]?.textColor;
+						ajaxevent.push({
+							"title" : title
+							, "start" : start
+							, "backgroundColor" : backgroundColor
+							, "borderColor" : borderColor
+							, "textColor" : textColor
+						});
+					};
+				}
+				, error : function() {
+					alert("달력 데이터 받아오기 에러!")
+				}
+			})
+			
+			alert(JSON.stringify(ajaxevent));
 	    });
 		
 	});
