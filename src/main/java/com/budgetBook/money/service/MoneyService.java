@@ -1167,110 +1167,151 @@ public class MoneyService {
 		, textColor : "#01DF01" -> 반복마다 바뀜 x /  수입 지출에 따라 다름
 		*/
 		
-		// 초기화
-		List<Map<String, String>> resultMapList = new ArrayList<>();
-		Map<String, String> calendarEventMap = new HashMap<>();
-		calendarEventMap.put("backgroundColor", "#FFFFFF");
-		calendarEventMap.put("borderColor", "#FFFFFF");
-		
 		
 		
 		// 해당 월 모든 사용내역 조회
 		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetweenOrderByDate(userId, RTP, startDate, endDate);
 		
-		LocalDate day = LocalDate.of(0000,01,01); // 기본값
+		LocalDate incomeDay = LocalDate.of(0000,01,01); // 수입 날짜 기본값
+		LocalDate outgoingDay = LocalDate.of(0000,01,01); // 치줄 날짜 기본값
+		LocalDate transferDay = LocalDate.of(0000,01,01); // 이체 날짜 기본값
 		int incomeCostSum = 0;  // 일자별 수입 합계 저장할 변수
 		int outgoingCostSum = 0;  // 일자별 지출 합계 저장할 변수
 		int transferCostSum = 0;  // 일자별 이체 합계 저장할 변수
 		int repeat = 1; // 반복 횟수
 		
+		// 초기화
+		List<Map<String, String>> BreaKdownMapList = new ArrayList<>();
+		// 수입
+		Map<String, String> incomeCalendarEventMap = new HashMap<>();
+		incomeCalendarEventMap.put("backgroundColor", "#FFFFFF");
+		incomeCalendarEventMap.put("borderColor", "#FFFFFF");
+		incomeCalendarEventMap.put("textColor", "#01DF01");
+		// 지출
+		Map<String, String> outgoingCalendarEventMap = new HashMap<>();
+		outgoingCalendarEventMap.put("backgroundColor", "#FFFFFF");
+		outgoingCalendarEventMap.put("borderColor", "#FFFFFF");
+		outgoingCalendarEventMap.put("textColor", "#FF0000");
+		// 이체
+		Map<String, String> transferCalendarEventMap = new HashMap<>();
+		transferCalendarEventMap.put("backgroundColor", "#FFFFFF");
+		transferCalendarEventMap.put("borderColor", "#FFFFFF");
+		transferCalendarEventMap.put("textColor", "#000000");
+		
+		boolean dayChange = false;
+		
 		// 내역 반복하면서 일자마다 합치기
 		for(Breakdown i : breakdownList) {
-			if(i.getClassification() == "수입") {
-				calendarEventMap.put("textColor", "#01DF01");
+			if(i.getClassification().equals("수입")) {
 				
-				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
-					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+				if(incomeDay.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					 // 내역의 날짜가 저장된 day보다 큼
 					if(repeat == 1) {
-						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+						// 반복의 처음이면 map 초기화 없음
 					}else {
-						// 그 전날 costSum 합계를 map에 저장
-						calendarEventMap.put("title", "수입 " + incomeCostSum +"원");
-						
-						// 그 전날 map을 리스트에 저장
-						resultMapList.add(calendarEventMap);
+						// 반복의 처음이 아니고 날짜가 넘어갔다면 map을 초기화
+						// 초기화
+						incomeCalendarEventMap = new HashMap<>();
+						incomeCalendarEventMap.put("backgroundColor", "#FFFFFF");
+						incomeCalendarEventMap.put("borderColor", "#FFFFFF");
+						incomeCalendarEventMap.put("textColor", "#01DF01");
 					}
+					// day 저장 후 넘어가기
 					// 날짜 string으로 변환
-					day = i.getDate().toLocalDate();
-					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					incomeDay = i.getDate().toLocalDate();
+					String date = incomeDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 					
 					// map에 날짜 저장
-					calendarEventMap.put("start", date);
+					incomeCalendarEventMap.put("start", date);
 					
 					incomeCostSum = 0; // 일자별 합계 저장할 변수 초기화
+					
+					dayChange = true; // 날짜 변경됨
 				}
+				
 				incomeCostSum += i.getCost();
 				repeat += 1;
 				
+				incomeCalendarEventMap.put("title", "수입 " + incomeCostSum +"원");
+				if(dayChange == true) {
+					BreaKdownMapList.add(incomeCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
+					dayChange = false;
+				};
 				
-			}else if(i.getClassification() == "지출"){
-				calendarEventMap.put("textColor", "#FF0000");
+			}else if(i.getClassification().equals("지출")){
 				
-				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
-					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+				if(outgoingDay.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					 // 내역의 날짜가 저장된 day보다 큼
 					if(repeat == 1) {
-						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+						// 반복의 처음이면 map 초기화 없음
 					}else {
-						// 그 전날 costSum 합계를 map에 저장
-						calendarEventMap.put("title", "지출 " + outgoingCostSum +"원");
-						
-						// 그 전날 map을 리스트에 저장
-						resultMapList.add(calendarEventMap);
+						// 반복의 처음이 아니고 날짜가 넘어갔다면 map을 초기화
+						// 초기화
+						outgoingCalendarEventMap = new HashMap<>();
+						outgoingCalendarEventMap.put("backgroundColor", "#FFFFFF");
+						outgoingCalendarEventMap.put("borderColor", "#FFFFFF");
+						outgoingCalendarEventMap.put("textColor", "#FF0000");
 					}
 					// 날짜 string으로 변환
-					day = i.getDate().toLocalDate();
-					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					outgoingDay = i.getDate().toLocalDate();
+					String date = outgoingDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 					
 					// map에 날짜 저장
-					calendarEventMap.put("start", date);
+					outgoingCalendarEventMap.put("start", date);
 					
 					outgoingCostSum = 0; // 일자별 합계 저장할 변수 초기화
+					
+					dayChange = true; // 날짜 변경됨
 				}
 				outgoingCostSum += i.getCost();
 				repeat += 1;
 				
-			}else{
-				calendarEventMap.put("textColor", "#000000");
+				outgoingCalendarEventMap.put("title", "지출 " + outgoingCostSum +"원");
+				if(dayChange == true) {
+					BreaKdownMapList.add(outgoingCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
+					dayChange = false;
+				};
 				
-				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
-					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+			}else{
+				
+				if(transferDay.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					 // 내역의 날짜가 저장된 day보다 큼
 					if(repeat == 1) {
-						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+						// 반복의 처음이면 map 초기화 없음
 					}else {
-						// 그 전날 costSum 합계를 map에 저장
-						calendarEventMap.put("title", "이체 " + transferCostSum +"원");
-						
-						// 그 전날 map을 리스트에 저장
-						resultMapList.add(calendarEventMap);
+						// 반복의 처음이 아니고 날짜가 넘어갔다면 map을 초기화
+						// 초기화
+						transferCalendarEventMap = new HashMap<>();
+						transferCalendarEventMap.put("backgroundColor", "#FFFFFF");
+						transferCalendarEventMap.put("borderColor", "#FFFFFF");
+						transferCalendarEventMap.put("textColor", "#000000");
 					}
 					// 날짜 string으로 변환
-					day = i.getDate().toLocalDate();
-					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					transferDay = i.getDate().toLocalDate();
+					String date = transferDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 					
 					// map에 날짜 저장
-					calendarEventMap.put("start", date);
+					transferCalendarEventMap.put("start", date);
 					
 					transferCostSum = 0; // 일자별 합계 저장할 변수 초기화
+					dayChange = true; // 날짜 변경됨
 				}
 				transferCostSum += i.getCost();
 				repeat += 1;
+				
+				transferCalendarEventMap.put("title", "이체 " + transferCostSum +"원");
+				if(dayChange == true) {
+					BreaKdownMapList.add(transferCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
+					dayChange = false;
+				};
 				
 				
 			}
 			
 		} // 반복문 종료
 		
-		return resultMapList;
+		
+		return BreaKdownMapList;
 	}
 	
 	

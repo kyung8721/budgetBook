@@ -6,29 +6,38 @@
 <script layout:fragment="scriptTop">
 	document.addEventListener('DOMContentLoaded', function() {
 		var ajaxevent = [];
-		$.ajax({
-			type : "post"
-			, url : "/budgetBook/money/calendar/dayList"
-			, data : {}
-			, async : false
-			, success : function(data){
-				for(let i ; data.length >= i ; i++){
-					events.push({
-						title : data[i].title
-						, start : data[i].start
-						, backgroundColor : data[i].backgroundColor
-						, borderColor : data[i].borderColor
-						, textColor : data[i].textColor
-					});
-				};
-			}
-			, error : function() {
-				alert("달력 데이터 받아오기 에러!")
-			}
-		});
+		
+		
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
 			initialView: 'dayGridMonth'
+			, eventsource : [
+				$.ajax({
+					type : "post"
+					, url : "/budgetBook/money/calendar/dayList"
+					, data : {}
+					, async : false
+					, success : function(data){
+						for(let i = 0 ; data.length >= i ; i++){
+							let title = data[i]?.title;
+							let start = data[i]?.start;
+							let backgroundColor = data[i]?.backgroundColor;
+							let borderColor = data[i]?.borderColor;
+							let textColor = data[i]?.textColor;
+							ajaxevent.push({
+								"title" : title
+								, "start" : start
+								, "backgroundColor" : backgroundColor
+								, "borderColor" : borderColor
+								, "textColor" : textColor
+							});
+						};
+					}
+					, error : function() {
+						alert("달력 데이터 받아오기 에러!")
+					}
+				})
+			]
 			, events : ajaxevent
 	    });
 		calendar.render();
@@ -204,6 +213,8 @@
     			<div id='calendar'></div>
     		</div>
     	</div>
+    	
+    	<button type="button" id="samBtn" class="btn btn-success">버튼1</button>
     	
     	<!-- 일부 사용 Modal -->
 		<div class="modal fade" id="partUseModal"  aria-hidden="true">
