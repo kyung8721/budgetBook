@@ -47,16 +47,16 @@ public class MoneyController {
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		
 		// 전체 예산 대비 내역 비율
-		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		// 고정비 내역 불러오기
 		List<FixedCostDto> fixedCostDtoList = moneyService.callFixedCost(userId);
 		
 		// 예측 내역
-		List<BreakdownDto> breakdownDtoPreList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<BreakdownDto> breakdownDtoPreList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		// 내역
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		
 		model.addAttribute("user", userDto);
@@ -79,7 +79,7 @@ public class MoneyController {
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		
 		// 내역
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		
 		model.addAttribute("breakdownList", breakdownDtoList);
@@ -166,10 +166,10 @@ public class MoneyController {
 		List<BreakdownDto> breakdownDtoList;
 		if(inputKeyword != null) {
 			// 검색 키워드가 있으면 검색 결과 출력
-			breakdownDtoList = moneyService.searchBreakdown(userId, 1, inputKeyword , distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			breakdownDtoList = moneyService.searchBreakdown(userId, 1, inputKeyword , distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		}else{
 			// 검색 키워드가 없으면 전체 내역 출력
-			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		}
 		
 		// 사용자 정보
@@ -261,15 +261,15 @@ public class MoneyController {
 		// 검색 - 예측 사용 내역
 		if(breakdownInputKeyword != null) {
 			// 검색 키워드가 있으면 검색 결과 출력
-			breakdownDtoList = moneyService.searchBreakdown(userId, 2, breakdownInputKeyword , distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			breakdownDtoList = moneyService.searchBreakdown(userId, 2, breakdownInputKeyword , distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		}else{
 			// 검색 키워드가 없으면 전체 내역 출력
-			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		}
 		
 		
 		// 전체 예산 대비 내역 비율
-		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
@@ -365,13 +365,13 @@ public class MoneyController {
 		
 		// 카테고리 별 지출 내역 가져오기
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), "지출");
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), "지출");
 		
 		if(categoryId == null) {
 			categoryId = 0;
 		}
 		// 지출 내역 가져오기
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "지출", 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), categoryId);
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "지출", 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), categoryId);
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("categoryList", categoryDtoList);
@@ -392,13 +392,13 @@ public class MoneyController {
 		
 		// 카테고리 별 수입 내역 가져오기
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), "수입");
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), "수입");
 		
 		if(categoryId == null) {
 			categoryId = 0;
 		}
 		// 수입 내역 가져오기
-		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "수입", 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), categoryId);
+		List<BreakdownDto> breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndClassificationAndYearMonthAndCategoryId(userId, "수입", 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), categoryId);
 		
 		model.addAttribute("user", userDto);
 		model.addAttribute("categoryList", categoryDtoList);

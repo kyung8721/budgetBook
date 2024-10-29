@@ -3,6 +3,7 @@ package com.budgetBook.money;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -419,11 +420,24 @@ public class MoneyRestController {
 		int userId = (Integer)session.getAttribute("userId");
 		
 		// 날짜
-		String yearMonth = null;
-		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
+		Calendar calendar =  Calendar.getInstance();
+		calendar.setTime(date); // 캘린더 객체로 변경시키면 get 사용 가능
+		int year = calendar.get(Calendar.YEAR); // 연도
+		int month = calendar.get(Calendar.MONTH) + 1; // 월
+		String monthString;
+		if(month < 10) {
+			monthString = "0" + month;
+		}else {
+			monthString = Integer.toString(month);
+		}
+		
+		String yearMonth = year + monthString;
+		
+		Map<String, LocalDateTime>distinguishMonthMap =  moneyService.distinguishMonth(userId, yearMonth);
+		
 		
 		// 해당 달의 내역 합계 불러오기
-		List<Map<String, String>> result = moneyService.calculateDayList(userId, 1,distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Map<String, String>> result = moneyService.calculateDayList(userId, 1,distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		return result;
 		
@@ -432,4 +446,3 @@ public class MoneyRestController {
 
 	
 }
-

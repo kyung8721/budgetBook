@@ -2,6 +2,7 @@ package com.budgetBook.money.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -872,49 +873,34 @@ public class MoneyService {
 	}
 	
 	// 내역 - 해당 월 구분
-	public Map<String, LocalDateTime> distinguishMonth(int userId, String yearMonth){
+	public Map<String, LocalDateTime> distinguishMonth(int userId, String yearMonth){ // yearmonth : 202410
 		
-		LocalDateTime selectMonth = null; // 선택된 달
-		String NextMonthString = null; // 선택된 달 + 1;
-		LocalDateTime nextMonth = null; // 다음달 LocalDateTime
+		LocalDateTime startDay = null; // 선택된 달의 첫째 날
+		LocalDateTime lastDay = null; // 선택된 달의 마지막 날 마지막 시간
 		
 		if(yearMonth == null) {
 			// 선택된 달이 없을 때
-			LocalDateTime now = LocalDateTime.now(); // 현재 날짜
-			String selectMonthString = Integer.toString(now.getYear()) + "-" + Integer.toString(now.getMonthValue()) + "-01";
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // LocalDate 날짜 패턴 지정
+			LocalDate now = LocalDate.now(); // 현재 날짜
 			
-			if(now.getMonthValue() == 12) {
-				// 현재 날짜가 12월일 때
-				NextMonthString =  Integer.toString(now.getYear() + 1) +"-01-01"; // 현재 날짜의 내년 1월 : 2025-01-01
-			}else{
-				// 현재 날짜가 12월이 아닐 때
-				NextMonthString =  Integer.toString(now.getYear()) +"-" + Integer.toString(now.getMonthValue() + 1) + "-01"; // 현재 날짜의 다음 달 : 2024-11-01
-			}
-			// 만든 날짜를 LocalDateTime으로 변형
-			selectMonth = LocalDate.parse(selectMonthString, formatter).atStartOfDay();
-			nextMonth = LocalDate.parse(NextMonthString, formatter).atStartOfDay();
+			startDay = now.withDayOfMonth(1).atStartOfDay();
+			lastDay = now.withDayOfMonth(now.lengthOfMonth()).atTime(LocalTime.MAX);
+			
+			
 		}else {
 			// 선택된 달이 있을 때
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // 날짜 패턴 지정
-			String yearMonthString = yearMonth.substring(0,4) + "-" + yearMonth.substring(4,6) + "-01"; // 선택한 날짜의 달을 지정
+			LocalDate yearMonthlocaldate = LocalDate.parse(yearMonth.substring(0,4) + "-" + yearMonth.substring(4,6) + "-01", formatter); // 선택한 날짜의 달을 지정
 			
-			if(Integer.parseInt(yearMonth.substring(4,6)) == 12) {
-				// 선택된 달이 12월일 때
-				NextMonthString = Integer.toString((Integer.parseInt(yearMonth.substring(0,4))+1)) + "-01" + "-01";
-			}else{
-				// 선택된 달이 12월이 아닐 떄
-				NextMonthString = yearMonth.substring(0,4) + "-" + Integer.toString((Integer.parseInt(yearMonth.substring(4,6))+1)) + "-01";
-			}
-			
-			// 만든 날짜를 LocalDateTime으로 변형
-			selectMonth = LocalDate.parse(yearMonthString, formatter).atStartOfDay();
-			nextMonth = LocalDate.parse(NextMonthString, formatter).atStartOfDay();
+			startDay = yearMonthlocaldate.withDayOfMonth(1).atStartOfDay();
+			lastDay = yearMonthlocaldate.withDayOfMonth(yearMonthlocaldate.lengthOfMonth()).atTime(LocalTime.MAX);
+
+			startDay = yearMonthlocaldate.withDayOfMonth(1).atStartOfDay();
+			lastDay = yearMonthlocaldate.withDayOfMonth(yearMonthlocaldate.lengthOfMonth()).atTime(LocalTime.MAX);
 		}
 		
 		Map<String, LocalDateTime> distinguishMonthMap = new HashMap<>();
-		distinguishMonthMap.put("selectMonth", selectMonth);
-		distinguishMonthMap.put("nextMonth", nextMonth);
+		distinguishMonthMap.put("startDay", startDay);
+		distinguishMonthMap.put("lastDay", lastDay);
 		
 		return distinguishMonthMap;
 	}
@@ -978,7 +964,7 @@ public class MoneyService {
 			// 카테고리 아이디가 없으면 전체 카테고리 내역 받아가기
 			// [{"categoryName" : 카테고리명}, {"cost" : 지출액}, {"color" : 컬러} ]
 			// 카테고리
-			List<CategoryDto> categoryDtoList = callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"), classification);
+			List<CategoryDto> categoryDtoList = callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), classification);
 			for(CategoryDto i : categoryDtoList) {
 				String name = i.getCategoryName(); // 카테고리명
 				int cost = i.getCategoryCost(); // 지출액
@@ -1003,7 +989,7 @@ public class MoneyService {
 			// 카테고리 사용 내역 합계
 			int categoryCost = 0;
 			 	// 카테고리 Id에 해당하는 수입/지출 내역 불러오기(현재 달만)
-			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndClassificationAndDateBetween(categoryId, 1, classification, distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+			List<Breakdown> breakdownList = breakdownRepository.findAllByCategoryIdAndRealTimePredictionAndClassificationAndDateBetween(categoryId, 1, classification, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 			for(Breakdown j : breakdownList) {
 				categoryCost += j.getCost();
 			}
@@ -1026,7 +1012,7 @@ public class MoneyService {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("수입"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "수입",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "수입",  distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		// 합계 계산
 		int incomeSum = 0;
@@ -1042,7 +1028,7 @@ public class MoneyService {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("지출"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "지출",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "지출",  distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		// 합계 계산
 		int outgoingSum = 0;
@@ -1057,7 +1043,7 @@ public class MoneyService {
 		// 해당 월 첫째날~마지막날 계산
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth);
 		// 조건 : userId, classification("이체"), 첫째날~마지막날
-		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "이체",  distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndClassificationAndDateBetween(userId, realTimePrediction, "이체",  distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		
 		// 합계 계산
 		int transferSum = 0;
