@@ -3,6 +3,7 @@ package com.budgetBook.money;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,6 @@ import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
-import com.budgetBook.money.dto.BreakdownDto;
 import com.budgetBook.money.service.MoneyService;
 
 import jakarta.servlet.http.HttpSession;
@@ -415,13 +415,17 @@ public class MoneyRestController {
 	// 달력에 표시할 수입, 지출 내역
 	@PostMapping("/calendar/dayList")
 	public List<Map<String, String>> dayList(HttpSession session
-			, @RequestParam("yearMonth")String yearMonth){
+			, @RequestParam(value ="date", required = false)Date date){
 		int userId = (Integer)session.getAttribute("userId");
 		
+		// 날짜
+		String yearMonth = null;
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		
-		List<Map<String, String>> result = moneyService.calculateDayList();
+		// 해당 달의 내역 합계 불러오기
+		List<Map<String, String>> result = moneyService.calculateDayList(userId, 1,distinguishMonthMap.get("selectMonth"), distinguishMonthMap.get("nextMonth"));
 		
+		return result;
 		
 	}
 	

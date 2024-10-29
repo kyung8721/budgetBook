@@ -5,12 +5,31 @@
         layout:decorate="~{layouts/default}">
 <script layout:fragment="scriptTop">
 	document.addEventListener('DOMContentLoaded', function() {
+		var ajaxevent = [];
+		$.ajax({
+			type : "post"
+			, url : "/budgetBook/money/calendar/dayList"
+			, data : {}
+			, async : false
+			, success : function(data){
+				for(let i ; data.length >= i ; i++){
+					events.push({
+						title : data[i].title
+						, start : data[i].start
+						, backgroundColor : data[i].backgroundColor
+						, borderColor : data[i].borderColor
+						, textColor : data[i].textColor
+					});
+				};
+			}
+			, error : function() {
+				alert("달력 데이터 받아오기 에러!")
+			}
+		});
 		var calendarEl = document.getElementById('calendar');
 		var calendar = new FullCalendar.Calendar(calendarEl, {
 			initialView: 'dayGridMonth'
-			, events : [
-					
-			]
+			, events : ajaxevent
 	    });
 		calendar.render();
 		

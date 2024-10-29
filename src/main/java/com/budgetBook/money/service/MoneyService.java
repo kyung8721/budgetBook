@@ -1156,8 +1156,121 @@ public class MoneyService {
 		return assetsDtoList;
 	}
 	
-	public List<Map<String, String>> calculateDayList(){
+	public List<Map<String, String>> calculateDayList(int userId, int RTP, LocalDateTime startDate, LocalDateTime endDate){
 		
+		
+		/*
+		title : "수입 " + "415,454" + "원" -> 반복마다 바뀜
+		, start : "2024-10-28" -> 반복마다 바뀜
+		, backgroundColor : "#FFFFFF" -> 반복마다 바뀜 x
+		, borderColor : "#FFFFFF" -> 반복마다 바뀜 x
+		, textColor : "#01DF01" -> 반복마다 바뀜 x /  수입 지출에 따라 다름
+		*/
+		
+		// 초기화
+		List<Map<String, String>> resultMapList = new ArrayList<>();
+		Map<String, String> calendarEventMap = new HashMap<>();
+		calendarEventMap.put("backgroundColor", "#FFFFFF");
+		calendarEventMap.put("borderColor", "#FFFFFF");
+		
+		
+		
+		// 해당 월 모든 사용내역 조회
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndRealTimePredictionAndDateBetweenOrderByDate(userId, RTP, startDate, endDate);
+		
+		LocalDate day = LocalDate.of(0000,01,01); // 기본값
+		int incomeCostSum = 0;  // 일자별 수입 합계 저장할 변수
+		int outgoingCostSum = 0;  // 일자별 지출 합계 저장할 변수
+		int transferCostSum = 0;  // 일자별 이체 합계 저장할 변수
+		int repeat = 1; // 반복 횟수
+		
+		// 내역 반복하면서 일자마다 합치기
+		for(Breakdown i : breakdownList) {
+			if(i.getClassification() == "수입") {
+				calendarEventMap.put("textColor", "#01DF01");
+				
+				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+					if(repeat == 1) {
+						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+					}else {
+						// 그 전날 costSum 합계를 map에 저장
+						calendarEventMap.put("title", "수입 " + incomeCostSum +"원");
+						
+						// 그 전날 map을 리스트에 저장
+						resultMapList.add(calendarEventMap);
+					}
+					// 날짜 string으로 변환
+					day = i.getDate().toLocalDate();
+					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					
+					// map에 날짜 저장
+					calendarEventMap.put("start", date);
+					
+					incomeCostSum = 0; // 일자별 합계 저장할 변수 초기화
+				}
+				incomeCostSum += i.getCost();
+				repeat += 1;
+				
+				
+			}else if(i.getClassification() == "지출"){
+				calendarEventMap.put("textColor", "#FF0000");
+				
+				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+					if(repeat == 1) {
+						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+					}else {
+						// 그 전날 costSum 합계를 map에 저장
+						calendarEventMap.put("title", "지출 " + outgoingCostSum +"원");
+						
+						// 그 전날 map을 리스트에 저장
+						resultMapList.add(calendarEventMap);
+					}
+					// 날짜 string으로 변환
+					day = i.getDate().toLocalDate();
+					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					
+					// map에 날짜 저장
+					calendarEventMap.put("start", date);
+					
+					outgoingCostSum = 0; // 일자별 합계 저장할 변수 초기화
+				}
+				outgoingCostSum += i.getCost();
+				repeat += 1;
+				
+			}else{
+				calendarEventMap.put("textColor", "#000000");
+				
+				if(day.isBefore(i.getDate().toLocalDate())) { // LocalDate로 변경하여 날짜 비교
+					// 내역의 날짜가 저장된 day보다 크면 day 저장 후 넘어가기
+					if(repeat == 1) {
+						// 반복의 처음이면 그 전날 map 리스트 저장 없이 넘어가게
+					}else {
+						// 그 전날 costSum 합계를 map에 저장
+						calendarEventMap.put("title", "이체 " + transferCostSum +"원");
+						
+						// 그 전날 map을 리스트에 저장
+						resultMapList.add(calendarEventMap);
+					}
+					// 날짜 string으로 변환
+					day = i.getDate().toLocalDate();
+					String date = day.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+					
+					// map에 날짜 저장
+					calendarEventMap.put("start", date);
+					
+					transferCostSum = 0; // 일자별 합계 저장할 변수 초기화
+				}
+				transferCostSum += i.getCost();
+				repeat += 1;
+				
+				
+			}
+			
+		} // 반복문 종료
+		
+		return resultMapList;
 	}
 	
 	
