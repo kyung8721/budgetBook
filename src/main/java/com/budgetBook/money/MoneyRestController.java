@@ -2,8 +2,8 @@ package com.budgetBook.money;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -416,28 +416,17 @@ public class MoneyRestController {
 	// 달력에 표시할 수입, 지출 내역
 	@PostMapping("/calendar/dayList")
 	public List<Map<String, String>> dayList(HttpSession session
-			, @RequestParam(value ="date", required = false)Date date){
+			, @RequestParam("startDate")String startDate
+			, @RequestParam("endDate")String endDate){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		// 날짜
-		Calendar calendar =  Calendar.getInstance();
-		calendar.setTime(date); // 캘린더 객체로 변경시키면 get 사용 가능
-		int year = calendar.get(Calendar.YEAR); // 연도
-		int month = calendar.get(Calendar.MONTH) + 1; // 월
-		String monthString;
-		if(month < 10) {
-			monthString = "0" + month;
-		}else {
-			monthString = Integer.toString(month);
-		}
-		
-		String yearMonth = year + monthString;
-		
-		Map<String, LocalDateTime>distinguishMonthMap =  moneyService.distinguishMonth(userId, yearMonth);
-		
+		// 날짜를 LocalDateTime으로 변경
+		// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.ZZZZZ");
+		LocalDateTime startDateTime = LocalDateTime.parse(startDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		LocalDateTime endDateTime = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 		
 		// 해당 달의 내역 합계 불러오기
-		List<Map<String, String>> result = moneyService.calculateDayList(userId, 1,distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
+		List<Map<String, String>> result = moneyService.calculateDayList(userId, 1, startDateTime, endDateTime);
 		
 		return result;
 		

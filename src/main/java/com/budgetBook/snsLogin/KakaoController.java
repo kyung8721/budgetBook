@@ -1,33 +1,23 @@
 package com.budgetBook.snsLogin;
 
-import java.util.HashMap;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.budgetBook.snsLogin.kakaoService.KakaoService;
 
 @Controller
 @RequestMapping("/budgetBook/kakao")
 public class KakaoController {
-	
+	/**
 	private KakaoService kakaoService;
 	
 	public KakaoController(KakaoService kakaoService) {
 		this.kakaoService = kakaoService;
 	}
 	
-	@GetMapping("/login") // 리다이렉트로 등록한 url
-	public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code) {
-		// 해당 code를 https://kauth.kakao.com/oauth/token URL로 POST 요청을 보내면 토큰을 받을 수 있음.
-		// 토큰 받아오는 dto 생성하기
-		// 토큰으로 사용자 정보 받아오기(dto로)
-		// 
-		
+	@PostMapping("/login") // 리다이렉트로 등록한 url
+	public BaseResponse<PostLoginRes> kakaoLogin((@RequestParam(required = false) String code) {
 		
 		try {
 	        // URL에 포함된 code를 이용하여 액세스 토큰 발급
@@ -55,5 +45,6 @@ public class KakaoController {
 	    }
 		
 		return new ResponseEntity<>(HttpStatus.OK);
-	}
+	} **/
 }
+
