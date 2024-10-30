@@ -57,6 +57,11 @@ public class UserService {
 		
 	}
 	
+	// 이메일로 회원가입
+	public UserDto addUserByEmail(String email, String snsLogin) {
+		
+	}
+	
 	// 프로필 생성
 	public Profile addProfile(int userId, String profileImagePath) {
 		
@@ -185,7 +190,27 @@ public class UserService {
 					.build();
 			return userDto;
 		}
+	}
+	
+
+	// 이메일을 로그인 아이디로 해서 사용자 찾기 -> UserDto로 내보내기
+	public UserDto findUserByEmail(String email) {
+		User user = findByLoginId(email);
 		
-		
+		if(user != null) {
+			Profile profile = profileRepository.findByUserId(user.getId());
+			UserDto userDto = UserDto.builder()
+					.userId(user.getId())
+					.profileId(profile.getId())
+					.loginId(user.getLoginId())
+					.email(user.getEmail())
+					.snsLogin(user.getSnsLogin())
+					.profileImagePath(profile.getProfileImagePath())
+					.build();
+			
+			return userDto;
+		}else {
+			return null;
+		}
 	}
 }
