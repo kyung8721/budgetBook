@@ -1,11 +1,11 @@
 package com.budgetBook.user.service;
 
-import java.security.SecureRandom;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.budgetBook.common.CreateSalt;
 import com.budgetBook.common.FileManager;
 import com.budgetBook.common.HashingEncoder;
 import com.budgetBook.common.SHA256HashingEncoder;
@@ -30,17 +30,8 @@ public class UserService {
 	
 	// 회원가입
 	public User addUser(User user) {
-		// 개인 salt 추가
-		SecureRandom secureRandom = new SecureRandom();
-		byte[] byteSalt = new byte[20];
-		// 난수 생성
-		secureRandom.nextBytes(byteSalt);
-		// byte to String
-		StringBuffer sb = new StringBuffer();
-		for(byte b : byteSalt) {
-			sb.append(String.format("%02x", b));
-		}
-		String salt = sb.toString();
+		
+		String salt = CreateSalt.CreateSaltToString();
 		
 		//// 비밀번호 암호화
 		HashingEncoder encoder = new SHA256HashingEncoder();
@@ -58,7 +49,40 @@ public class UserService {
 	}
 	
 	// 이메일로 회원가입
-	public UserDto addUserByEmail(String email, String snsLogin) {
+	public UserDto addUserByEmail(String email, String snsLogin, String profileImagePath) {
+		
+		// sns 가입 시 비밀번호는 랜덤으로 생성 - 암호화를 여러번 돌린다.
+		String salt = CreateSalt.CreateSaltToString();
+		
+		//// 비밀번호 암호화
+		HashingEncoder encoder = new SHA256HashingEncoder();
+		String encryptPassword = encoder.encode(encoder.encode(encoder.encode(salt))); // 암호화를 3번 반복
+		
+		User user = User.builder()
+				.loginId(email)
+				.password(encryptPassword)
+				.email(email)
+				.snsLogin(snsLogin)
+				.salt("-")
+				.build();
+		
+		// user 저장
+		User userSave = userRepository.save(user);
+		
+		// profile 저장
+		Profile profile = addProfile(userSave.getId(), profileImagePath);
+		
+		// userDto 변환
+		UserDto userDto = UserDto.builder()
+				.userId(user.getId())
+				.profileId(profile.getId())
+				.loginId(user.getLoginId())
+				.email(user.getEmail())
+				.snsLogin(user.getSnsLogin())
+				.profileImagePath(profile.getProfileImagePath())
+				.build();
+		
+		return userDto;
 		
 	}
 	

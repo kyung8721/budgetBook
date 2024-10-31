@@ -10,10 +10,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+@Service
 public class KakaoService {
 	
 	public String getKakaoAccessToken (String code) {
@@ -43,6 +46,7 @@ public class KakaoService {
 	        bufferedWriter.flush();
 
 	        int responseCode = conn.getResponseCode(); // 200이라면 성공
+	        System.out.println("responseCode : " + responseCode);
 
 	        // 요청을 통해 얻은 데이터를 InputStreamReader을 통해 읽어 오기
 	        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -52,6 +56,8 @@ public class KakaoService {
 	        while ((line = bufferedReader.readLine()) != null) {
 	            result +=line;
 	        }
+	        System.out.println("result : " + result);
+	        
 	        
 	        Gson gson = new Gson();
             JsonElement element = gson.fromJson(result, JsonElement.class); // string을 jsonElement로 변환
@@ -99,11 +105,13 @@ public class KakaoService {
 	        JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
 	        JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
 
-	        String nickname = properties.getAsJsonObject().get("nickname").getAsString();
+	        // String nickname = properties.getAsJsonObject().get("nickname").getAsString();
 	        String email = kakaoAccount.getAsJsonObject().get("email").getAsString();
-
-	        userInfo.put("nickname", nickname);
+	        String profileImagePath = kakaoAccount.getAsJsonObject().get("profile_image_url").getAsString();
+	        
+	        // userInfo.put("nickname", nickname);
 	        userInfo.put("email", email);
+	        userInfo.put("profileImagePath", profileImagePath);
 
 	    } catch (IOException exception) {
 	        exception.printStackTrace();

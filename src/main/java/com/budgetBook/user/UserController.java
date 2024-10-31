@@ -1,5 +1,6 @@
 package com.budgetBook.user;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,12 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/budgetBook/user")
 public class UserController {
 	
+	@Value("${kakao.client_id}")
+    private String client_id;
+	
+	@Value("${kakao.redirect_uri}")
+    private String redirect_uri;
+	
 	private UserService userService;
 	
 	public UserController(UserService userService) {
@@ -22,7 +29,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/login-view")
-	public String loginView() {
+	public String loginView(Model model) {
+		
+		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+        model.addAttribute("kakaoLocation", location); // 카카오 로그인 버튼 클릭 시 보여줄 화면
+		
 		return "/user/login";
 	}
 	
