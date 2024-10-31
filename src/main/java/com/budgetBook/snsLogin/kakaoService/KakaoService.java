@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -18,6 +19,12 @@ import com.google.gson.JsonObject;
 
 @Service
 public class KakaoService {
+	
+	@Value("${kakao.client_id}")
+    private String client_id;
+	
+	@Value("${kakao.redirect_uri}")
+    private String redirect_uri;
 	
 	public String getKakaoAccessToken (String code) {
 	    String accessToken = "";
@@ -39,14 +46,14 @@ public class KakaoService {
 	        // POST 요청에서 필요한 파라미터를 OutputStream을 통해 전송
 	        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 	        String sb = "grant_type=authorization_code" +
-	                "&client_id=REST_API_KEY 입력" + // REST_API_KEY
-	                "&redirect_uri=http://localhost:8080/app/login/kakao" + // REDIRECT_URI
+	                "&client_id=" +  client_id +// REST_API_KEY
+	                "&redirect_uri=" + redirect_uri + // REDIRECT_URI
 	                "&code=" + code;
 	        bufferedWriter.write(sb);
 	        bufferedWriter.flush();
 
 	        int responseCode = conn.getResponseCode(); // 200이라면 성공
-	        System.out.println("responseCode : " + responseCode);
+	        System.out.println("getToken responseCode : " + responseCode);
 
 	        // 요청을 통해 얻은 데이터를 InputStreamReader을 통해 읽어 오기
 	        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -64,6 +71,7 @@ public class KakaoService {
 
 	        accessToken = element.getAsJsonObject().get("access_token").getAsString();
 	        refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
+	        System.out.println("accessToken : " + refreshToken);
 
 	        bufferedReader.close();
 	        bufferedWriter.close();
@@ -88,6 +96,7 @@ public class KakaoService {
 	        conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
 	        int responseCode = conn.getResponseCode();
+	        System.out.println("userInfo response body : " +  responseCode);
 
 	        // 요청을 통해 얻은 데이터를 InputStreamReader을 통해 읽어 오기
 	        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -97,7 +106,7 @@ public class KakaoService {
 	        while ((line = br.readLine()) != null) {
 	            result += line;
 	        }
-	        System.out.println("response body : " + result);
+	        System.out.println("result : " + result);
 
 	        Gson gson = new Gson();
             JsonElement element = gson.fromJson(result, JsonElement.class); // string을 jsonElement로 변환
@@ -107,7 +116,10 @@ public class KakaoService {
 
 	        // String nickname = properties.getAsJsonObject().get("nickname").getAsString();
 	        String email = kakaoAccount.getAsJsonObject().get("email").getAsString();
-	        String profileImagePath = kakaoAccount.getAsJsonObject().get("profile_image_url").getAsString();
+	        System.out.println("email : " + email);
+	        JsonElement profile = kakaoAccount.getAsJsonObject().get("profile");
+	        String profileImagePath = profile.getAsJsonObject().get("profile_image_url").getAsString();
+	        System.out.println("profileImagePath : " + profileImagePath);
 	        
 	        // userInfo.put("nickname", nickname);
 	        userInfo.put("email", email);

@@ -23,5 +23,5 @@ mybatis:
   mapper-locations: mappers/*Mapper.xml
 
 kakao:
-  client_id: d304944413fee880749e05c9f19c5e2f
-  redirect_uri: http://localhost:8080/budgetBook/kakao/login
+  client_id: ${kakao.clientId}
+  redirect_uri: ${kakao.redirectUri}
