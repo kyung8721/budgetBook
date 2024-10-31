@@ -2,6 +2,8 @@ package com.budgetBook.user;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,22 @@ public class UserRestController {
 			, @RequestParam("email") String email
 			, @RequestParam(value = "snsLogin", required = false) String snsLogin
 			, @RequestParam(value = "profileImagePath", required = false) String profileImagePath) {
+		
+		// 이메일 정규식 패턴
+		Pattern emailPattern = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\." +
+		        "[a-zA-Z0-9_+&*-]+)*@" +
+		        "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+		        "A-Z]{2,7}$");
+		
+		// 이메일 패턴 확인
+		Matcher emailMatcher = emailPattern.matcher(email);
+		
+		if(!emailMatcher.find()) {
+			// 이메일 형식이 아니라면
+			Map<String, String> middelResultMap = new HashMap<>();
+			middelResultMap.put("result", "fail");
+			middelResultMap.put("emailPattern", "이메일 형식에 맞게 작성해주세요.");
+		}
 		
 		User user = User.builder()
 				.loginId(loginId)

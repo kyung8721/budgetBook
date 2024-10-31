@@ -165,6 +165,13 @@
 			$("#emailDuplicateBtn").on("click", function(){
 				let email = $("#email").val();
 				
+				const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+
+				if(!regEmail.test(email)) {
+				    alert('이메일 형식에 따라 정확히 입력해주세요');
+				    return;
+				}
+				
 				$.ajax({
 					type : "get"
 					, url : "/budgetBook/user/join/email-check"
@@ -212,6 +219,14 @@
     				return ;
     			}
     			
+    			// 이메일 형식 확인
+    			const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+
+				if(!regEmail.test(email)) {
+				    alert('이메일 형식에 따라 정확히 입력해주세요');
+				    return;
+				}
+    			
     			// 중복 체크 - 아이디
     			if(!checkDuplicateLoginId){
     				alert("아이디 중복을 확인하세요");
@@ -248,6 +263,9 @@
                     		location.href = "/budgetBook/user/login-view"
                     	}else{
                     		alert("회원가입 실패!")
+                    		if(data.emailPattern != null){
+                    			alert(data.emailPattern); // "이메일 형식에 맞게 작성해주세요."
+                    		}
                     	}
                     }
     				, error : function(){

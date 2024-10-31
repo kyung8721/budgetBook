@@ -23,7 +23,7 @@
     		<div class = "d-flex pl-2 pt-4 pb-4 align-items-center">
     			<div class = "col-3">아이디</div>
     			<div th:text="${user.loginId}">sfqw_269</div>
-    			<button type = "button" class="btn btn-outline-dark ml-3">수정</button>
+    			<button th:if="${user.snsLogin == null}" type = "button" class="btn btn-outline-dark ml-3">수정</button>
     		</div>
     		
     		<hr style = "height : 1px; background-color : #c0c0c0; border : 0; margin : 0;">
@@ -31,7 +31,7 @@
     		<!-- 비밀번호 수정 -->
     		<div class = "d-flex pl-2 pt-4 pb-4 align-items-center">
     			<div class = "col-3">비밀번호</div>
-    			<button type = "button" class="btn btn-outline-dark ml-3">수정</button>
+    			<button th:if="${user.snsLogin == null}"  type = "button" class="btn btn-outline-dark ml-3">수정</button>
     		</div>
     		
     		<hr style = "height : 1px; background-color : #c0c0c0; border : 0; margin : 0;">
