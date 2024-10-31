@@ -52,6 +52,9 @@ dependencies {
 	
 	//json
 	implementation 'com.google.code.gson:gson:2.11.0'
+	
+	// 이메일로 인증번호 보내기
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.0.5'
 }
 
 tasks.named('test') {

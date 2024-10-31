@@ -163,6 +163,38 @@ public class UserService {
 		
 	}
 	
+	// 이메일로 로그인 아이디 검색
+	public User findLoginIdByEmail(String email) {
+		Optional<User> optionalUser =  userRepository.findByEmail(email);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			return user;
+		}else {
+			return null;
+		}
+	}
+	
+	// 아이디로 비밀번호 검색
+	public User findPasswordByLoginId(String LoginId) {
+		Optional<User> optionalUser =  userRepository.findByLoginId(LoginId);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			if(user.getSnsLogin() != null) {
+				// sns 로그인이면 그대로 user 리턴
+				return user;
+			}else {
+				// 비밀번호 재 설정 후 user 리턴
+			}
+		}else {
+			// user가 없으면 null 리턴
+			return null;
+		}
+		
+		
+	}
+	
 	// 프로필 이미지 저장
 	public String profileImageSave(int userId, MultipartFile img) {
 		String urlPath = FileManager.saveFile(userId, img);

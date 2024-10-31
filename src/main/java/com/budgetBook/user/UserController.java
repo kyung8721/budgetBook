@@ -66,5 +66,19 @@ public class UserController {
 		return "redirect:/budgetBook/user/login-view";
 	}
 	
+	// 아이디 찾기 페이지
+	@GetMapping("/findId-view")
+	public String findIdView() {
+		
+		return "/user/findId";
+	}
+	
+	// 비밀번호 찾기 페이지
+	@GetMapping("/findPassword-view")
+	public String findPasswordView() {
+		
+		return "/user/findPassword";
+	}
+	
 	
 }
