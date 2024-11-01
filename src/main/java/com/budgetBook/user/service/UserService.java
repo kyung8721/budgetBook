@@ -176,8 +176,8 @@ public class UserService {
 	}
 	
 	// 비밀번호 랜덤으로 변경
-	public User randomPassword(int userId) {
-		Optional<User> optionalUser =  userRepository.findById(userId);
+	public String randomPassword(String loginId) {
+		Optional<User> optionalUser =  userRepository.findByLoginId(loginId);
 		User user = optionalUser.orElse(null);
 		
 		if(user != null) {
@@ -187,6 +187,7 @@ public class UserService {
 			String salt = CreateSalt.CreateSaltToString();
 			// 랜덤 비밀번호 설정
 			String newPassword = CreateSalt.CreateSaltToString();
+			HashingEncoder encoder = new SHA256HashingEncoder();
 			String encryptPassword = encoder.encode(newPassword + salt);
 			
 			
@@ -195,13 +196,15 @@ public class UserService {
 			// salt DB에 저장
 			user.setSalt(salt);
 			
-			return userRepository.save(user);
+			// 유저 업데이트
+			userRepository.save(user);
+			
+			// 비밀번호 리턴
+			return newPassword;
 		}else {
 			// user가 없으면 null 리턴
 			return null;
 		}
-		
-		
 	}
 	
 	// 프로필 이미지 저장

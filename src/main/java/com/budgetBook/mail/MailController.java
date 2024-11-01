@@ -9,17 +9,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.budgetBook.mail.service.MailService;
+import com.budgetBook.user.service.UserService;
 
 @RestController
 @RequestMapping("/budgetBook/user/mail")
 public class MailController {
 	
 	private MailService mailService;
+	private UserService userService;
 	
-	public MailController(MailService mailService) {
+	public MailController(MailService mailService,UserService userService) {
 		this.mailService = mailService;
+		this.userService = userService;
 	}
 	
+	// 메일 전송
 	@GetMapping("/send")
 	public String emailSend(@RequestParam("mail")String mail) {
 		int number = mailService.sendMail(mail);
@@ -28,6 +32,7 @@ public class MailController {
 		return num;
 	}
 	
+	// 인증번호 확인
 	@GetMapping("/check")
 	public Map<String, String> numberCheck(String loginId, String number){
 		
@@ -37,6 +42,24 @@ public class MailController {
 		
 		if(result) {
 			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 인증번호 확인 후 임시 비밀번호 생성
+	@GetMapping("/check/createNewPassword")
+	public Map<String, String> numberCheckAndCreateNewPassword(String loginId, String number){
+		
+		boolean result = mailService.checkNumber(loginId, number);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(result) {
+			String password = userService.randomPassword(loginId);
+			resultMap.put("password", password);
 		}else {
 			resultMap.put("result", "fail");
 		}

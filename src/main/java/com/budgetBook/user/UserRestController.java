@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.budgetBook.mail.service.MailService;
 import com.budgetBook.user.domain.Profile;
 import com.budgetBook.user.domain.User;
 import com.budgetBook.user.dto.UserDto;
@@ -27,9 +28,11 @@ import jakarta.servlet.http.HttpSession;
 public class UserRestController {
 	
 	private UserService userService;
+	private MailService mailService;
 	
-	UserRestController(UserService userService){
+	UserRestController(UserService userService, MailService mailService){
 		this.userService = userService;
+		this.mailService = mailService;
 	}
 	
 	// 회원가입
@@ -92,10 +95,6 @@ public class UserRestController {
 			resultMap.put("isDuplicate", "false"); // 사용자 없음
 		}else {
 			resultMap.put("isDuplicate", "true"); // 사용자 있음
-			if(user.getSnsLogin() != null) {
-				// sns로그인 시
-				resultMap.put("sns", user.getSnsLogin() + "로 로그인 하셨습니다.");
-			}
 		}
 		
 		return resultMap;
@@ -139,7 +138,7 @@ public class UserRestController {
 		return resultMap;
 	}
 	
-	// 아이디 찾기
+	// 아이디 찾기 - 이메일로
 	@PostMapping("/findId")
 	public Map<String, String> findId(@RequestParam("email")String email){
 		User user = userService.findLoginIdByEmail(email);
@@ -152,6 +151,35 @@ public class UserRestController {
 			resultMap.put("snsLogin", user.getSnsLogin());
 		}else {
 			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 로그인 아이디로 유저를 찾고 그 유저의 이메일로 인증번호 전송
+	public Map<String, String> findUserByLoginId(@RequestParam("loginId")String loginId){
+		User user = userService.findByLoginId(loginId);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(user == null) {
+			resultMap.put("isDuplicate", "false"); // 사용자 없음
+		}else {
+			resultMap.put("isDuplicate", "true"); // 사용자 있음
+			if(user.getSnsLogin() != null) {
+				// sns로그인 시
+				resultMap.put("sns", user.getSnsLogin() + "로 로그인 하셨습니다.");
+			}else {
+				String email = user.getEmail();
+				int num = mailService.sendMail(email);
+				if(num >= 0) {
+					// 인증번호 전송 성공
+					resultMap.put("result", "success");
+				}else {
+					// 인증번호 전송 실패
+					resultMap.put("result", "fail");
+				}
+			}
 		}
 		
 		return resultMap;

@@ -95,7 +95,12 @@ public class MailService {
     	if(diffMin >= 3) {
     		return false;
     	}else {
-    		return true;
+    		// 인증번호 확인
+    		if(saveNum.equals(number)) {
+    			return true;
+    		}else {
+    			return false;
+    		}
     	}
     	
     }
