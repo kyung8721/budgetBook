@@ -1,7 +1,16 @@
 package com.budgetBook.mail.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import com.budgetBook.mail.domain.CertificationNumber;
+import com.budgetBook.mail.repository.CertificationNumberRepository;
+import com.budgetBook.user.domain.User;
+import com.budgetBook.user.repository.UserRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,9 +20,13 @@ public class MailService {
 	private final JavaMailSender javaMailSender;
     private static final String senderEmail= "${spring.mail.username}";
     private static int number;
+    private CertificationNumberRepository certificationNumberRepository;
+    private UserRepository userRepository;
     
-    public MailService(JavaMailSender javaMailSender) {
+    public MailService(JavaMailSender javaMailSender, CertificationNumberRepository certificationNumberRepository, UserRepository userRepository) {
     	this.javaMailSender = javaMailSender;
+    	this.certificationNumberRepository = certificationNumberRepository;
+    	this.userRepository = userRepository;
     }
 
     // 랜덤 인증번호 생성
@@ -24,6 +37,14 @@ public class MailService {
     // 메일 내용 및 설정 생성
     public MimeMessage CreateMail(String mail){
         createNumber(); // 인증번호 생성
+        // 인증번호 저장
+        CertificationNumber saveNumber = CertificationNumber.builder()
+        		.email(mail)
+        		.number(Integer.toString(number))
+        		.build();
+        certificationNumberRepository.save(saveNumber);
+        
+        // 이메일 생성
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
@@ -48,5 +69,34 @@ public class MailService {
         javaMailSender.send(message);
 
         return number;
+    }
+    
+    // 메일로 보낸 인증번호 확인
+    public boolean checkNumber(String LoginId, String number) {
+    	
+    	// 입력한 로그인 아이디로 이메일 찾기
+    	Optional<User> optionaluser = userRepository.findByLoginId(LoginId);
+    	User user = optionaluser.orElse(null);
+    	
+    	// 이메일로 인증번호 찾기
+    	Optional<CertificationNumber> optionalSaveNumber = certificationNumberRepository.findByEmail(user.getEmail());
+    	CertificationNumber saveNumber = optionalSaveNumber.orElse(null);
+    	
+    	// 저장된 인증번호
+    	String saveNum = saveNumber.getNumber();
+    	
+    	// 시간 확인
+    	LocalDateTime saveTime = saveNumber.getCreatedAt(); // 인증번호가 만들어진 시간
+    	LocalDateTime now = LocalDateTime.now(); // 현재 시간
+    	
+    	// 시간 차 확인
+    	Duration diff = Duration.between(saveTime, now);
+    	long diffMin = diff.toMinutes();
+    	if(diffMin >= 3) {
+    		return false;
+    	}else {
+    		return true;
+    	}
+    	
     }
 }

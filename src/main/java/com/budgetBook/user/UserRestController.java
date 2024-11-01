@@ -89,9 +89,13 @@ public class UserRestController {
 		Map<String, String> resultMap = new HashMap<>();
 		
 		if(user == null) {
-			resultMap.put("isDuplicate", "false");
+			resultMap.put("isDuplicate", "false"); // 사용자 없음
 		}else {
-			resultMap.put("isDuplicate", "true");
+			resultMap.put("isDuplicate", "true"); // 사용자 있음
+			if(user.getSnsLogin() != null) {
+				// sns로그인 시
+				resultMap.put("sns", user.getSnsLogin() + "로 로그인 하셨습니다.");
+			}
 		}
 		
 		return resultMap;
@@ -153,28 +157,6 @@ public class UserRestController {
 		return resultMap;
 	}
 	
-	// 비밀번호 찾기
-	@PostMapping("/findPassword")
-	public Map<String, String> findPassword(@RequestParam("LoginId")String LoginId){
-		User user = userService.findPasswordByLoginId(LoginId);
-		
-		Map<String, String> resultMap = new HashMap<>();
-		
-		if(user != null) {
-			if(user.getSnsLogin() != null) {
-				resultMap.put("result", "success");
-				resultMap.put("password", user.getSnsLogin() + "로 로그인 하셨습니다!");
-			}else {
-				resultMap.put("result", "success");
-				resultMap.put("password", user.getPassword());
-			}
-			
-		}else {
-			resultMap.put("result", "fail");
-		}
-		
-		return resultMap;
-	}
 	
 	// 프로필 사진 수정
 	@PutMapping("/profileImage")

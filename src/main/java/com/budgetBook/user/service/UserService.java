@@ -175,18 +175,27 @@ public class UserService {
 		}
 	}
 	
-	// 아이디로 비밀번호 검색
-	public User findPasswordByLoginId(String LoginId) {
-		Optional<User> optionalUser =  userRepository.findByLoginId(LoginId);
+	// 비밀번호 랜덤으로 변경
+	public User randomPassword(int userId) {
+		Optional<User> optionalUser =  userRepository.findById(userId);
 		User user = optionalUser.orElse(null);
 		
 		if(user != null) {
-			if(user.getSnsLogin() != null) {
-				// sns 로그인이면 그대로 user 리턴
-				return user;
-			}else {
-				// 비밀번호 재 설정 후 user 리턴
-			}
+			// 비밀번호 재 설정 후 user 리턴
+			
+			// salt 재 설정
+			String salt = CreateSalt.CreateSaltToString();
+			// 랜덤 비밀번호 설정
+			String newPassword = CreateSalt.CreateSaltToString();
+			String encryptPassword = encoder.encode(newPassword + salt);
+			
+			
+			// 비밀번호 user에 저장
+			user.setPassword(encryptPassword);
+			// salt DB에 저장
+			user.setSalt(salt);
+			
+			return userRepository.save(user);
 		}else {
 			// user가 없으면 null 리턴
 			return null;
