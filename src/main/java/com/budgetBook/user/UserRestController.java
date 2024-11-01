@@ -187,6 +187,7 @@ public class UserRestController {
 	}
 	
 	
+	
 	// 프로필 사진 수정
 	@PutMapping("/profileImage")
 	public Map<String, String> profileImage(

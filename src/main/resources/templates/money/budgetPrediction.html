@@ -19,7 +19,7 @@
 			<div class="ml-5 mr-5 ">
 				<div class="d-flex justify-content-between mb-2 row row-cols-3">
 					<!-- 반복 -->
-					<div class="col col-4 miniProgress mt-2" th:each = "category : ${categoryList}">
+					<div class="col col-4 miniProgress mt-2" th:each = "category : ${categoryProportionList}">
 						<div class="d-flex col-12 align-items-center">
 							<div class="col-5 d-flex justify-content-end" th:text="${category.categoryName}">생활비</div>
 							<div class="progress d-flex align-items-center justify-content-between" style="flex-grow: 1;">

@@ -41,7 +41,7 @@ public class MoneyController {
 		
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
 		// 카테고리
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 1, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), "지출");
 		
 		// 자산
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
@@ -244,6 +244,7 @@ public class MoneyController {
 		model.addAttribute("user", userDto);
 		
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
+		List<CategoryDto> categoryProportionList = moneyService.callCategoryDtoByUserIdAndRealTimePredictionAndDate(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"), "All");
 		
 		// 리스트 초기화
 		List<CategoryDto> categoryDtoList;
@@ -274,6 +275,7 @@ public class MoneyController {
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
+		model.addAttribute("categoryProportionList", categoryProportionList);
 		model.addAttribute("allProportion", allProportionCategory);
 		
 		return "money/budgetPrediction";
