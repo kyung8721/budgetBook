@@ -71,7 +71,7 @@ public class MailService {
         return number;
     }
     
-    // 메일로 보낸 인증번호 확인
+    // 메일로 보낸 인증번호 확인 - 기존 사용자의 경우
     public boolean checkNumber(String LoginId, String number) {
     	
     	// 입력한 로그인 아이디로 이메일 찾기
@@ -80,6 +80,36 @@ public class MailService {
     	
     	// 이메일로 인증번호 찾기
     	Optional<CertificationNumber> optionalSaveNumber = certificationNumberRepository.findByEmail(user.getEmail());
+    	CertificationNumber saveNumber = optionalSaveNumber.orElse(null);
+    	
+    	// 저장된 인증번호
+    	String saveNum = saveNumber.getNumber();
+    	
+    	// 시간 확인
+    	LocalDateTime saveTime = saveNumber.getCreatedAt(); // 인증번호가 만들어진 시간
+    	LocalDateTime now = LocalDateTime.now(); // 현재 시간
+    	
+    	// 시간 차 확인
+    	Duration diff = Duration.between(saveTime, now);
+    	long diffMin = diff.toMinutes();
+    	if(diffMin >= 3) {
+    		return false;
+    	}else {
+    		// 인증번호 확인
+    		if(saveNum.equals(number)) {
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}
+    	
+    }
+    
+    // 메일로 보낸 인증번호 확인 - 사용자 가입 시
+    public boolean checkNumberNewUser(String email, String number) {
+    	
+    	// 이메일로 인증번호 찾기
+    	Optional<CertificationNumber> optionalSaveNumber = certificationNumberRepository.findByEmail(email);
     	CertificationNumber saveNumber = optionalSaveNumber.orElse(null);
     	
     	// 저장된 인증번호

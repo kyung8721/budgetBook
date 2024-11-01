@@ -25,18 +25,26 @@ public class MailController {
 	
 	// 메일 전송
 	@GetMapping("/send")
-	public String emailSend(@RequestParam("mail")String mail) {
+	public Map<String, String> emailSend(@RequestParam("mail")String mail) {
 		int number = mailService.sendMail(mail);
 		String num = Integer.toString(number);
 		
-		return num;
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(num != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
 	}
 	
-	// 인증번호 확인
+	// 이메일로 인증번호 확인
 	@GetMapping("/check")
-	public Map<String, String> numberCheck(String loginId, String number){
+	public Map<String, String> numberCheck(String email, String number){
 		
-		boolean result = mailService.checkNumber(loginId, number);
+		boolean result = mailService.checkNumberNewUser(email, number);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		

@@ -157,6 +157,7 @@ public class UserRestController {
 	}
 	
 	// 로그인 아이디로 유저를 찾고 그 유저의 이메일로 인증번호 전송
+	@GetMapping("/findUser/loginId")
 	public Map<String, String> findUserByLoginId(@RequestParam("loginId")String loginId){
 		User user = userService.findByLoginId(loginId);
 		
