@@ -12,6 +12,7 @@
 				<div class="dropstart">
 					<div class="profileSection bg-secondary" data-toggle="dropdown">
 						<img th:src="${user.profileImagePath}" class="profileImage d-flex justify-content-center align-items-center">
+						<img th:if="${user.profileImagePath == null}" src = "https://cdn.pixabay.com/photo/2016/11/14/17/39/person-1824144_1280.png" class="profileImage d-flex justify-content-center align-items-center">
 					</div>
 					<ul class="dropdown-menu">
 					    <li><a class="dropdown-item d-flex justify-content-center align-items-center" href="/budgetBook/user/profile-view">프로필 수정</a></li>

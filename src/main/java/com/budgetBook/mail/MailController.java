@@ -42,7 +42,7 @@ public class MailController {
 	
 	// 이메일로 인증번호 확인
 	@GetMapping("/check")
-	public Map<String, String> numberCheck(String email, String number){
+	public Map<String, String> numberCheck(@RequestParam("mail")String email, @RequestParam("number")String number){
 		
 		boolean result = mailService.checkNumberNewUser(email, number);
 		
@@ -59,7 +59,7 @@ public class MailController {
 	
 	// 인증번호 확인 후 임시 비밀번호 생성
 	@GetMapping("/check/createNewPassword")
-	public Map<String, String> numberCheckAndCreateNewPassword(String loginId, String number){
+	public Map<String, String> numberCheckAndCreateNewPassword(@RequestParam("loginId")String loginId, @RequestParam("number")String number){
 		
 		boolean result = mailService.checkNumber(loginId, number);
 		
@@ -67,6 +67,7 @@ public class MailController {
 		
 		if(result) {
 			String password = userService.randomPassword(loginId);
+			resultMap.put("result", "success");
 			resultMap.put("password", password);
 		}else {
 			resultMap.put("result", "fail");

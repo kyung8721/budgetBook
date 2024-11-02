@@ -37,11 +37,20 @@ public class MailService {
     // 메일 내용 및 설정 생성
     public MimeMessage CreateMail(String mail){
         createNumber(); // 인증번호 생성
-        // 인증번호 저장
-        CertificationNumber saveNumber = CertificationNumber.builder()
-        		.email(mail)
-        		.number(Integer.toString(number))
-        		.build();
+        
+        Optional<CertificationNumber> optionalSaveNumber = certificationNumberRepository.findByEmail(mail);
+        CertificationNumber saveNumber = optionalSaveNumber.orElse(null);
+        
+        if(saveNumber == null) {
+        	// 인증번호 저장
+            saveNumber = CertificationNumber.builder()
+            		.email(mail)
+            		.number(Integer.toString(number))
+            		.build();
+        }else {
+        	saveNumber.setNumber(Integer.toString(number));
+        }
+        
         certificationNumberRepository.save(saveNumber);
         
         // 이메일 생성
@@ -127,6 +136,7 @@ public class MailService {
     	}else {
     		// 인증번호 확인
     		if(saveNum.equals(number)) {
+    			certificationNumberRepository.deleteById(saveNumber.getId()); // 인증번호 삭제
     			return true;
     		}else {
     			return false;

@@ -129,18 +129,9 @@ public class UserService {
 		User user = optionalUser.orElse(null);
 		
 		if(user != null) {
-			// 사용자가 있으면
-			// 개인 salt 불러오기
-			String salt = user.getSalt();
-			// 입력받은 비밀번호+salt 암호화
-			HashingEncoder encoder = new SHA256HashingEncoder();
-			String encryptPassword = encoder.encode(password + salt);
+			boolean passwordCheck = passwordCheckService(user.getId(), password);
 			
-			// DB에 저장된 비밀번호 소환
-			String DBPassword = user.getPassword();
-			
-			// 비밀번호끼리 비교
-			if(encryptPassword.equals(DBPassword)) {
+			if(passwordCheck) {
 				// 비밀번호 동일 : UserDto 리턴
 				Profile profile = profileRepository.findByUserId(user.getId());
 				UserDto userDto = UserDto.builder()
@@ -153,14 +144,42 @@ public class UserService {
 						.build();
 				return userDto;
 			}else {
-				// 비밀번호 일치 안 함
 				return null;
 			}
+			
 		}else {
-			// 사용자가 없으면
 			return null;
 		}
 		
+	}
+	
+	// 비밀번호 확인
+	public boolean passwordCheckService(int userId, String password) {
+		Optional<User> optionalUser = userRepository.findById(userId);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			// 사용자가 있으면
+			// 개인 salt 불러오기
+			String salt = user.getSalt();
+			// 입력받은 비밀번호+salt 암호화
+			HashingEncoder encoder = new SHA256HashingEncoder();
+			String encryptPassword = encoder.encode(password + salt);
+			
+			// DB에 저장된 비밀번호 소환
+			String DBPassword = user.getPassword();
+			
+			// 비밀번호끼리 비교
+			if(encryptPassword.equals(DBPassword)) {
+				return true;
+			}else {
+				// 비밀번호 일치 안 함
+				return false;
+			}
+		}else {
+			// 사용자가 없으면
+			return false;
+		}
 	}
 	
 	// 이메일로 로그인 아이디 검색
@@ -201,6 +220,34 @@ public class UserService {
 			
 			// 비밀번호 리턴
 			return newPassword;
+		}else {
+			// user가 없으면 null 리턴
+			return null;
+		}
+	}
+	
+	// 비밀번호 변경
+	public User changePassword(int userId, String password) {
+		Optional<User> optionalUser =  userRepository.findById(userId);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			// 비밀번호 재 설정 후 user 리턴
+			// salt 재 설정
+			String salt = CreateSalt.CreateSaltToString();
+			// 비밀번호 암호화
+			HashingEncoder encoder = new SHA256HashingEncoder();
+			String encryptPassword = encoder.encode(password + salt);
+			
+			
+			// 비밀번호 user에 저장
+			user.setPassword(encryptPassword);
+			// salt DB에 저장
+			user.setSalt(salt);
+			
+			// 유저 업데이트
+			return userRepository.save(user);
+			
 		}else {
 			// user가 없으면 null 리턴
 			return null;

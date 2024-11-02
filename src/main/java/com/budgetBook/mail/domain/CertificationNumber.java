@@ -3,6 +3,7 @@ package com.budgetBook.mail.domain;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +33,6 @@ public class CertificationNumber {
 	private String number;
 	
 	@Column(name="createdAt")
-	@CreationTimestamp
+	@UpdateTimestamp
 	private LocalDateTime createdAt;
 }

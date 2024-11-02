@@ -138,6 +138,46 @@ public class UserRestController {
 		return resultMap;
 	}
 	
+	// 비밀번호 확인
+	@PostMapping("/passwordCheck")
+	public Map<String, String> findPassword(
+			@RequestParam("password") String password
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		boolean result = userService.passwordCheckService(userId, password);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 비밀번호 변경
+	@PostMapping("/passwordChange")
+	public Map<String, String> changePassword(
+			@RequestParam("password") String password
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		User user = userService.changePassword(userId, password);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(user != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
 	// 아이디 찾기 - 이메일로
 	@PostMapping("/findId")
 	public Map<String, String> findId(@RequestParam("email")String email){
