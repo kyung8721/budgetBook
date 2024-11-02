@@ -159,13 +159,33 @@ public class UserRestController {
 	}
 	
 	// 비밀번호 변경
-	@PostMapping("/passwordChange")
+	@PutMapping("/passwordChange")
 	public Map<String, String> changePassword(
 			@RequestParam("password") String password
 			, HttpSession session){
 		int userId = (Integer)session.getAttribute("userId");
 		
 		User user = userService.changePassword(userId, password);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(user != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 아이디 변경
+	@PutMapping("/loginIdChange")
+	public Map<String, String> changeLoginId(
+			@RequestParam("loginId") String loginId
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		User user = userService.changeLoginId(userId, loginId);
 		
 		Map<String, String> resultMap = new HashMap<>();
 		

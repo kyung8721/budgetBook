@@ -23,7 +23,7 @@
     		<div class = "d-flex pl-2 pt-4 pb-4 align-items-center">
     			<div class = "col-3">아이디</div>
     			<div th:text="${user.loginId}">sfqw_269</div>
-    			<button th:if="${user.snsLogin == null}" type = "button" class="btn btn-outline-dark ml-3">수정</button>
+    			<button id="idChangeBtn" th:if="${user.snsLogin == null}" type = "button" class="btn btn-outline-dark ml-3">수정</button>
     		</div>
     		
     		<hr style = "height : 1px; background-color : #c0c0c0; border : 0; margin : 0;">
@@ -134,6 +134,32 @@
 		  </div>
 		</div>
 		
+		<!-- 아이디 수정 모달 -->
+		<div class="modal fade" id="idChangeModal"aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content">
+		      <div class="modal-body">
+		      	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+			      <div>
+			      	<label class="mt-3">새 아이디</label>
+					<div class="d-flex">
+						<input type="text" placeholder="새 아이디를 입력하세요" class="form-control" width="100%" id="idInput">
+						<button type="button" class="btn btn-outline-secondary col-3 ml-2" id="idDuplicateBtn">중복 확인</button>
+					</div>
+					<div id= "unavailableId" class="d-none"><span class="text-danger">사용 불가능한 아이디 입니다.</span></div>
+					<div id="vailableId" class = "d-none"><span class="text-success">사용 가능한 아이디 입니다.</span></div>
+					<div class="d-flex justify-content-end">
+						<button type="button" class="btn btn-primary mt-2" id="idChangeCheckBtn">확인</button>
+					</div>
+					
+			      </div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
     
     </section>
     
@@ -141,13 +167,102 @@
     
     	$(document).ready(function(){
     		
+    		// 아이디 변경
+    		$("#idChangeCheckBtn").on("click", function(){
+    			let loginId = $("#idInput").val();
+    			
+    			// 유효성 검사
+    			if(loginId == ""){
+    				alert("아이디를 입력해주세요!");
+    				return;
+    			};
+    			
+    			// 중복 체크 - 아이디
+    			if(!checkDuplicateLoginId){
+    				alert("아이디 중복을 확인하세요");
+    				return ;
+    			}
+    			if(isDuplicateLoginId == true){
+    				alert("아이디가 중복입니다");
+    				return ;
+    			}
+    			
+    			$.ajax({
+    				type : "put"
+    				, url : "/budgetBook/user/loginIdChange"
+    				, data : {"loginId" : loginId}
+    				, success : function(data){
+    					if(data.result == "success"){
+    						location.reload();
+    					}else{
+    						alert("아이디 변경 실패!");
+    					}
+    				}
+    				, error : function(){
+    					alert("아이디 변경 에러!");
+    				}
+    			});
+    			
+    		});
+    		
+    		// 전역변수
+			var checkDuplicateLoginId = false;
+			var idDuplicateLoginId = false;
+			
+			// 로그인 아이디 입력이 바뀌면 중복체크 초기화
+			$("#idInput").on("input", function(){
+				var checkDuplicateLoginId = false;
+				var idDuplicateLoginId = false;
+				
+				$("#vailableId").addClass("d-none");
+				$("#unavailableId").addClass("d-none");
+			}); // 로그인 아이디 입력이 바뀌면 중복체크 초기화 종료
+    		
+    		// 중복 확인
+    		$("#idDuplicateBtn").on("click", function(){
+    			let loginId = $("#idInput").val();
+    			
+    			// 유효성 검사
+    			if(loginId == ""){
+    				alert("아이디를 입력해주세요!");
+    				return;
+    			};
+    			
+    			$.ajax({
+    				type : "get"
+   					, url : "/budgetBook/user/join/loginId-check"
+   					, data : {"loginId" : loginId}
+   					, success : function(data){
+   						
+   						checkDuplicateLoginId = true;
+   	                	isDuplicateLoginId = data.isDuplicate;
+   	                	
+   						if(data.isDuplicate == "false"){
+   							$("#vailableId").removeClass("d-none");
+   							$("#unavailableId").addClass("d-none");
+   						}else{
+   							$("#vailableId").addClass("d-none");
+   							$("#unavailableId").removeClass("d-none");
+   						}
+   					}
+   					, error : function(){
+   						alert("아이디 중복검사 에러!")
+   					}
+    			});
+    		});
+    		
+    		// 아이디 수정 버튼 클릭
+    		$("#idChangeBtn").on("click", function(){
+    			$("#idChangeModal").modal("show");
+    		});
+    		
     		// 비밀번호 변경 버튼 클릭
     		$("#newPasswordChangeBtn").on("click", function(){
     			let password = $("#newPassword").val();
     			
     			
     			$.ajax({
-    				type : "post"
+    				type : "put"
     				, url : "/budgetBook/user/passwordChange"
     				, data : {"password" : password}
     				, success : function(data){

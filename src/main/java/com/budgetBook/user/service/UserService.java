@@ -254,6 +254,23 @@ public class UserService {
 		}
 	}
 	
+	// 아이디 변경
+	public User changeLoginId(int userId, String loginId) {
+		Optional<User> optionalUser =  userRepository.findById(userId);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			user.setLoginId(loginId);
+			
+			// 유저 업데이트
+			return userRepository.save(user);
+			
+		}else {
+			// user가 없으면 null 리턴
+			return null;
+		}
+	}
+	
 	// 프로필 이미지 저장
 	public String profileImageSave(int userId, MultipartFile img) {
 		String urlPath = FileManager.saveFile(userId, img);
