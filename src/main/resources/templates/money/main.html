@@ -45,7 +45,8 @@
 	    			<div th:unless = "${allProportion.proportion < 100.0}" class="pl-2 progress-bar bg-danger" th:style="|width: ${allProportion.proportion}%; height : 100%;|" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" th:text="${#numbers.formatInteger(allProportion.breakdownSum, 3, 'COMMA')}">사용금액</div>
 	    			
 	    		</div>
-	    		<div class="ml-2" th:text="|${#numbers.formatDecimal(allProportion.proportion,1,1)}%|"></div>
+	    		<div class="ml-2" th:if="${#numbers.formatDecimal(allProportion.proportion,1,1) == 'NaN'}">0%</div> <!-- 0%일 경우 -->
+	    		<div class="ml-2" th:unless="${#numbers.formatDecimal(allProportion.proportion,1,1) == 'NaN'}" th:text="|${#numbers.formatDecimal(allProportion.proportion,1,1)}%|"></div> <!--  0%가 아닐 경우 -->
 			</div>
 			<div class="ml-5 mr-5 ">
 				<div class="d-flex justify-content-between mb-2 row row-cols-3">
@@ -237,7 +238,6 @@
     
     <script layout:fragment="script">
     	$(document).ready(function(){
-    		
     		
     		// 예측 내역 및 실제 사용 내역 삭제 버튼 클릭
   			$("[id^='breakdownDelete']").on("click", function(){

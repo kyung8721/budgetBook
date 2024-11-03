@@ -898,9 +898,6 @@ public class MoneyService {
 			
 			startDay = yearMonthlocaldate.withDayOfMonth(1).atStartOfDay();
 			lastDay = yearMonthlocaldate.withDayOfMonth(yearMonthlocaldate.lengthOfMonth()).atTime(LocalTime.MAX);
-
-			startDay = yearMonthlocaldate.withDayOfMonth(1).atStartOfDay();
-			lastDay = yearMonthlocaldate.withDayOfMonth(yearMonthlocaldate.lengthOfMonth()).atTime(LocalTime.MAX);
 		}
 		
 		Map<String, LocalDateTime> distinguishMonthMap = new HashMap<>();

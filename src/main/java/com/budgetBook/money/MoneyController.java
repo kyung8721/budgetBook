@@ -1,5 +1,6 @@
 package com.budgetBook.money;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +158,7 @@ public class MoneyController {
 	// 내역 페이지
 	@GetMapping("/breakdown-view")
 	public String breakdownView(HttpSession session, Model model
-			, @RequestParam(value = "yearMonth", required = false)String yearMonth  // yearMonth : 20241001
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth  // yearMonth : 202410
 			, @RequestParam(value = "inputKeyword", required = false)String inputKeyword) {
 		int userId = (Integer)session.getAttribute("userId");
 		Map<String, LocalDateTime> distinguishMonthMap = moneyService.distinguishMonth(userId, yearMonth); // 월 구별
@@ -180,11 +181,32 @@ public class MoneyController {
 		int outGoingSum = moneyService.outGoingSumService(userId, yearMonth, 1);
 		int difference = incomeSum - outGoingSum;
 		
+		// 날짜
+		if(yearMonth == null) {
+			model.addAttribute("year", LocalDate.now().getYear()); // 현재 년도
+			if(LocalDate.now().getMonthValue() < 10) {
+				model.addAttribute("month", "0" + LocalDate.now().getMonthValue()); // 앞에 0 붙여주기
+			}else {
+				model.addAttribute("month", LocalDate.now().getMonthValue());
+			}
+		}else {
+			model.addAttribute("year", yearMonth.substring(0, 4));
+			model.addAttribute("month", yearMonth.substring(4));
+		}
+		
+		// 연도 현재 날짜 기준으로 앞 뒤 5년 저장
+		List<Integer> modelYear = new ArrayList<>();
+		int nowYear = LocalDate.now().getYear();
+		for(int i = -5 ; i <= 5 ; i++) {
+			modelYear.add(nowYear + i);
+		}
+		
 		model.addAttribute("user", userDto);
 		model.addAttribute("breakdownList", breakdownDtoList);
 		model.addAttribute("incomeSum", incomeSum);
 		model.addAttribute("outGoingSum", outGoingSum);
 		model.addAttribute("difference", difference);
+		model.addAttribute("modelYear", modelYear);
 		
 		return "money/detailView";
 	}

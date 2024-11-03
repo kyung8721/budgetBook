@@ -195,3 +195,11 @@ input:focus{
 	border-radius : 13px;
 	outline : solid 1px #c0c0c0;
 }
+
+select{
+	border : none;
+	border-radius : 0;
+	-webkit-appearance:none; /* 크롬 화살표 없애기 */
+    -moz-appearance:none; /* 파이어폭스 화살표 없애기 */
+    appearance:none; /* 화살표 없애기 */
+}
