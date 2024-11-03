@@ -38,7 +38,11 @@ public class UserController {
 	}
 	
 	@GetMapping("/join-view")
-	public String joinView() {
+	public String joinView(Model model) {
+		
+		String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+        model.addAttribute("kakaoLocation", location); // 카카오 로그인 버튼 클릭 시 보여줄 화면
+        
 		return "/user/join";
 	}
 	

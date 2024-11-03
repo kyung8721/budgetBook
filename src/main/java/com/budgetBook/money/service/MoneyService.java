@@ -955,11 +955,10 @@ public class MoneyService {
 	}
 	
 	// 차트 데이터 받아오기
-	public List<Map<String, Object>> chartDataService(Integer categoryId, int userId, String classification){
+	public List<Map<String, Object>> chartDataService(Integer categoryId, int userId, String classification, String yearMonth){
 		
 		List<Map<String, Object>> resultList = new ArrayList<>();
 		
-		String yearMonth = null;
 		Map<String, LocalDateTime> distinguishMonthMap = distinguishMonth(userId, yearMonth); // 월 구별
 		
 		if(categoryId == 0) {

@@ -248,13 +248,16 @@
   			$("#searchBreakdownBtn").on("click", function(){
   				let searchInput = $("#searchBreakdowntInput").val();
   				
+  				let h3Year = $("#h3Year").data("h3-year");
+  				let h3Month = $("#h3Month").data("h3-month");
+  				
   				// 유효성 검사
   				if(searchInput == ""){
   					alert("검색어를 입력하세요!");
   					return ;
   				}
   				
-  				location.href = "/budgetBook/money/budgetPrediction-view?breakdownInputKeyword=" + searchInput;
+  				location.href = "/budgetBook/money/budgetPrediction-view?yearMonth=" + h3Year + "" + h3Month + "&breakdownInputKeyword=" + searchInput;
   			});
     		
     		

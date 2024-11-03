@@ -7,9 +7,27 @@
     <section layout:fragment="mainContents" class="mainContents p-3">
     	<div class="d-flex align-items-center">
     		<!-- 월 -->
-   			<i class="bi bi-chevron-left"></i>
-   			<h3 class="ml-3 mr-3">10월</h3>
-   			<i class="bi bi-chevron-right"></i>
+   			<div class="ml-3 mr-3">
+   				<select class="h3" id="h3Year" th:data-h3-year="${year}">
+   					<option th:each=" mYear : ${modelYear}" th:text="${mYear}">2023</option>
+   				</select>
+   				<span class=" h3">년 </span>
+   				<select class=" h3" id="h3Month" th:data-h3-month="${month}">
+					<option>01</option>
+   					<option>02</option>
+   					<option>03</option>
+   					<option>04</option>
+   					<option>05</option>
+   					<option>06</option>
+   					<option>07</option>
+   					<option>08</option>
+   					<option>09</option>
+   					<option>10</option>
+   					<option>11</option>
+   					<option>12</option>
+   				</select>
+   				<span class="h3">월</span>
+			</div>
     		
     		<!-- 수입 / 지출 -->
     		<a href="/budgetBook/money/statics/income-view" class="ml-4 thisPageText">수입</a>
@@ -121,11 +139,13 @@
     		var categoryDataList = [];
     		var categoryNameList = [];
     		var categoryId = $("#categorySectionDiv").data("category-null-or-id");
+    		var chartYear = $("#h3Year").data("h3-year");
+			var chartMonth = $("#h3Month").data("h3-month");
     		
     		$.ajax({
     			type : "post"	
     			, url : "/budgetBook/money/chart/data"
-    			, data : {"categoryId" : categoryId, "classification" : "수입"}
+    			, data : {"categoryId" : categoryId, "classification" : "수입", "yearMonth" : chartYear + "" + chartMonth}
     			, async : false // 이걸 추가함으로서 변수에 값을 저장해서 전달할 수 있게 됨
     			, success: function(data){
     				if(data.result != null){
@@ -151,6 +171,29 @@
     			} 
     		});
     		
+    		// 연도
+  			let h3Year = $("#h3Year").data("h3-year");
+  			$("#h3Year option:contains("+ h3Year +")").prop("selected", true);
+  			
+  			// 월
+  			let h3Month = $("#h3Month").data("h3-month");
+  			$("#h3Month option:contains("+ h3Month +")").prop("selected", true);
+  			
+  			// 연도 변하면
+  			$("#h3Year").change(function(){
+  				let year = $("#h3Year").val();
+  				let month = $("#h3Month").val();
+  				
+  				location.href="/budgetBook/money/statics/income-view?yearMonth=" + year + month;
+  			});
+  			
+  			// 달이 변하면
+  			$("#h3Month").change(function(){
+  				let year = $("#h3Year").val();
+  				let month = $("#h3Month").val();
+  				
+  				location.href="/budgetBook/money/statics/income-view?yearMonth=" + year + month;
+  			});
     		
     		// 차트 데이터
     		var dataset = {

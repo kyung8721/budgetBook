@@ -158,13 +158,16 @@
   			$("#searchBreakdownBtn").on("click", function(){
   				let searchInput = $("#searchBreakdownInput").val();
   				
+  				let h3Year = $("#h3Year").data("h3-year");
+  				let h3Month = $("#h3Month").data("h3-month");
+  				
   				// 유효성 검사
   				if(searchInput == ""){
   					alert("검색어를 입력하세요!");
   					return ;
   				}
   				
-  				location.href = "/budgetBook/money/breakdown-view?inputKeyword=" + searchInput;
+  				location.href = "/budgetBook/money/breakdown-view?yearMonth=" + h3Year + "" + h3Month + "&inputKeyword=" + searchInput;
   			});
   			
     		// 내역추가 버튼 클릭

@@ -398,10 +398,11 @@ public class MoneyRestController {
 	@PostMapping("/chart/data")
 	public Map<String, List<Map<String, Object>>> chartData(HttpSession session
 			, @RequestParam("categoryId")Integer categoryId
-			, @RequestParam("classification")String classification){
+			, @RequestParam("classification")String classification
+			, @RequestParam(value = "yearMonth", required = false)String yearMonth){
 		int userId = (Integer)session.getAttribute("userId");
 		
-		List<Map<String, Object>> resultList = moneyService.chartDataService(categoryId, userId, classification);
+		List<Map<String, Object>> resultList = moneyService.chartDataService(categoryId, userId, classification, yearMonth);
 		
 		Map<String, List<Map<String, Object>>> resultMap = new HashMap<>();
 		if(resultList != null) {
