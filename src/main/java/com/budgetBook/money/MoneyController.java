@@ -290,6 +290,27 @@ public class MoneyController {
 			breakdownDtoList = moneyService.callBreakdownDtoByUserIdAndYearMonth(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
 		}
 		
+		// 날짜
+		if(yearMonth == null) {
+			model.addAttribute("year", LocalDate.now().getYear()); // 현재 년도
+			if(LocalDate.now().getMonthValue() < 10) {
+				model.addAttribute("month", "0" + LocalDate.now().getMonthValue()); // 앞에 0 붙여주기
+			}else {
+				model.addAttribute("month", LocalDate.now().getMonthValue());
+			}
+		}else {
+			model.addAttribute("year", yearMonth.substring(0, 4));
+			model.addAttribute("month", yearMonth.substring(4));
+		}
+		
+		// 연도 현재 날짜 기준으로 앞 뒤 5년 저장
+		List<Integer> modelYear = new ArrayList<>();
+		int nowYear = LocalDate.now().getYear();
+		for(int i = -5 ; i <= 5 ; i++) {
+			modelYear.add(nowYear + i);
+		}
+		model.addAttribute("modelYear", modelYear);
+		
 		
 		// 전체 예산 대비 내역 비율
 		Map<String, Float> allProportionCategory = moneyService.allProportion(userId, 2, distinguishMonthMap.get("startDay"), distinguishMonthMap.get("lastDay"));
