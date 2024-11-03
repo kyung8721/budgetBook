@@ -198,6 +198,26 @@ public class UserRestController {
 		return resultMap;
 	}
 	
+	// 이메일 변경
+	@PutMapping("/emailChange")
+	public Map<String, String> changeEmail(
+			@RequestParam("email") String email
+			, HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		User user = userService.changeEmail(userId, email);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		
+		if(user != null) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
 	// 아이디 찾기 - 이메일로
 	@PostMapping("/findId")
 	public Map<String, String> findId(@RequestParam("email")String email){

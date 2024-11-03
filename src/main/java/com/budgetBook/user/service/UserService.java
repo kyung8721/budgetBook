@@ -271,6 +271,23 @@ public class UserService {
 		}
 	}
 	
+	// 이메일 변경
+	public User changeEmail(int userId, String email) {
+		Optional<User> optionalUser =  userRepository.findById(userId);
+		User user = optionalUser.orElse(null);
+		
+		if(user != null) {
+			user.setEmail(email);
+			
+			// 유저 업데이트
+			return userRepository.save(user);
+			
+		}else {
+			// user가 없으면 null 리턴
+			return null;
+		}
+	}
+	
 	// 프로필 이미지 저장
 	public String profileImageSave(int userId, MultipartFile img) {
 		String urlPath = FileManager.saveFile(userId, img);
