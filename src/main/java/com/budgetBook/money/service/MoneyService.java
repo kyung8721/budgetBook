@@ -413,7 +413,7 @@ public class MoneyService {
 		// 내역 합계 - 수입은 더하고 지출은 빼고
 		int costSum = 0;
 		for(Breakdown i : breakdownList) {
-			if(i.getClassification() == "수입") {
+			if(i.getClassification().equals("수입")) {
 				// 수입
 				costSum += i.getCost();
 			}else {
