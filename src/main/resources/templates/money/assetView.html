@@ -55,7 +55,9 @@
     						</div>
     						
    						</td>
-    					<td class = "text-danger">이번 달이 끝나면 200,000원 감소할 예정이에요!</td>
+    					<td class = "text-danger" th:if="${assets.balancePrediction < 0}">이번 달이 끝나면 <span th:text="${assets.balancePrediction} * -1">200,000</span>원 감소할 예정이에요!</td>
+    					<td class = "text-success" th:if="${assets.balancePrediction > 0}">이번 달이 끝나면 <span th:text="${assets.balancePrediction}">200,000</span>원 증가할 예정이에요!</td>
+    					<td th:if="${assets.balancePrediction == 0}">이번 달이 끝나도 변함이 없을 예정이에요!</td>
     				</tr>
     				
     			</tbody>

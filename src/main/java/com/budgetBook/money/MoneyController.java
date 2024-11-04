@@ -370,7 +370,7 @@ public class MoneyController {
 			// 검색어가 있다면 해당 리스트 출력
 			assetsDtoList = moneyService.searchAssets(userId, inputKeyword);
 		}else {
-			assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+			assetsDtoList = moneyService.callAssetsDtoByUserIdAndYearMonthAndRTP(userId, null, 2);
 		}
 		
 		UserDto userDto = moneyService.callUserData(userId);

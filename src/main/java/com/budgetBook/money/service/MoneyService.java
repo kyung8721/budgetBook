@@ -319,6 +319,7 @@ public class MoneyService {
 		// 자산 차이 계산
 		String balanceDifference;
 		
+		// 지난 달과 비교
 		if(i.getLastBalance() != null) {
 			int intBalanceDifference = i.getBalance() - i.getLastBalance();
 			if(intBalanceDifference < 0) {
@@ -331,6 +332,7 @@ public class MoneyService {
 		}else {
 			balanceDifference = null;
 		}
+		
 		
 		AssetsDto assetsDto = AssetsDto.builder()
 				.id(i.getId())
@@ -360,8 +362,6 @@ public class MoneyService {
 	public List<AssetsDto> callAssetsDtoByUserId(int userId) {
 		List<Assets> assetsList = assetsRepository.findAllByUserId(userId);
 		
-		
-		
 		List<AssetsDto> assetsDtoList = new ArrayList<>();
 		if(assetsList != null) {
 			for(Assets i : assetsList) {
@@ -375,6 +375,53 @@ public class MoneyService {
 		}
 		
 		return assetsDtoList;
+	}
+	
+	// 자산 DTO UserId, yearMonth, realTimePrediction으로 불러오기
+	public List<AssetsDto> callAssetsDtoByUserIdAndYearMonthAndRTP(int userId, String yearMonth, int RTP) {
+		List<Assets> assetsList = assetsRepository.findAllByUserId(userId);
+		
+		List<AssetsDto> assetsDtoList = new ArrayList<>();
+		if(assetsList != null) {
+			for(Assets i : assetsList) {
+				// assets -> assetsDto
+				AssetsDto assetsDto = AssetsToDto(i);
+				// 내역 합계 추가
+				int costSum = sumOfCategory(i.getUserId(), yearMonth, i.getId(), RTP);
+				assetsDto.setBalancePrediction(costSum);
+				
+				// 리스트에 저장
+				assetsDtoList.add(assetsDto);
+			}
+			
+		}else {
+			assetsDtoList = null;
+		}
+		
+		return assetsDtoList;
+	}
+	
+	// 자산 별 합계 계산
+	public int sumOfCategory(int userId, String yearMonth, int assetsId, int RTP){
+		//// 선택된 달, 해당 자산Id에 해당하는 내역만 불러오기
+		// 선택된 달 날짜 불러오기
+		Map<String, LocalDateTime> month = distinguishMonth(userId, yearMonth);
+		
+		// 내역 불러오기
+		List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndAssetsIdAndRealTimePredictionAndDateBetween(userId, assetsId, RTP, month.get("startDay"), month.get("lastDay"));
+		
+		// 내역 합계 - 수입은 더하고 지출은 빼고
+		int costSum = 0;
+		for(Breakdown i : breakdownList) {
+			if(i.getClassification() == "수입") {
+				// 수입
+				costSum += i.getCost();
+			}else {
+				// 지출
+				costSum -= i.getCost();
+			}
+		}
+		return costSum;
 	}
 	
 	// 예산 카테고리 작성 및 수정
