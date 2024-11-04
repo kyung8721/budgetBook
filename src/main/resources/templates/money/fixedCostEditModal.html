@@ -37,10 +37,11 @@
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assets = "${fixedCost.assetsName}">
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button id="fixedCostAssetAddBtnLong" type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					자산 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostAssetAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 카테고리 -->
@@ -49,10 +50,11 @@
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}"  th:data-category = "${fixedCost.categoryName}" id="categorySelected">
       					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button id="fixedCostCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					카테고리 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostCategoryAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 세부 카테고리 -->
@@ -61,10 +63,11 @@
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected" th:data-detail-category = "">
       					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
-      				<button type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+      				<button id="fixedCostDetailCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
      					세부 카테고리 추가하기
      				</button>
+     				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostDetailCategoryAddBtn"></i>
 	      		</div>
 	      		
 	      		<!-- 내역명 -->
@@ -95,6 +98,39 @@
 	        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
 	      	</div>
 	      	
+	      	<!--세부 카테고리추가 Modal -->
+			<div class="modal fade" id="detailCategoryModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			    	<div class=" d-flex justify-content-end">
+			        </div>
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!--카테고리추가 Modal -->
+			<div class="modal fade" id="categoryModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			    	<div class=" d-flex justify-content-end">
+			        </div>
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+			<!-- 자산 추가 Modal -->
+			<div class="modal fade" id="assetModal"  aria-hidden="true">
+			  <div class="modal-dialog modal-dialog-centered">
+			    <div class="modal-content p-3">
+			      <div class="modal-body">
+			      </div>
+			    </div>
+			  </div>
+			</div>
 	      	
 	      	<script th:inline="javascript">
 	      		$(document).ready(function(){
@@ -154,6 +190,42 @@
 	      				$("#transferBtn").removeClass("btn-outline-secondary");
 	      				$("#transferBtn").addClass("btn-secondary");
 	      			}
+	      			
+	      			// 자산추가 버튼 클릭
+	        		$("#fixedCostAssetAddBtn").on("click", function(){
+	        			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+	        			$("#assetModal").modal("show");
+	        		});
+	      			
+	      			// 자산추가 긴 버전 버튼 클릭
+	        		$("#fixedCostAssetAddBtnLong").on("click", function(){
+	        			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+	        			$("#assetModal").modal("show");
+	        		});
+	      			
+	      			// 카테고리 추가
+	      			$("#fixedCostCategoryAddBtn").on("click", function(){
+	      				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+	        			$("#categoryModal").modal("show");
+	      			});  
+	      			
+	      			// 카테고리 추가 버튼 긴 버전 추가
+	      			$("#fixedCostCategoryAddBtnLong").on("click", function(){
+	      				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+	        			$("#categoryModal").modal("show");
+	      			}); 
+	      			
+	      			// 세부 카테고리추가 버튼 클릭
+	        		$("#fixedCostDetailCategoryAddBtn").on("click", function(){
+	        			$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+	        			$("#detailCategoryModal").modal("show");
+	        		});
+	      			
+	        		// 세부 카테고리추가 긴 버전 버튼 클릭
+	        		$("#fixedCostDetailCategoryAddBtnLong").on("click", function(){
+	        			$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+	        			$("#detailCategoryModal").modal("show");
+	        		});
 	      			
 	      			//// 삭제 버튼 클릭
 	      			$("#deleteBtn").on("click", function(){

@@ -31,7 +31,7 @@
 	      		</div>
 	      		
 	      		<!-- 카테고리 -->
-	      		<div class="d-flex align-items-center mt-3 modalText">
+	      		<div class="d-flex align-items-center mt-3 modalText" id="categorySectionDiv">
 	      			<div class="col-4">카테고리</div>
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
       					<option value="" selected disabled hidden>선택해주세요</option>
@@ -135,20 +135,44 @@
 	  					
 	  				});
 	      			
+	      			/* // 카테고리 추가 모달 닫히면 새로고침
+	      			$("#categoryModal").on("hidden.bs.modal", function(){
+	      				location.reload();
+	      			}); */
+	      			
+	      			
 	      			// 자산추가 버튼 클릭
-	        		$("#breakdownAssetAddBtn" || "#breakdownAssetAddBtnLong").on("click", function(){
+	        		$("#breakdownAssetAddBtn").on("click", function(){
+	        			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+	        			$("#assetModal").modal("show");
+	        		});
+	      			
+	      			// 자산추가 긴 버전 버튼 클릭
+	        		$("#breakdownAssetAddBtnLong").on("click", function(){
 	        			$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
 	        			$("#assetModal").modal("show");
 	        		});
 	      			
 	      			// 카테고리 추가
-	      			$("#breakdownCategoryAddBtn" || "#breakdownCategoryAddBtnLong").on("click", function(){
+	      			$("#breakdownCategoryAddBtn").on("click", function(){
 	      				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
 	        			$("#categoryModal").modal("show");
-	      			});      			
+	      			});  
+	      			
+	      			// 카테고리 추가 버튼 긴 버전 추가
+	      			$("#breakdownCategoryAddBtnLong").on("click", function(){
+	      				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+	        			$("#categoryModal").modal("show");
+	      			}); 
 	      			
 	      			// 세부 카테고리추가 버튼 클릭
-	        		$("#breakdownDetailCategoryAddBtn" || "#breakdownDetailCategoryAddBtnLong").on("click", function(){
+	        		$("#breakdownDetailCategoryAddBtn").on("click", function(){
+	        			$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+	        			$("#detailCategoryModal").modal("show");
+	        		});
+	      			
+	        		// 세부 카테고리추가 긴 버전 버튼 클릭
+	        		$("#breakdownDetailCategoryAddBtnLong").on("click", function(){
 	        			$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
 	        			$("#detailCategoryModal").modal("show");
 	        		});

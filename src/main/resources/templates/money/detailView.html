@@ -138,6 +138,11 @@
     		let differenceValue = $("#differenceValue").data("difference-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
   			$("#differenceValue").text(differenceValue);
   			
+  			/* // 모달 닫히면 새로고침
+  			$("#detailModal").on("hidden.bs.modal", function(){
+  				location.reload();
+  			}); */
+  			
   			// 연도 변하면
   			$("#h3Year").change(function(){
   				let year = $("#h3Year").val();

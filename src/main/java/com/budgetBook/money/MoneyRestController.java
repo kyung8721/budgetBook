@@ -2,14 +2,13 @@ package com.budgetBook.money;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +20,7 @@ import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
+import com.budgetBook.money.dto.CategoryDto;
 import com.budgetBook.money.service.MoneyService;
 
 import jakarta.servlet.http.HttpSession;
@@ -431,6 +431,16 @@ public class MoneyRestController {
 		
 		return result;
 		
+	}
+	
+	// 카테고리 리스트 새로고침
+	@GetMapping("/detail/categoryList")
+	public List<CategoryDto> reloadCategoryDto(HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
+		
+		return categoryDtoList;
 	}
 	
 
