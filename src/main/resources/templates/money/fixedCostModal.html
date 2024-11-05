@@ -48,7 +48,10 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">카테고리</div>
 	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
-      					<option th:each = "category : ${categoryList}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option value="" selected disabled hidden>선택해주세요</option>
+      					<option class="d-none" th:id = "|breakdownOutgoingCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '지출'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option class="d-none" th:id = "|breakdownIncomeCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '수입'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+      					<option class="d-none" th:id = "|breakdownTransferCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '이체'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
       				</select>
       				<button id="fixedCostCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
      					<i class="bi bi-plus-circle mr-2"></i>
@@ -61,6 +64,7 @@
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
 	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected">
+      					<option value="" selected disabled hidden>선택해주세요</option>
       					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
       				<button id="fixedCostDetailCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
@@ -193,7 +197,7 @@
 	        			
 	        			if(period == "매월"){
 	      					let Mperiod = $("#periodInput").val();
-	      					if(Mperiod == null){ // 유효성 검사
+	      					if(Mperiod == ""){ // 유효성 검사
 	      						alert("반복일을 입력해주세요!");
 	      						return ;
 	      					}
@@ -201,7 +205,7 @@
 	      					
 	      				}else if(period == "매주"){
 	      					let Wperiod = $("#weekPeriod").val();
-	      					if(Wperiod == null){ // 유효성 검사
+	      					if(Wperiod == ""){ // 유효성 검사
 	      						alert("요일을 선택해주세요!");
 	      						return ;
 	      					}
@@ -213,23 +217,30 @@
 	      				
 	      				// 자산
 	      				let assetsId = $("#assetsSelected :selected").val();
-	      				if(assetsId == null){
+	      				if(assetsId == ""){
 	      					alert("자산을 선택해주세요!"); // 유효성 검사
+	      					return;
 	      				}
 	      				
 	      				// 카테고리 - 비어있어도 됨
 	      				let categoryId = "";
 						if($("#categorySelected").length > 0){
 							categoryId = $("#categorySelected :selected").val();
-	      				}else{
+							if(categoryId == ""){
+								categoryId = 0;
+							}
+						}else{
 	      					categoryId = 0;
 	      				};
 	      				
 	      				
 	      				// 세부 카테고리 - 비어있어도 됨
 	      				let detailCategoryId = "";
-						if(document.getElementById("detailCategorySelected") != null){
+						if($("#detailCategorySelected").length > 0){
 							detailCategoryId = $("#detailCategorySelected :selected").val();
+							if(detailCategoryId == ""){
+								detailCategoryId = 0;
+							}
 	      				}else{
 	      					detailCategoryId = 0;
 	      				}
@@ -238,7 +249,7 @@
 	      				// 내역명
 	      				let fixedCostName = $("#fixedCostName").val();
 	      				
-	      				if(fixedCostName == null){
+	      				if(fixedCostName == ""){
 	      					alert("내역명을 입력해주세요!"); // 유효성 검사
 	      					return ;
 	      				}
@@ -246,7 +257,7 @@
 	      				// 금액
 	      				let fixedCostString = $("#fixedCostCost").val();
 	      				let fixedCostCost = fixedCostString.replace(/,/g, "");
-	      				if(fixedCostCost == null){
+	      				if(fixedCostCost == ""){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;
 	      				}
@@ -319,6 +330,10 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
+	      				
+	      				$("[id^='breakdownIncomeCategorySelect']").removeClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
 	      			});
 	      			// 지출 버튼
 	      			$("#outgoingBtn").on("click", function(){
@@ -329,6 +344,10 @@
 	      				$("#incomeBtn").addClass("btn-outline-success");
 	      				$("#transferBtn").removeClass("btn-secondary");
 	      				$("#transferBtn").addClass("btn-outline-secondary");
+
+	      				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").removeClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
 	      			}); 
 	      			// 이체 버튼
 	      			$("#transferBtn").on("click", function(){
@@ -339,6 +358,10 @@
 	      				$("#outgoingBtn").addClass("btn-outline-danger");
 	      				$("#incomeBtn").removeClass("btn-success");
 	      				$("#incomeBtn").addClass("btn-outline-success");
+
+	      				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+	      				$("[id^='breakdownTransferCategorySelect']").removeClass("d-none");
 	      			}); 
 	      		});
 	      	</script>

@@ -87,6 +87,11 @@
     
     	$(document).ready(function(){
     		
+    		// 모달 닫히면 새로고침
+  			$("#fixedCostModal").on("hidden.bs.modal", function(){
+  				location.reload();
+  			});
+    		
     		// 검색 기능
   			$("#searchFixedCostBtn").on("click", function(){
   				let searchInput = $("#searchFixedCostInput").val();

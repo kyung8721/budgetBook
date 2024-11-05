@@ -199,12 +199,17 @@
 	        			
 	        			// 날짜
 	        			let date = $("#datepicker").val();
+	        			if(date == ""){
+	        				alert("날짜를 입력해주세요!");
+	        				return;
+	        			}
 	        			
 	      				
 	      				// 자산
 	      				let assetsId = $("#assetsSelected :selected").val();
-	      				if(assetsId == null){
+	      				if(assetsId == ""){
 	      					alert("자산을 선택해주세요!"); // 유효성 검사
+	      					return;
 	      				}
 	      				
 	      				// 카테고리 - 비어있어도 됨
@@ -234,7 +239,7 @@
 	      				// 내역명
 	      				let breakdownName = $("#breakdownName").val();
 	      				
-	      				if(breakdownName == null){
+	      				if(breakdownName == ""){
 	      					alert("내역명을 입력해주세요!"); // 유효성 검사
 	      					return ;
 	      				}
@@ -242,7 +247,7 @@
 	      				// 금액
 	      				let breakdownCostString = $("#breakdownCost").val();
 	      				let breakdownCost = breakdownCostString.replace(/,/g, "");
-	      				if(breakdownCost == null){
+	      				if(breakdownCost == ""){
 	      					alert("금액을 입력해주세요!"); // 유효성 검사
 	      					return ;
 	      				}

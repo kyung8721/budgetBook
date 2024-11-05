@@ -219,6 +219,13 @@
     <script layout:fragment="script">
     
     	$(document).ready(function(){
+    		// 모달 닫히면 새로고침
+  			$("#detailModal").on("hidden.bs.modal", function(){
+  				location.reload();
+  			});
+  			$("#categoryModal").on("hidden.bs.modal", function(){
+  				location.reload();
+  			});
     		
     		// 연도
   			let h3Year = $("#h3Year").data("h3-year");
