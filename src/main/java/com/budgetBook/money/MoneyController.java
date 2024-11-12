@@ -86,7 +86,7 @@ public class MoneyController {
 		model.addAttribute("breakdownList", breakdownDtoList);
 		model.addAttribute("selectBreakdownId", breakdownId);
 		
-		return "money/maindetailModal";
+		return "money/mainDetailModal";
 	}
 	
 	// 고정비 작성 페이지
