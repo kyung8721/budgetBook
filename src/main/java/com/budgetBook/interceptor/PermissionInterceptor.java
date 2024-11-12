@@ -34,7 +34,16 @@ public class PermissionInterceptor implements HandlerInterceptor{
 			}
 		}else {
 			// 로그인된 상태라면 로그인 화면에 접근하지 못 하도록 설정
-			if(uri.startsWith("/budgetBook/user/") && !(uri.startsWith("/budgetBook/user/profile-view"))) {
+			if(uri.startsWith("/budgetBook/user/")
+					&& !(uri.startsWith("/budgetBook/user/profile-view"))
+					&& !(uri.startsWith("/budgetBook/user/join/email-check"))
+					&& !(uri.startsWith("/budgetBook/user/emailChange"))
+					&& !(uri.startsWith("/budgetBook/user/loginIdChange"))
+					&& !(uri.startsWith("/budgetBook/user/join/loginId-check"))
+					&& !(uri.startsWith("/budgetBook/user/passwordChange"))
+					&& !(uri.startsWith("/budgetBook/user/passwordCheck"))
+					&& !(uri.startsWith("/budgetBook/user/profileImage/delete"))
+					&& !(uri.startsWith("/budgetBook/user/profileImage"))) {
 				response.sendRedirect("/budgetBook/money/main-view");
 				return false;
 			}
