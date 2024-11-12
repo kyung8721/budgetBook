@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 public class FileManager {
-	
+
 	// 기본 저장 경로 상수로 저장
 	public static final String FILE_UPLOAD_PATH = "/home/ec2-user/upload"; // 리눅스 저장 위치
 	
