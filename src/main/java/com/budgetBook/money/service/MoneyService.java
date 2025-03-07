@@ -1264,9 +1264,10 @@ public class MoneyService {
 				}
 				
 				incomeCostSum += i.getCost();
+				String str = String.format("%,d", incomeCostSum);
 				repeat += 1;
 				
-				incomeCalendarEventMap.put("title", "수입 " + incomeCostSum +"원");
+				incomeCalendarEventMap.put("title", "수입 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(incomeCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;
@@ -1298,9 +1299,10 @@ public class MoneyService {
 					dayChange = true; // 날짜 변경됨
 				}
 				outgoingCostSum += i.getCost();
+				String str = String.format("%,d", outgoingCostSum);
 				repeat += 1;
 				
-				outgoingCalendarEventMap.put("title", "지출 " + outgoingCostSum +"원");
+				outgoingCalendarEventMap.put("title", "지출 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(outgoingCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;
@@ -1331,9 +1333,10 @@ public class MoneyService {
 					dayChange = true; // 날짜 변경됨
 				}
 				transferCostSum += i.getCost();
+				String str = String.format("%,d", transferCostSum);
 				repeat += 1;
 				
-				transferCalendarEventMap.put("title", "이체 " + transferCostSum +"원");
+				transferCalendarEventMap.put("title", "이체 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(transferCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;
