@@ -88,9 +88,18 @@
     					<td>
     						<span th:if = "${breakdown.classification} == '지출'" class="text-danger">-</span>
     						<th:block th:switch="${breakdown.classification}">
-    							<span th:case = "지출" class="text-danger" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
-    							<span th:case = "수입" class="text-success" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
-    							<span th:case = "이체" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							<span th:case = "지출">
+    								<span th:if="${breakdown.cost < 100} and ${breakdown.cost > -100}" class="text-danger" th:text="${breakdown.cost}"></span>
+    								<span th:unless="${breakdown.cost < 100} and ${breakdown.cost > -100}" class="text-danger" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							</span>
+    							<span th:case = "수입">
+    								<span th:if="${breakdown.cost < 100} and ${breakdown.cost > -100}" class="text-success" th:text="${breakdown.cost}"></span>
+    								<span th:unless="${breakdown.cost < 100} and ${breakdown.cost > -100}" class="text-success" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							</span>
+    							<span th:case = "이체">
+    								<span th:if="${breakdown.cost < 100} and ${breakdown.cost > -100}" th:text="${breakdown.cost}"></span>
+    								<span th:unless="${breakdown.cost < 100} and ${breakdown.cost > -100}" th:text="${#numbers.formatInteger(breakdown.cost, 3, 'COMMA')}"></span>
+    							</span>
     						</th:block>
    						</td>
     				</tr>
