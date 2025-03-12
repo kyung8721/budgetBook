@@ -214,12 +214,25 @@ public class MoneyController {
 
 	// 상세 내역 추가(내역 작성)
 	@GetMapping("/detailAdd")
-	public String detailListView(Model model, HttpSession session, @RequestParam("realTimePrediction")int realTimePrediction) {
+	public String detailListView(Model model, HttpSession session
+			, @RequestParam(value ="breakdownId", required = false)String breakdownId
+			, @RequestParam("realTimePrediction")int realTimePrediction) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
 		// 사용자 정보
 		UserDto userDto = moneyService.callUserData(userId);
+		
+		BreakdownDto breakdownDto;
+		if(breakdownId != null) {
+			int intBreakdownId = Integer.parseInt(breakdownId);
+			// 내역 불러오기
+			breakdownDto = moneyService.callBreakdownById(userId, intBreakdownId);
+		}else {
+			breakdownDto = BreakdownDto.builder()
+					.id(null)
+					.build();
+		}
 		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
@@ -231,33 +244,11 @@ public class MoneyController {
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("realTimePrediction", realTimePrediction);
+		model.addAttribute("breakdown", breakdownDto);
 		
 		return "money/detailAddView";
 	}
 	
-	// 상세 내역 클릭시 모달
-	@GetMapping("/detailEditModal")
-	public String detailModalEditView(Model model, HttpSession session
-			, @RequestParam("breakdownId")int breakdownId
-			, @RequestParam("realTimePrediction")int realTimePrediction) {
-		
-		int userId = (Integer)session.getAttribute("userId");
-		
-		// 내역 불러오기
-		BreakdownDto breakdownDto = moneyService.callBreakdownById(userId, breakdownId);
-		
-		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
-		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
-		
-		model.addAttribute("assetsList", assetsDtoList);
-		model.addAttribute("categoryList", categoryDtoList);
-		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		model.addAttribute("breakdown", breakdownDto);
-		model.addAttribute("realTimePrediction", realTimePrediction);
-		
-		return "money/detailEditModal";
-	}
 	
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
