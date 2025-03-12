@@ -110,7 +110,7 @@
     
 	
 	<!-- Modal -->
-	<div class="modal fade" id="detailModal"  aria-hidden="true">
+	<!-- <div class="modal fade" id="detailModal"  aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-centered">
 	    <div class="modal-content p-3">
 	    	<div class=" d-flex justify-content-end">
@@ -122,7 +122,7 @@
 	      </div>
 	    </div>
 	  </div>
-	</div>
+	</div> -->
     
     </section>
     
@@ -186,8 +186,7 @@
   			
     		// 내역추가 버튼 클릭
     		$("#detailAdd").on("click", function(){
-    			$("#detailModal .modal-body").load("/budgetBook/money/detailModal?realTimePrediction=1");
-    			$("#detailModal").modal("show");
+    			location.href = "/budgetBook/money/detailAdd?realTimePrediction=1";
     		});
     		
     		// 상세내역 모달 불러오기

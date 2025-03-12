@@ -212,23 +212,27 @@ public class MoneyController {
 	}
 	
 
-	// 상세 내역 모달(내역 작성)
-	@GetMapping("/detailModal")
+	// 상세 내역 추가(내역 작성)
+	@GetMapping("/detailAdd")
 	public String detailListView(Model model, HttpSession session, @RequestParam("realTimePrediction")int realTimePrediction) {
 		
 		int userId = (Integer)session.getAttribute("userId");
+		
+		// 사용자 정보
+		UserDto userDto = moneyService.callUserData(userId);
 		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
 		
+		model.addAttribute("user", userDto);
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("realTimePrediction", realTimePrediction);
 		
-		return "money/detail";
+		return "money/detailAddView";
 	}
 	
 	// 상세 내역 클릭시 모달
