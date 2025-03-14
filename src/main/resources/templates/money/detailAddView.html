@@ -7,7 +7,7 @@
     <section layout:fragment="mainContents" class="mainContents p-3">
     	<div id="detailDiv" th:data-breakdown-id = "${breakdown.id}" th:data-real-time-prediction = "${realTimePrediction}">
 	      		<!-- 수입 지출 이체 구분 -->
-	      		<div class="d-flex align-items-center modalText" >
+	      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${breakdown.classification}">
 	      			<div class="col-4">분류</div>
 	      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
 	      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
@@ -17,13 +17,13 @@
 	      		<!-- 날짜 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">날짜</div>
-	      			<input type="text" id="datepicker" class="inputBottomBorder ml-1 col-7">
+	      			<input type="text" id="datepicker" class="inputBottomBorder ml-1 col-7" th:value = "${breakdown.date}">
 	      		</div>
 	      		
 	      		<!-- 자산 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">자산</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assets = "${breakdown.assetsName}">
       					<option value="" selected disabled hidden>선택해주세요</option>
       					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
       				</select>
@@ -37,7 +37,7 @@
 	      		<!-- 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText" id="categorySectionDiv">
 	      			<div class="col-4">카테고리</div>
-	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected">
+	      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" th:data-category = "${breakdown.categoryName}" id="categorySelected">
       					<option value="" selected disabled hidden>선택해주세요</option>
       					<option class="d-none" th:id = "|breakdownOutgoingCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '지출'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
       					<option class="d-none" th:id = "|breakdownIncomeCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '수입'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
@@ -53,7 +53,7 @@
 	      		<!-- 세부 카테고리 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">세부 카테고리</div>
-	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected">
+	      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected" th:data-detail-category = "${breakdown.detailCategoryName}">
       					<option value="" selected disabled hidden>선택해주세요</option>
       					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
       				</select>
@@ -67,13 +67,13 @@
 	      		<!-- 내역명 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">내역</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="breakdownName">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="breakdownName" th:value = "${breakdown.breakdownName}">
 	      		</div>
 	      		
 	      		<!-- 금액 -->
 	      		<div class="d-flex align-items-center mt-3 modalText">
 	      			<div class="col-4">금액</div>
-	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="breakdownCost" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
+	      			<input type="text" class="inputBottomBorder ml-1 col-7" id="breakdownCost" th:data-cost-value="${breakdown.cost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
 	      		
 	      		<!-- 메모 -->
@@ -81,13 +81,14 @@
 	      			<div class="col-4">메모</div>
 	      		</div>
 	      		<div class="d-flex justify-content-center">
-	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo"></textarea>
+	      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:text = "${breakdown.memo}"></textarea>
 	      		</div>
 	      		
 	      		
 	      	</div>
 	      	
-	      	<div class="d-flex justify-content-end mt-2">
+	      	<div class="d-flex justify-content-between mt-2">
+	      		<button type="button" class="btn btn-outline-danger" id="deleteBtn">삭제</button>
 	        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
 	      	</div>
 	      	
@@ -140,40 +141,41 @@
 				});
     		
     		//// 선택된 내역의 정보
-  			
-  			// 금액에 쉼표 붙이기
-  			let costData = $("#breakdownCost").data("cost-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
-  			$("#breakdownCost").val(costData);
-  			
-  			
-  			// 세부 카테고리 선택
-  			let breakdownDetailCategoryName = $("#detailCategorySelected").data("detail-category");
-  			$("#detailCategorySelected option:contains("+ breakdownDetailCategoryName +")").prop("selected", true);
-  			
-  			// 카테고리 선택
-  			let breakdownCategoryName = $("#categorySelected").data("category");
-  			$("#categorySelected option:contains("+ breakdownCategoryName +")").prop("selected", true);
-  			
-  			// 자산 선택
-  			let breakdownAssetsName = $("#assetsSelected").data("assets");
-  			$("#assetsSelected option:contains(" + breakdownAssetsName +")").prop("selected", true);
-  			
-  			
-  			// 분류
-  			let breakdownClassification = $("#classification").data("classification");
-  			if(breakdownClassification == "지출"){
-  				$("#outgoingBtn").removeClass("btn-outline-danger");
-  				$("#outgoingBtn").addClass("btn-danger");
-  			}else if(breakdownClassification == "수입"){
-  				$("#incomeBtn").removeClass("btn-outline-success");
-  				$("#incomeBtn").addClass("btn-success");
-  				
-  			}else{
-  				$("#transferBtn").removeClass("btn-outline-secondary");
-  				$("#transferBtn").addClass("btn-secondary");
+  			if($("#detailDiv").data("breakdown-id") != null){
+  				// 금액에 쉼표 붙이기
+  				let costData = $("#breakdownCost").data("cost-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  	  			$("#breakdownCost").val(costData);
+  	  			
+  	  			
+  	  			// 세부 카테고리 선택
+  	  			let breakdownDetailCategoryName = $("#detailCategorySelected").data("detail-category");
+  	  			$("#detailCategorySelected option:contains("+ breakdownDetailCategoryName +")").prop("selected", true);
+  	  			
+  	  			// 카테고리 선택
+  	  			let breakdownCategoryName = $("#categorySelected").data("category");
+  	  			$("#categorySelected option:contains("+ breakdownCategoryName +")").prop("selected", true);
+  	  			
+  	  			// 자산 선택
+  	  			let breakdownAssetsName = $("#assetsSelected").data("assets");
+  	  			$("#assetsSelected option:contains(" + breakdownAssetsName +")").prop("selected", true);
+  	  			
+  	  			
+  	  			// 분류
+  	  			let breakdownClassification = $("#classification").data("classification");
+  	  			if(breakdownClassification == "지출"){
+  	  				$("#outgoingBtn").removeClass("btn-outline-danger");
+  	  				$("#outgoingBtn").addClass("btn-danger");
+  	  			}else if(breakdownClassification == "수입"){
+  	  				$("#incomeBtn").removeClass("btn-outline-success");
+  	  				$("#incomeBtn").addClass("btn-success");
+  	  				
+  	  			}else{
+  	  				$("#transferBtn").removeClass("btn-outline-secondary");
+  	  				$("#transferBtn").addClass("btn-secondary");
+  	  			}
+  	  			
   			}
   			
-  			//// 선택된 내역 정보 끝
   			
   			// 자산추가 버튼 클릭
     		$("#breakdownAssetAddBtn").on("click", function(){
@@ -303,6 +305,11 @@
     			formData.append("memo", memo);
     			
     			
+    			if($("#detailDiv").data("breakdown-id") != null){
+    				// breakdownId
+        			let breakdownId = $("#detailDiv").data("breakdown-id");
+    				formData.append("breakdownId", breakdownId);
+    			}
     			
     			$.ajax({
     				type : "post"
@@ -312,7 +319,7 @@
                     , contentType : false
                     , success : function(data){
                     	if(data.result == "success"){
-                    		location.reload();
+                    		location.href = "/budgetBook/money/breakdown-view";
                     	}else{
                     		alert("내역 추가 실패!");
                     	}
@@ -324,6 +331,28 @@
   				
   				
     		});
+      		
+    		//// 삭제 버튼 클릭
+  			$("#deleteBtn").on("click", function(){
+  				// breakdownId
+    			let breakdownId = $("#detailDiv").data("breakdown-id");
+  				
+  				$.ajax({
+  					type : "delete"
+  					, url : "/budgetBook/money/breakdown/delete"
+  					, data : {"breakdownId" : breakdownId}
+  					, success : function(data){
+  						if(data.result = "success"){
+  							location.href = "/budgetBook/money/breakdown-view";
+  						}else{
+  							alert("내역 삭제 실패!");
+  						}
+  					}
+  					, error : function(){
+  						alert("내역 삭제 에러!");
+  					}
+  				});
+  			});
   			
   			// 버튼 클릭 시 버튼 스타일 변경
   			$("#incomeBtn").on("click", function(){

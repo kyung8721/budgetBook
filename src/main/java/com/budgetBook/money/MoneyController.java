@@ -231,6 +231,18 @@ public class MoneyController {
 		}else {
 			breakdownDto = BreakdownDto.builder()
 					.id(null)
+					.userId(null)
+					.realTimePrediction(null)
+					.classification(null)
+					.date(null)
+					.listDate(null)
+					.assetsName(null)
+					.categoryName(null)
+					.detailCategoryName(null)
+					.breakdownName(null)
+					.cost(null)
+					.memoImagePath(null)
+					.memo(null)
 					.build();
 		}
 		

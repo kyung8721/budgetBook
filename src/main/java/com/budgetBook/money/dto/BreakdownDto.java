@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class BreakdownDto {
 	private Integer id;
-	private int userId;
-	private int realTimePrediction;
+	private Integer userId;
+	private Integer realTimePrediction;
 	private String classification;
 	private String date;
 	private String listDate;
@@ -20,8 +20,8 @@ public class BreakdownDto {
 	private String categoryColor;
 	private String detailCategoryName;
 	private String breakdownName;
-	private int cost;
-	private int remainCost;
+	private Integer cost;
+	private Integer remainCost;
 	private Integer selectBreakdown;
 	private String memoImagePath;
 	private String memo;
