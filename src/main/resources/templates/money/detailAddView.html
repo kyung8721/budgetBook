@@ -319,7 +319,12 @@
                     , contentType : false
                     , success : function(data){
                     	if(data.result == "success"){
-                    		location.href = "/budgetBook/money/breakdown-view";
+                    		if(realTimePrediction == 1){
+                    			location.href = "/budgetBook/money/breakdown-view";
+                    		}else{
+                    			location.href = "/budgetBook/money/budgetPrediction-view";
+                    		}
+                    		
                     	}else{
                     		alert("내역 추가 실패!");
                     	}
@@ -337,13 +342,20 @@
   				// breakdownId
     			let breakdownId = $("#detailDiv").data("breakdown-id");
   				
+    			// 실제 사용내역인지, 예측 사용 내역인지 구별
+    			let realTimePrediction = $("#detailDiv").data("real-time-prediction");
+  				
   				$.ajax({
   					type : "delete"
   					, url : "/budgetBook/money/breakdown/delete"
   					, data : {"breakdownId" : breakdownId}
   					, success : function(data){
   						if(data.result = "success"){
-  							location.href = "/budgetBook/money/breakdown-view";
+  							if(realTimePrediction == 1){
+                    			location.href = "/budgetBook/money/breakdown-view";
+                    		}else{
+                    			location.href = "/budgetBook/money/budgetPrediction-view";
+                    		}
   						}else{
   							alert("내역 삭제 실패!");
   						}
