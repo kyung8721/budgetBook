@@ -304,7 +304,7 @@
     			formData.append("cost", breakdownCost);
     			formData.append("memo", memo);
     			
-    			
+    			// 내역 수정이라면 breakdownId 추가해서 수정이라는 걸 알려주기
     			if($("#detailDiv").data("breakdown-id") != null){
     				// breakdownId
         			let breakdownId = $("#detailDiv").data("breakdown-id");

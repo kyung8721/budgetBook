@@ -115,44 +115,48 @@ public class MoneyController {
 	}
 	
 	
-	// 고정비 작성 모달
-	@GetMapping("/fixedCostModal")
-	public String fixedCostModalView(Model model, HttpSession session) {
-		int userId = (Integer)session.getAttribute("userId");
-		
-		
-		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
-		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
-		
-		model.addAttribute("assetsList", assetsDtoList);
-		model.addAttribute("categoryList", categoryDtoList);
-		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		
-		return "money/fixedCostModal";
-	}
-	
-	// 고정비 내역 클릭 시 모달(고정비 수정 가능)
-	@GetMapping("/fixedCostEditModal")
-	public String fixedCostEditModalView(
-			@RequestParam("fixedCostId") int fixedCostId 
+	// 고정비 추가, 수정 페이지
+	@GetMapping("/fixedCostAdd")
+	public String fixedCostModalView(
+			@RequestParam(value = "fixedCostId", required=false) Integer fixedCostId 
 			, Model model, HttpSession session) {
 		int userId = (Integer)session.getAttribute("userId");
+		// 사용자 정보
+		UserDto userDto = moneyService.callUserData(userId);
 		
-		// 해당 고정비 정보 불러오기
-		FixedCostDto fixedCostDto = moneyService.callFixedCostDtoById(fixedCostId);
+		FixedCostDto fixedCostDto;
+		if(fixedCostId != null) {
+			// 내역 불러오기
+			fixedCostDto = moneyService.callFixedCostDtoById(fixedCostId);
+		}else {
+			fixedCostDto = FixedCostDto.builder()
+					.id(null)
+					.userId(null)
+					.classification(null)
+					.period(null)
+					.assetsName(null)
+					.assetsColor(null)
+					.categoryName(null)
+					.categoryColor(null)
+					.detailCategoryName(null)
+					.fixedCostName(null)
+					.fixedCost(null)
+					.memo(null)
+					.build();
+		}
 		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
 		
+		model.addAttribute("user", userDto);
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("fixedCost", fixedCostDto);
 		
-		return "money/fixedCostEditModal";
+		return "money/fixedCostAddView";
 	}
 	
 	// 내역 페이지

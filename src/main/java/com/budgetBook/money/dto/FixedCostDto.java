@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class FixedCostDto {
 	
-	private int id;
-	private int userId;
+	private Integer id;
+	private Integer userId;
 	private String classification;
 	private String period;
 	private String assetsName;
@@ -19,6 +19,6 @@ public class FixedCostDto {
 	private String categoryColor;
 	private String detailCategoryName;
 	private String fixedCostName;
-	private int fixedCost;
+	private Integer fixedCost;
 	private String memo;
 }
