@@ -50,8 +50,8 @@
     			<div style = "width : 100%;">
 	    			<div class = "col-3">프로필</div>
 	    			<div class="col-12">
-	    				<div class="d-flex justify-content-center bg-secondary profileBicImgSection">
-	    					<img class="profileBigImg" th:src="${user.profileImagePath}">
+	    				<div class="d-flex justify-content-center bg-light profileBicImgSection">
+	    					<img class="profileBigImg" th:unless="${user.profileImagePath == null}" th:src="${user.profileImagePath}">
 	    					<img class="profileBigImg" th:if="${user.profileImagePath == null}" src = "https://cdn.pixabay.com/photo/2016/11/14/17/39/person-1824144_1280.png">
 	    				</div>
 	    				<div class="dropstart">
@@ -519,6 +519,24 @@
     		//회원 삭제 시 정말 삭제하겠냐는 모달 띄우기
     		$("#deleteUserCheck").on("click", function(){
     			$("#deleteUserCheckModal").modal("show");
+    		});
+    		
+    		// 회원 삭제
+    		$("#deleteUser").on("click", function(){
+    			$.ajax({
+    				type : "post"
+       				, url : "/budgetBook/user/userDelete"
+       				, success : function(data){
+       					if(data.result == "success"){
+       						location.href = "/budgetBook/user/login-view";
+       					}else{
+       						alert("회원 탈퇴 실패!");
+       					}
+       				}
+       				, error : function(){
+       					alert("회원 탈퇴 에러!");
+       				}
+    			});
     		});
     		
     	}); // 문서 종료

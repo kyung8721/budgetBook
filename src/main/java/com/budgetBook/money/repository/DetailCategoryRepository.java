@@ -8,4 +8,6 @@ import com.budgetBook.money.domain.DetailCategory;
 
 public interface DetailCategoryRepository extends JpaRepository<DetailCategory, Integer>{
 	List<DetailCategory> findAllByUserId(int userId);
+	void deleteByUserId(int userId);
+	int countByUserId(int userId);
 }

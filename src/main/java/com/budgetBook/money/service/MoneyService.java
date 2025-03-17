@@ -113,6 +113,16 @@ public class MoneyService {
 		}
 	}
 	
+	// 고정비 userId로 삭제
+	public boolean deleteFixedCostByUserId(int userId) {
+		fixedCostRepository.deleteByUserId(userId);
+		if(fixedCostRepository.countByUserId(userId) > 0) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
 	// 유저 정보 불러오기
 	public UserDto callUserData(int userId) {
 		return userService.userData(userId);
@@ -314,6 +324,17 @@ public class MoneyService {
 		}
 	}
 	
+	// userId로 자산 삭제
+	public boolean deleteAssetsByUserId(int userId) {
+		assetsRepository.deleteByUserId(userId);
+		
+		if(assetsRepository.countByUserId(userId) > 0) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	// Assets -> AssetsDto
 	public AssetsDto AssetsToDto(Assets i) {
 		// 자산 차이 계산
@@ -463,6 +484,16 @@ public class MoneyService {
 			return true;
 		}else {
 			return false;
+		}
+	}
+	
+	// 카테고리 userId 기준으로 삭제
+	public boolean deleteCategoryByUserId(int userId) {
+		categoryRepository.deleteByUserId(userId);
+		if(categoryRepository.countByUserId(userId) >0) {
+			return false;
+		}else {
+			return true;
 		}
 	}
 	
@@ -629,6 +660,16 @@ public class MoneyService {
 		}
 	}
 	
+	// 세부 예산 카테고리 userId로 삭제
+	public boolean deleteDetailCategoryByUserId(int userId) {
+		detailCategoryRepository.deleteByUserId(userId);
+		if(detailCategoryRepository.countByUserId(userId) > 0) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	// 세부 예산 카테고리 Dto 조회
 	public DetailCategoryDto callDetailCategoryDto(int id) {
 		Optional<DetailCategory> optionalDetailCategory = detailCategoryRepository.findById(id);
@@ -718,6 +759,16 @@ public class MoneyService {
 			return true;
 		}else {
 			return false;
+		}
+	}
+	
+	// 내역 삭제 userId로 삭제
+	public boolean deleteBreakdownByUserId(int userId) {
+		breakdownRepository.deleteByUserId(userId);
+		if(breakdownRepository.countByUserId(userId) > 0) {
+			return false;
+		}else {
+			return true;
 		}
 	}
 	

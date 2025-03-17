@@ -9,4 +9,6 @@ import com.budgetBook.money.domain.Assets;
 public interface AssetsRepository extends JpaRepository<Assets, Integer>{
 	List<Assets> findAllByUserId(int userId);
 	List<Assets> findAllByUserIdAndAssetsNameContaining(int userId, String inputKeyword);
+	void deleteByUserId(int userId);
+	int countByUserId(int userId);
 }

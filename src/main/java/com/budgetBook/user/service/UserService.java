@@ -9,6 +9,7 @@ import com.budgetBook.common.CreateSalt;
 import com.budgetBook.common.FileManager;
 import com.budgetBook.common.HashingEncoder;
 import com.budgetBook.common.SHA256HashingEncoder;
+import com.budgetBook.money.service.MoneyService;
 import com.budgetBook.user.domain.Profile;
 import com.budgetBook.user.domain.User;
 import com.budgetBook.user.dto.UserDto;
@@ -302,7 +303,7 @@ public class UserService {
 		return profileRepository.save(profile);
 	}
 	
-	// 프로필 사진 삭제 후 기본 이미지로 돌아가기
+	// 프로필 사진 삭제
 	public boolean deleteProfileImage(int userId) {
 		Profile profile = profileRepository.findByUserId(userId);
 		
@@ -310,7 +311,7 @@ public class UserService {
 			// 프로필 DB에 저장된 경로의 사진 및 폴더 삭제
 			FileManager.deleteImageFile(profile.getProfileImagePath());
 			// 프로필 DB update
-			profile.setProfileImagePath("https://cdn.pixabay.com/photo/2016/11/14/17/39/person-1824144_1280.png");
+			profile.setProfileImagePath(null);
 			profileRepository.save(profile);
 			
 			return true;
@@ -318,6 +319,26 @@ public class UserService {
 			return false;
 		}
 		
+	}
+	
+	// 프로필을 아예 삭제
+	public boolean deleteProfileImageByUserId(int userId) {
+		Profile profile = profileRepository.findByUserId(userId);
+		
+		if(profile != null) {
+			// 프로필 DB에 저장된 경로의 사진 및 폴더 삭제
+			FileManager.deleteImageFile(profile.getProfileImagePath());
+			// 프로필 DB 삭제
+			profileRepository.deleteById(profile.getId());
+			if(profileRepository.countByUserId(userId) > 0) {
+				return false;
+			}else {
+				return true;
+			}
+			
+		}else {
+			return false;
+		}
 	}
 	
 	// 사용자 정보 조회 및 전달
@@ -362,4 +383,20 @@ public class UserService {
 			return null;
 		}
 	}
+	
+	// 사용자 삭제
+	public boolean deleteUser(int userId) {
+		userRepository.deleteById(userId);
+		
+		// 삭제 되었는지 확인
+		int count = userRepository.countById(userId);
+		if(count > 0) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
+	
+	
 }

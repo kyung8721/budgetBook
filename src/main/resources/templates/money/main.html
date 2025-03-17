@@ -37,7 +37,7 @@
     <section layout:fragment="mainContents" class="mainContents">
     	<!-- 예산소진 화면 -->
     	<div class="budgetExhausted border-bottom">
-    		<h3 class="pl-2 mt-2">현재 예산 소진 상황</h3>
+    		<h3 class="pl-2 mt-2">예산 소진 상황</h3>
     		<div class="d-flex align-items-center mb-2" style="width:100%; flex-direction: row;">
 	    		<div class="pl-2 pr-2">전체 예산</div>
 	    		<div class="progress d-flex align-items-center justify-content-between" style="flex-grow: 1;">
@@ -72,7 +72,7 @@
     	</div>
     	
     	<div class="d-flex downSection">
-    		<!-- 고정비, 사용 예측, 실제 사용 내역 -->
+    		<!-- 고정비, 하위 예산, 실제 사용 내역 -->
     		<div class="fixedCostAndbudgetPrediction border-right">
     			<!-- 고정비 -->
     			<div class="mt-2 mb-3 pl-2 pr-2">
@@ -117,7 +117,7 @@
     			</div>
     			<!-- 예산 예측 -->
     			<div class=" pl-2 pr-2">
-    				<div class="h4">사용 예측 내역</div>
+    				<div class="h4">잔여 하위 예산</div>
     				<div>
     					<!-- 예산예측 내역 리스트 -->
     					<table class="table table-sm text-center" id="budgetPredictionDetailList">
@@ -127,9 +127,10 @@
     								<span th:unless="${breakdown.breakdownName.length > 3 }" th:text="${breakdown.breakdownName}"></span>
     								
     							</td>
-    							<td>
-    								<div th:text="${#numbers.formatInteger(breakdown.remainCost, 3, 'COMMA')}">500,000</div>
-    							</td>
+    							
+    							<td th:if = "${breakdown.remainCost < 100}" th:text="${breakdown.remainCost}">600,000</td>
+    							<td th:unless = "${breakdown.remainCost < 100}" th:text="${#numbers.formatInteger(breakdown.remainCost, 3, 'COMMA')}">600,000</td>
+    							
     							<td>
     								<button class="btn btn-sm dropdown-toggle" data-toggle="dropdown" value="bank" th:text="${breakdown.assetsName}" th:style = "|background-color : ${breakdown.assetsColor}|">카카오뱅크</button>
 	    							<ul class="dropdown-menu">
@@ -161,7 +162,7 @@
     			
     			<!-- 실제 내역 리스트 -->
     			<div class=" pl-2 pr-2">
-    				<div class="h4">실제 사용 내역</div>
+    				<div class="h4">사용 내역</div>
     				<div>
     					<!-- 실제 내역 리스트 -->
     					<table class="table table-sm text-center" id="budgetPredictionDetailList">
