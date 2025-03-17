@@ -204,31 +204,112 @@
   			
   			
 			
-				// 자산추가 버튼 클릭
+			// 자산추가 버튼 클릭
 			$("#fixedCostAssetAddBtn").on("click", function(){
 				$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
 				$("#assetModal").modal("show");
 			});
 				
-				// 자산추가 긴 버전 버튼 클릭
+			// 자산추가 긴 버전 버튼 클릭
 			$("#fixedCostAssetAddBtnLong").on("click", function(){
 				$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
 				$("#assetModal").modal("show");
 			});
+			
+			// 자산 추가 이후
+    		$('#assetModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/assetsList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let assetsSelect = $("#assetsSelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            assetsSelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.assets.forEach(assets => {
+                            	assetsSelect.append(
+                                    `<option value="${assets.id}">${assets.assetsName}</option>`
+                                );
+                                
+                            });
+                    	}else{
+                    		alert("세부 카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("세부 카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
 				
-				// 카테고리 추가
-				$("#fixedCostCategoryAddBtn").on("click", function(){
-					$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+			// 카테고리 추가
+			$("#fixedCostCategoryAddBtn").on("click", function(){
+				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
 				$("#categoryModal").modal("show");
-				});  
-				
-				// 카테고리 추가 버튼 긴 버전 추가
-				$("#fixedCostCategoryAddBtnLong").on("click", function(){
-					$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+			});  
+			
+			// 카테고리 추가 버튼 긴 버전 추가
+			$("#fixedCostCategoryAddBtnLong").on("click", function(){
+				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
 				$("#categoryModal").modal("show");
-				}); 
+			}); 
+			
+			// 카테고리 추가 이후
+    		$('#categoryModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/categoryList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let categorySelect = $("#categorySelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            categorySelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.categories.forEach(category => {
+                                if (category.classification === "지출") {
+                                    categorySelect.append(
+                                        `<option class="d-none" id = "breakdownOutgoingCategorySelect`
+                                        + category.id
+                                        + `" value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }else if(category.classification === "수입"){
+                                	categorySelect.append(
+                                        `<option class="d-none" id = "breakdownIncomeCategorySelect`
+                                        + category.id
+                                        + `"value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }else if(category.classification === "이체"){
+                                	categorySelect.append(
+                                        `<option class="d-none" id = "breakdownTransferCategorySelect`
+                                        + category.id
+                                        + `"value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }
+                            });
+                    	}else{
+                    		alert("카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
 				
-				// 세부 카테고리추가 버튼 클릭
+			// 세부 카테고리추가 버튼 클릭
 			$("#fixedCostDetailCategoryAddBtn").on("click", function(){
 				$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
 				$("#detailCategoryModal").modal("show");
@@ -239,8 +320,41 @@
 				$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
 				$("#detailCategoryModal").modal("show");
 			});
+			
+			// 세부 카테고리 추가 이후
+    		$('#detailCategoryModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/detailCategoryList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let detailCategorySelect = $("#detailCategorySelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            detailCategorySelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.detailCategories.forEach(detailCategory => {
+                            	detailCategorySelect.append(
+                                    `<option value="${detailCategory.id}">${detailCategory.detailCategoryName}</option>`
+                                );
+                                
+                            });
+                    	}else{
+                    		alert("세부 카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("세부 카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
 				
-				// 완료 버튼 클릭
+			// 완료 버튼 클릭
 			$("#submitBtn").on("click", function(){
 				
 				// 분류
