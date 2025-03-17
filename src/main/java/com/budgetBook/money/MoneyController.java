@@ -506,4 +506,5 @@ public class MoneyController {
 		
 		return "money/staticinComeView";
 	}
+	
 }
