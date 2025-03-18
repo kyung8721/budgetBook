@@ -317,6 +317,11 @@ public class UserRestController {
 		int userId = (Integer)session.getAttribute("userId");
 		boolean result = userDeleteService.deleteUser(userId);
 		
+		// 세션 제거
+		session.removeAttribute("userId");
+		session.removeAttribute("loginId");
+		
+		
 		Map<String, String> resultMap = new HashMap<>();
 		if(result) {
 			resultMap.put("result", "success");

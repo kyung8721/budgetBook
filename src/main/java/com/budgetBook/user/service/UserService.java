@@ -329,7 +329,7 @@ public class UserService {
 			// 프로필 DB에 저장된 경로의 사진 및 폴더 삭제
 			FileManager.deleteImageFile(profile.getProfileImagePath());
 			// 프로필 DB 삭제
-			profileRepository.deleteById(profile.getId());
+			profileRepository.delete(profile);
 			if(profileRepository.countByUserId(userId) > 0) {
 				return false;
 			}else {
@@ -389,8 +389,7 @@ public class UserService {
 		userRepository.deleteById(userId);
 		
 		// 삭제 되었는지 확인
-		int count = userRepository.countById(userId);
-		if(count > 0) {
+		if(userRepository.countById(userId) > 0) {
 			return false;
 		}else {
 			return true;

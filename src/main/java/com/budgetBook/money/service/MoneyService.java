@@ -116,6 +116,7 @@ public class MoneyService {
 	// 고정비 userId로 삭제
 	public boolean deleteFixedCostByUserId(int userId) {
 		fixedCostRepository.deleteByUserId(userId);
+		
 		if(fixedCostRepository.countByUserId(userId) > 0) {
 			return false;
 		}else {
@@ -326,9 +327,10 @@ public class MoneyService {
 	
 	// userId로 자산 삭제
 	public boolean deleteAssetsByUserId(int userId) {
+		// 삭제
 		assetsRepository.deleteByUserId(userId);
 		
-		if(assetsRepository.countByUserId(userId) > 0) {
+		if( assetsRepository.countByUserId(userId) > 0) {
 			return false;
 		}else{
 			return true;
@@ -490,6 +492,7 @@ public class MoneyService {
 	// 카테고리 userId 기준으로 삭제
 	public boolean deleteCategoryByUserId(int userId) {
 		categoryRepository.deleteByUserId(userId);
+		
 		if(categoryRepository.countByUserId(userId) >0) {
 			return false;
 		}else {
@@ -663,6 +666,7 @@ public class MoneyService {
 	// 세부 예산 카테고리 userId로 삭제
 	public boolean deleteDetailCategoryByUserId(int userId) {
 		detailCategoryRepository.deleteByUserId(userId);
+		
 		if(detailCategoryRepository.countByUserId(userId) > 0) {
 			return false;
 		}else{
