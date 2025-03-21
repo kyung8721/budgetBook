@@ -339,31 +339,12 @@ public class MoneyService {
 	
 	// Assets -> AssetsDto
 	public AssetsDto AssetsToDto(Assets i) {
-		// 자산 차이 계산
-		String balanceDifference;
-		
-		// 지난 달과 비교
-		if(i.getLastBalance() != null) {
-			int intBalanceDifference = i.getBalance() - i.getLastBalance();
-			if(intBalanceDifference < 0) {
-				balanceDifference = "감소" + Math.abs(intBalanceDifference);
-			}else if(intBalanceDifference > 0){
-				balanceDifference = "증가" + intBalanceDifference;
-			}else {
-				balanceDifference = "변함없음";
-			}
-		}else {
-			balanceDifference = null;
-		}
-		
 		
 		AssetsDto assetsDto = AssetsDto.builder()
 				.id(i.getId())
 				.userId(i.getUserId())
 				.assetsName(i.getAssetsName())
 				.balance(i.getBalance())
-				.lastBalance(i.getLastBalance())
-				.balanceDifference(balanceDifference)
 				.color(i.getColor())
 				.memo(i.getMemo())
 				.build();

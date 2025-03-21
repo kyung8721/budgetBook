@@ -13,8 +13,6 @@ public class AssetsDto {
 	private int userId;
 	private String assetsName;
 	private int balance; // 자산 잔액
-	private Integer lastBalance;
-	private String balanceDifference;
 	private int balancePrediction;
 	private String color;
 	private String memo;
