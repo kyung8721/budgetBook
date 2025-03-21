@@ -106,6 +106,8 @@ public class MailService {
     	}else {
     		// 인증번호 확인
     		if(saveNum.equals(number)) {
+    			// 인증번호 삭제
+    			certificationNumberRepository.delete(saveNumber);
     			return true;
     		}else {
     			return false;

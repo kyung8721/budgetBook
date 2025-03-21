@@ -57,7 +57,7 @@
 						<button class="btn btn-outline-secondary mt-3" type="button" id="verificationCodeBtn">인증번호 확인</button>
 						
 						<!-- 인증번호 확인버튼 클릭 후 -->
-						<div class="d-none" id="verificationCode">
+						<div class="d-none" id="verificationCodeDiv">
 							<!-- 인증번호 확인 -->
 							<div>
 								<label class="mt-3">인증번호 확인</label>
@@ -138,18 +138,21 @@
                 countTime--;
             };
 
-    		
+            var numberCheck = false;
+            
     		// 인증번호 확인
     		$("#verificationCodeCheckBtn").on("click", function(){
     			let verificationCode = $("#verificationCode").val();
     			let email = $("#email").val();
+    			alert(verificationCode);
     			
     			$.ajax({
     				type : "get"
     				, url : "/budgetBook/user/mail/check"
-    				, data : {"loginId" : loginId, "number" : certificationNumber}
+    				, data : {"mail" : email, "number" : verificationCode}
     				, success : function(data){
     					if(data.result == "success"){
+    						numberCheck = true;
     						$("#numberCheckSuccess").removeClass("d-none");
     						$("#numberCheckFail").addClass("d-none");
     					}else{
@@ -181,6 +184,7 @@
 			var idDuplicateEmail = false;
 			var checkDuplicateLoginId = false;
 			var idDuplicateLoginId = false;
+			
 			
 			// 로그인 아이디 입력이 바뀌면 중복체크 초기화
 			$("loginId").on("input", function(){
@@ -314,6 +318,12 @@
     				return ;
     			}
     			
+    			// 인증번호 확인
+    			if(numberCheck == false){
+    				alert("이메일 인증번호를 확인해주세요");
+    				return;
+    			}
+    			
     			let formData = new FormData();
     			formData.append("loginId", loginId);
     			formData.append("password", password);
@@ -377,7 +387,7 @@
     				, data : {"mail" : email}
     				, success : function(data){
     					if(data.result == "success"){
-    						$("#verificationCode").removeClass("d-none");
+    						$("#verificationCodeDiv").removeClass("d-none");
     						$.time(179);
     					}else{
     						alert("인증번호 보내기 실패!");
