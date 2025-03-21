@@ -291,10 +291,22 @@ public class MoneyService {
 					.memo(memo)
 					.build();
 		}else {
-			// 수정 시 userId와 해당 자산의 userId가 동일한지 검사
+			
 			Optional<Assets> optionalAssets = assetsRepository.findById(assetsId);
 			Assets assetsCheck = optionalAssets.orElse(null);
-			if(userId == assetsCheck.getUserId()) {
+			
+			// 자산 금액이 수정되었으면 balanceUpdatedAt을 현재 시간으로 저장해주기
+			if(assetsCheck.getBalance() != balance) {
+				assets = Assets.builder()
+						.id(assetsId)
+						.userId(userId)
+						.assetsName(assetsName)
+						.balance(balance)
+						.color(color)
+						.memo(memo)
+						.balanceUpdatedAt(LocalDateTime.now())
+						.build();
+			}else {
 				assets = Assets.builder()
 						.id(assetsId)
 						.userId(userId)
@@ -303,9 +315,8 @@ public class MoneyService {
 						.color(color)
 						.memo(memo)
 						.build();
-			}else {
-				assets = null;
 			}
+			
 		}
 		
 		return assetsRepository.save(assets);
@@ -347,6 +358,39 @@ public class MoneyService {
 				.balance(i.getBalance())
 				.color(i.getColor())
 				.memo(i.getMemo())
+				.updatedAt(i.getUpdatedAt())
+				.build();
+		return assetsDto;
+	}
+	
+	// Assets -> AssetsDto(내역 계산 포함된 버전)
+	public AssetsDto AssetsToDtoRemain(Assets i) {
+		
+		// 자산 금액 업데이트 날 이후부터 내역 계산
+		LocalDateTime now = LocalDateTime.now();
+		int assetsBalanceRemain = 0;
+		if(i.getBalanceUpdatedAt() == null) { // 자산 금액이 업데이트된 날짜가 없다면 자산 금액 그대로 넣어줌
+			assetsBalanceRemain = i.getBalance();
+		}else {
+			List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndAssetsIdAndRealTimePredictionAndDateBetween(i.getUserId(), i.getId(), 1, i.getBalanceUpdatedAt(), now);
+			int breakdownSum = 0;
+			for(Breakdown b: breakdownList) { // 내역 합계
+				breakdownSum += b.getCost();
+			}
+			// 자산 금액 - 내역 합계
+			assetsBalanceRemain = i.getBalance() - breakdownSum;
+		}
+		
+		
+		
+		AssetsDto assetsDto = AssetsDto.builder()
+				.id(i.getId())
+				.userId(i.getUserId())
+				.assetsName(i.getAssetsName())
+				.balance(assetsBalanceRemain)
+				.color(i.getColor())
+				.memo(i.getMemo())
+				.updatedAt(i.getUpdatedAt())
 				.build();
 		return assetsDto;
 	}
@@ -389,7 +433,7 @@ public class MoneyService {
 		if(assetsList != null) {
 			for(Assets i : assetsList) {
 				// assets -> assetsDto
-				AssetsDto assetsDto = AssetsToDto(i);
+				AssetsDto assetsDto = AssetsToDtoRemain(i);
 				// 내역 합계 추가
 				int costSum = sumOfCategory(i.getUserId(), yearMonth, i.getId(), RTP);
 				assetsDto.setBalancePrediction(costSum);
@@ -1192,7 +1236,7 @@ public class MoneyService {
 		return fixedCostDtoList;
 	}
 	
-	//
+	// 검색어로 카테고리 조회
 	public List<CategoryDto> searchCategory(int userId, String categoryInputKeyword){
 		List<Category> categoryList = categoryRepository.findAllByUserIdAndCategoryNameContaining(userId, categoryInputKeyword);
 		
@@ -1209,6 +1253,7 @@ public class MoneyService {
 		return categoryDtoList;
 	}
 	
+	// 검색어로 자산 조회
 	public List<AssetsDto> searchAssets(int userId, String inputKeyword){
 		List<Assets> assetsList = assetsRepository.findAllByUserIdAndAssetsNameContaining(userId, inputKeyword);
 		
@@ -1218,7 +1263,7 @@ public class MoneyService {
 		
 		// Category -> CategoryDto
 		for(Assets i : assetsList) {
-			assetsDto = AssetsToDto(i); 
+			assetsDto = AssetsToDtoRemain(i); 
 			assetsDtoList.add(assetsDto);
 		}
 		

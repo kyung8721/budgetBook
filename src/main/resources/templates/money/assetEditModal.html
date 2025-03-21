@@ -11,8 +11,11 @@
 	      			<div class="col-4">잔액</div>
 	      			<input type="text" class="inputBottomBorder ml-1 col-7" th:data-balance-value="${assets.balance}" id="assetsBalance"  oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
 	      		</div>
+	      		<div class="d-flex justify-content-center">
+	      			<p class="align-items-center pt-1 text-secondary modalText"><i class="bi bi-exclamation-circle"></i>수정 이후 내역부터 계산된 결과를 보여줍니다.</p>
+	      		</div>
 	      		
-	      		<div class="d-flex align-items-center mt-3 modalText">
+	      		<div class="d-flex align-items-center mt-1 modalText">
 	      			<div class="col-4">색상</div>
 	      			<div id="colorPicker" class="pl-3 pr-3">색상 수정하기</div>
 	      			<input id="assetsInputColor" type="color" class="d-none" th:value="${assets.color}">
