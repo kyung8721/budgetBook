@@ -2,6 +2,7 @@ package com.budgetBook.mail.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -106,6 +107,8 @@ public class MailService {
     	}else {
     		// 인증번호 확인
     		if(saveNum.equals(number)) {
+    			// 인증번호 삭제
+    			certificationNumberRepository.delete(saveNumber);
     			return true;
     		}else {
     			return false;
@@ -142,6 +145,15 @@ public class MailService {
     			return false;
     		}
     	}
-    	
+    }
+    
+    // 메일 인증번호 불러오기
+    public List<CertificationNumber> certificationNumberList(){
+    	return certificationNumberRepository.findAll();
+    }
+    
+    // 메일 인증번호 삭제하기
+    public void deleteCertificationNumber(CertificationNumber c) {
+    	certificationNumberRepository.delete(c);
     }
 }

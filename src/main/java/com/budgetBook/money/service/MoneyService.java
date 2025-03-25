@@ -113,6 +113,17 @@ public class MoneyService {
 		}
 	}
 	
+	// 고정비 userId로 삭제
+	public boolean deleteFixedCostByUserId(int userId) {
+		fixedCostRepository.deleteByUserId(userId);
+		
+		if(fixedCostRepository.countByUserId(userId) > 0) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
 	// 유저 정보 불러오기
 	public UserDto callUserData(int userId) {
 		return userService.userData(userId);
@@ -280,10 +291,22 @@ public class MoneyService {
 					.memo(memo)
 					.build();
 		}else {
-			// 수정 시 userId와 해당 자산의 userId가 동일한지 검사
+			
 			Optional<Assets> optionalAssets = assetsRepository.findById(assetsId);
 			Assets assetsCheck = optionalAssets.orElse(null);
-			if(userId == assetsCheck.getUserId()) {
+			
+			// 자산 금액이 수정되었으면 balanceUpdatedAt을 현재 시간으로 저장해주기
+			if(assetsCheck.getBalance() != balance) {
+				assets = Assets.builder()
+						.id(assetsId)
+						.userId(userId)
+						.assetsName(assetsName)
+						.balance(balance)
+						.color(color)
+						.memo(memo)
+						.balanceUpdatedAt(LocalDateTime.now())
+						.build();
+			}else {
 				assets = Assets.builder()
 						.id(assetsId)
 						.userId(userId)
@@ -292,9 +315,8 @@ public class MoneyService {
 						.color(color)
 						.memo(memo)
 						.build();
-			}else {
-				assets = null;
 			}
+			
 		}
 		
 		return assetsRepository.save(assets);
@@ -314,35 +336,61 @@ public class MoneyService {
 		}
 	}
 	
+	// userId로 자산 삭제
+	public boolean deleteAssetsByUserId(int userId) {
+		// 삭제
+		assetsRepository.deleteByUserId(userId);
+		
+		if( assetsRepository.countByUserId(userId) > 0) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	// Assets -> AssetsDto
 	public AssetsDto AssetsToDto(Assets i) {
-		// 자산 차이 계산
-		String balanceDifference;
-		
-		// 지난 달과 비교
-		if(i.getLastBalance() != null) {
-			int intBalanceDifference = i.getBalance() - i.getLastBalance();
-			if(intBalanceDifference < 0) {
-				balanceDifference = "감소" + Math.abs(intBalanceDifference);
-			}else if(intBalanceDifference > 0){
-				balanceDifference = "증가" + intBalanceDifference;
-			}else {
-				balanceDifference = "변함없음";
-			}
-		}else {
-			balanceDifference = null;
-		}
-		
 		
 		AssetsDto assetsDto = AssetsDto.builder()
 				.id(i.getId())
 				.userId(i.getUserId())
 				.assetsName(i.getAssetsName())
 				.balance(i.getBalance())
-				.lastBalance(i.getLastBalance())
-				.balanceDifference(balanceDifference)
 				.color(i.getColor())
 				.memo(i.getMemo())
+				.updatedAt(i.getUpdatedAt())
+				.build();
+		return assetsDto;
+	}
+	
+	// Assets -> AssetsDto(내역 계산 포함된 버전)
+	public AssetsDto AssetsToDtoRemain(Assets i) {
+		
+		// 자산 금액 업데이트 날 이후부터 내역 계산
+		LocalDateTime now = LocalDateTime.now();
+		int assetsBalanceRemain = 0;
+		if(i.getBalanceUpdatedAt() == null) { // 자산 금액이 업데이트된 날짜가 없다면 자산 금액 그대로 넣어줌
+			assetsBalanceRemain = i.getBalance();
+		}else {
+			List<Breakdown> breakdownList = breakdownRepository.findAllByUserIdAndAssetsIdAndRealTimePredictionAndDateBetween(i.getUserId(), i.getId(), 1, i.getBalanceUpdatedAt(), now);
+			int breakdownSum = 0;
+			for(Breakdown b: breakdownList) { // 내역 합계
+				breakdownSum += b.getCost();
+			}
+			// 자산 금액 - 내역 합계
+			assetsBalanceRemain = i.getBalance() - breakdownSum;
+		}
+		
+		
+		
+		AssetsDto assetsDto = AssetsDto.builder()
+				.id(i.getId())
+				.userId(i.getUserId())
+				.assetsName(i.getAssetsName())
+				.balance(assetsBalanceRemain)
+				.color(i.getColor())
+				.memo(i.getMemo())
+				.updatedAt(i.getUpdatedAt())
 				.build();
 		return assetsDto;
 	}
@@ -385,7 +433,7 @@ public class MoneyService {
 		if(assetsList != null) {
 			for(Assets i : assetsList) {
 				// assets -> assetsDto
-				AssetsDto assetsDto = AssetsToDto(i);
+				AssetsDto assetsDto = AssetsToDtoRemain(i);
 				// 내역 합계 추가
 				int costSum = sumOfCategory(i.getUserId(), yearMonth, i.getId(), RTP);
 				assetsDto.setBalancePrediction(costSum);
@@ -463,6 +511,17 @@ public class MoneyService {
 			return true;
 		}else {
 			return false;
+		}
+	}
+	
+	// 카테고리 userId 기준으로 삭제
+	public boolean deleteCategoryByUserId(int userId) {
+		categoryRepository.deleteByUserId(userId);
+		
+		if(categoryRepository.countByUserId(userId) >0) {
+			return false;
+		}else {
+			return true;
 		}
 	}
 	
@@ -629,6 +688,17 @@ public class MoneyService {
 		}
 	}
 	
+	// 세부 예산 카테고리 userId로 삭제
+	public boolean deleteDetailCategoryByUserId(int userId) {
+		detailCategoryRepository.deleteByUserId(userId);
+		
+		if(detailCategoryRepository.countByUserId(userId) > 0) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 	// 세부 예산 카테고리 Dto 조회
 	public DetailCategoryDto callDetailCategoryDto(int id) {
 		Optional<DetailCategory> optionalDetailCategory = detailCategoryRepository.findById(id);
@@ -718,6 +788,16 @@ public class MoneyService {
 			return true;
 		}else {
 			return false;
+		}
+	}
+	
+	// 내역 삭제 userId로 삭제
+	public boolean deleteBreakdownByUserId(int userId) {
+		breakdownRepository.deleteByUserId(userId);
+		if(breakdownRepository.countByUserId(userId) > 0) {
+			return false;
+		}else {
+			return true;
 		}
 	}
 	
@@ -1156,7 +1236,7 @@ public class MoneyService {
 		return fixedCostDtoList;
 	}
 	
-	//
+	// 검색어로 카테고리 조회
 	public List<CategoryDto> searchCategory(int userId, String categoryInputKeyword){
 		List<Category> categoryList = categoryRepository.findAllByUserIdAndCategoryNameContaining(userId, categoryInputKeyword);
 		
@@ -1173,6 +1253,7 @@ public class MoneyService {
 		return categoryDtoList;
 	}
 	
+	// 검색어로 자산 조회
 	public List<AssetsDto> searchAssets(int userId, String inputKeyword){
 		List<Assets> assetsList = assetsRepository.findAllByUserIdAndAssetsNameContaining(userId, inputKeyword);
 		
@@ -1182,7 +1263,7 @@ public class MoneyService {
 		
 		// Category -> CategoryDto
 		for(Assets i : assetsList) {
-			assetsDto = AssetsToDto(i); 
+			assetsDto = AssetsToDtoRemain(i); 
 			assetsDtoList.add(assetsDto);
 		}
 		
@@ -1264,9 +1345,10 @@ public class MoneyService {
 				}
 				
 				incomeCostSum += i.getCost();
+				String str = String.format("%,d", incomeCostSum);
 				repeat += 1;
 				
-				incomeCalendarEventMap.put("title", "수입 " + incomeCostSum +"원");
+				incomeCalendarEventMap.put("title", "수입 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(incomeCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;
@@ -1298,9 +1380,10 @@ public class MoneyService {
 					dayChange = true; // 날짜 변경됨
 				}
 				outgoingCostSum += i.getCost();
+				String str = String.format("%,d", outgoingCostSum);
 				repeat += 1;
 				
-				outgoingCalendarEventMap.put("title", "지출 " + outgoingCostSum +"원");
+				outgoingCalendarEventMap.put("title", "지출 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(outgoingCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;
@@ -1331,9 +1414,10 @@ public class MoneyService {
 					dayChange = true; // 날짜 변경됨
 				}
 				transferCostSum += i.getCost();
+				String str = String.format("%,d", transferCostSum);
 				repeat += 1;
 				
-				transferCalendarEventMap.put("title", "이체 " + transferCostSum +"원");
+				transferCalendarEventMap.put("title", "이체 " + str +"원");
 				if(dayChange == true) {
 					BreaKdownMapList.add(transferCalendarEventMap); // map이 초기화 되는 게 아닌 이상 같은 자리에 덮어쓰기 되므로 반복 끝날 때마다 새로 리스트 저장
 					dayChange = false;

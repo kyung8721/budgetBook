@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko" 
+    xmlns:th="http://www.thymeleaf.org" 
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layouts/default}">
+        
+    <section layout:fragment="mainContents" class="mainContents p-3">
+    	<div id="fixedCostDiv" th:data-fixed-cost-id = "${fixedCost.id}">
+      		<!-- 수입 지출 이체 구분 -->
+      		<div class="d-flex align-items-center modalText" id="classification" th:data-classification = "${fixedCost.classification}">
+      			<div class="col-4">분류</div>
+      			<button type="button" id="incomeBtn" class="btn btn-sm btn-outline-success col-2 mr-1">수입</button>
+      			<button type="button" id = "outgoingBtn" class="btn btn-sm btn-outline-danger col-2 ml-1 mr-1 ">지출</button>
+      			<button type="button" id="transferBtn" class="btn btn-sm btn-outline-secondary col-2 ml-1 mr-1 ">이체</button>
+      		</div>
+      		
+      		<!-- 반복주기 -->
+      		<div class="d-flex align-items-center mt-3 modalText" id="FCperiod" th:data-period = "${fixedCost.period}">
+      			<div class="col-4">반복주기</div>
+      			<select class="form-control col-2 form-control-sm" id="periodSelect">
+      				<option value="M">매월</option>
+      				<option value="W">매주</option>
+      				<option value="Daily">매일</option>
+      			</select>
+      			<input type="number" class="inputBottomBorder col-2 ml-1" id="periodInput" min="1" max="31" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"> 
+      			<select class="form-control col-3 ml-1 d-none" id="weekPeriod">
+      				<option value="Mon">월요일</option>
+      				<option value="Tue">화요일</option>
+      				<option value="Wed">수요일</option>
+      				<option value="Thu">목요일</option>
+      				<option value="Fri">금요일</option>
+      				<option value="Sat">토요일</option>
+      				<option value="Sun">일요일</option>
+      			</select>
+      			<div id = "periodText">일마다 반복</div>
+      		</div>
+      		
+      		<!-- 자산 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">자산</div>
+      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(assetsList)}" id = "assetsSelected" th:data-assets = "${fixedCost.assetsName}">
+     					<option th:each = "assets : ${assetsList}" th:text="${assets.assetsName}" th:value = "${assets.id}"></option>
+     				</select>
+     				<button id="fixedCostAssetAddBtnLong" type="button" th:unless="${not #lists.isEmpty(assetsList)} " class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+    					<i class="bi bi-plus-circle mr-2"></i>
+    					자산 추가하기
+    				</button>
+    				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostAssetAddBtn"></i>
+      		</div>
+      		
+      		<!-- 카테고리 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">카테고리</div>
+      			<select class="form-control form-control-sm col-4"  th:if="${not #lists.isEmpty(categoryList)}" id="categorySelected" th:data-category = "${fixedCost.categoryName}">
+     					<option value="" selected disabled hidden>선택해주세요</option>
+     					<option class="d-none" th:id = "|breakdownOutgoingCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '지출'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+     					<option class="d-none" th:id = "|breakdownIncomeCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '수입'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+     					<option class="d-none" th:id = "|breakdownTransferCategorySelect${category.id}|" th:each = "category : ${categoryList}" th:if = "${category.classification == '이체'}" th:text="${category.categoryName}" th:value = "${category.id}"></option>
+     				</select>
+     				<button id="fixedCostCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(categoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+    					<i class="bi bi-plus-circle mr-2"></i>
+    					카테고리 추가하기
+    				</button>
+    				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostCategoryAddBtn"></i>
+      		</div>
+      		
+      		<!-- 세부 카테고리 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">세부 카테고리</div>
+      			<select class="form-control form-control-sm col-4" th:if="${not #lists.isEmpty(detailCategoryList)}" id="detailCategorySelected" th:data-detail-category = "${fixedCost.detailCategoryName}">
+     					<option value="" selected disabled hidden>선택해주세요</option>
+     					<option th:each = "detailCategory : ${detailCategoryList}" th:text="${detailCategory.detailCategoryName}" th:value = "${detailCategory.id}"></option>
+     				</select>
+     				<button id="fixedCostDetailCategoryAddBtnLong" type="button" th:unless="${not #lists.isEmpty(detailCategoryList)}" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
+    					<i class="bi bi-plus-circle mr-2"></i>
+    					세부 카테고리 추가하기
+    				</button>
+    				<i class="bi bi-plus-circle mr-2 ml-2" id="fixedCostDetailCategoryAddBtn"></i>
+      		</div>
+      		
+      		<!-- 내역명 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">내역</div>
+      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostName" th:value = "${fixedCost.fixedCostName}">
+      		</div>
+      		
+      		<!-- 금액 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">금액</div>
+      			<input type="text" class="inputBottomBorder ml-1 col-7" id="fixedCostCost" th:data-cost-value = "${fixedCost.fixedCost}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ','); ">
+      		</div>
+      		
+      		<!-- 메모 -->
+      		<div class="d-flex align-items-center mt-3 modalText">
+      			<div class="col-4">메모</div>
+      		</div>
+      		<div class="d-flex justify-content-center">
+      			<textarea class="form-control mt-1 col-11" rows = "8" id="memo" th:text = "${fixedCost.memo}"></textarea>
+      		</div>
+      		
+      	</div>
+      	
+      	
+      	<div class="d-flex justify-content-between mt-2">
+      		<button type="button" class="btn btn-outline-danger" id="deleteBtn">삭제</button>
+        	<button type="button" class="btn btn-outline-dark" id="submitBtn">완료</button>
+      	</div>
+      	
+      	<!--세부 카테고리추가 Modal -->
+		<div class="modal fade" id="detailCategoryModal"  aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content p-3">
+		    	<div class=" d-flex justify-content-end">
+		        </div>
+		      <div class="modal-body">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!--카테고리추가 Modal -->
+		<div class="modal fade" id="categoryModal"  aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content p-3">
+		    	<div class=" d-flex justify-content-end">
+		        </div>
+		      <div class="modal-body">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<!-- 자산 추가 Modal -->
+		<div class="modal fade" id="assetModal"  aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content p-3">
+		      <div class="modal-body">
+		      </div>
+		    </div>
+		  </div>
+		</div>
+    </section>
+    
+    <script layout:fragment="script">
+    	$(document).ready(function(){
+    		
+    		//// 선택된 고정비의 정보
+  			if($("#fixedCostDiv").data("fixed-cost-id") != null){
+	  			// 금액에 쉼표 붙이기
+	  			let costData = $("#fixedCostCost").data("cost-value").toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+	  			$("#fixedCostCost").val(costData);
+	  			
+	  			// 세부 카테고리 선택
+	  			let fixedCostDetailCategoryName = $("#detailCategorySelected").data("detail-category");
+	  			$("#detailCategorySelected option:contains("+ fixedCostDetailCategoryName +")").prop("selected", true);
+	  			
+	  			// 카테고리 선택
+	  			let fixedCostCategoryName = $("#categorySelected").data("category");
+	  			$("#categorySelected option:contains("+ fixedCostCategoryName +")").prop("selected", true);
+	  			
+	  			// 자산 선택
+	  			let fixedCostAssetsName = $("#assetsSelected").data("assets");
+	  			$("#assetsSelected option:contains(" + fixedCostAssetsName +")").prop("selected", true);
+	  			
+	  			// 반복 주기
+	  			let fixedCostPeriod = $("#FCperiod").data("period");
+	  			let firstPeriod = fixedCostPeriod.substr(0,2);
+	  			
+	  			if(firstPeriod == "매월"){
+	  				$("#periodSelect").val("M").prop("selected", true);
+	  				$("#weekPeriod").addClass("d-none");
+						$("#periodInput").removeClass("d-none");
+						$("#periodText").val("일 마다 반복");
+	  				$("#periodInput").val(fixedCostPeriod.substr(2));
+	  				
+	  			} else if(firstPeriod == "매주"){
+	  				$("#periodSelect").val("W").prop("selected", true);
+	  				$("#periodText").text("마다 반복");
+						$("#periodInput").addClass("d-none");
+						$("#weekPeriod").removeClass("d-none");
+						$("#weekPeriod option:contains(" + fixedCostPeriod.substr(2) + ")").prop("selected", true);
+	  				
+	  			} else{
+	  				$("#periodSelect").val("Daily").prop("selected", true);
+	  				$("#periodInput").addClass("d-none");
+						$("#weekPeriod").addClass("d-none");
+						$("#periodText").addClass("d-none");
+	  			}
+	  			
+	  			// 분류
+	  			let fixedCostClassification = $("#classification").data("classification");
+	  			if(fixedCostClassification == "지출"){
+	  				$("#outgoingBtn").removeClass("btn-outline-danger");
+	  				$("#outgoingBtn").addClass("btn-danger");
+	  			}else if(fixedCostClassification == "수입"){
+	  				$("#incomeBtn").removeClass("btn-outline-success");
+	  				$("#incomeBtn").addClass("btn-success");
+	  				
+	  			}else{
+	  				$("#transferBtn").removeClass("btn-outline-secondary");
+	  				$("#transferBtn").addClass("btn-secondary");
+	  			}
+  			}
+  			
+  			
+			
+			// 자산추가 버튼 클릭
+			$("#fixedCostAssetAddBtn").on("click", function(){
+				$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+				$("#assetModal").modal("show");
+			});
+				
+			// 자산추가 긴 버전 버튼 클릭
+			$("#fixedCostAssetAddBtnLong").on("click", function(){
+				$("#assetModal .modal-body").load("/budgetBook/money/assetModal");
+				$("#assetModal").modal("show");
+			});
+			
+			// 자산 추가 이후
+    		$('#assetModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/assetsList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let assetsSelect = $("#assetsSelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            assetsSelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.assets.forEach(assets => {
+                            	assetsSelect.append(
+                                    `<option value="${assets.id}">${assets.assetsName}</option>`
+                                );
+                                
+                            });
+                    	}else{
+                    		alert("세부 카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("세부 카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
+				
+			// 카테고리 추가
+			$("#fixedCostCategoryAddBtn").on("click", function(){
+				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+				$("#categoryModal").modal("show");
+			});  
+			
+			// 카테고리 추가 버튼 긴 버전 추가
+			$("#fixedCostCategoryAddBtnLong").on("click", function(){
+				$("#categoryModal .modal-body").load("/budgetBook/money/categoryModal");
+				$("#categoryModal").modal("show");
+			}); 
+			
+			// 카테고리 추가 이후
+    		$('#categoryModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/categoryList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let categorySelect = $("#categorySelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            categorySelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.categories.forEach(category => {
+                                if (category.classification === "지출") {
+                                    categorySelect.append(
+                                        `<option class="d-none" id = "breakdownOutgoingCategorySelect`
+                                        + category.id
+                                        + `" value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }else if(category.classification === "수입"){
+                                	categorySelect.append(
+                                        `<option class="d-none" id = "breakdownIncomeCategorySelect`
+                                        + category.id
+                                        + `"value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }else if(category.classification === "이체"){
+                                	categorySelect.append(
+                                        `<option class="d-none" id = "breakdownTransferCategorySelect`
+                                        + category.id
+                                        + `"value="${category.id}">${category.categoryName}</option>`
+                                    );
+                                }
+                            });
+                    	}else{
+                    		alert("카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
+				
+			// 세부 카테고리추가 버튼 클릭
+			$("#fixedCostDetailCategoryAddBtn").on("click", function(){
+				$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+				$("#detailCategoryModal").modal("show");
+			});
+				
+			// 세부 카테고리추가 긴 버전 버튼 클릭
+			$("#fixedCostDetailCategoryAddBtnLong").on("click", function(){
+				$("#detailCategoryModal .modal-body").load("/budgetBook/money/detailCategoryModal");
+				$("#detailCategoryModal").modal("show");
+			});
+			
+			// 세부 카테고리 추가 이후
+    		$('#detailCategoryModal').on('hidden.bs.modal', function () {
+   				
+   				$.ajax({
+    				type : "get"
+    				, url : "/budgetBook/money/detail/detailCategoryList"
+    				, data : null
+                    , success : function(data){
+                    	if(data.result == "success"){
+                    		let detailCategorySelect = $("#detailCategorySelected");
+
+                            // 기존 옵션 제거 후 기본 옵션 추가
+                            detailCategorySelect.empty().append('<option value="" selected disabled hidden>선택해주세요</option>');
+                            
+
+                            // 새로운 옵션 추가
+                            data.detailCategories.forEach(detailCategory => {
+                            	detailCategorySelect.append(
+                                    `<option value="${detailCategory.id}">${detailCategory.detailCategoryName}</option>`
+                                );
+                                
+                            });
+                    	}else{
+                    		alert("세부 카테고리 새로고침 실패!");
+                    	}
+                    }
+    				, error : function(){
+    					alert("세부 카테고리 새로고침 에러!");
+    				}
+   				
+   				})
+    		});
+				
+			// 완료 버튼 클릭
+			$("#submitBtn").on("click", function(){
+				
+				// 분류
+				let classification = "";
+				if($("#incomeBtn").hasClass("btn-success")){
+					classification = "수입";
+				}else if($("#outgoingBtn").hasClass("btn-danger")){
+					classification = "지출";
+				}else if($("#transferBtn").hasClass("btn-secondary")){
+					classification = "이체";
+				}else{
+					alert("분류를 선택해주세요!"); // 유효성 검사
+					return ;
+				}
+				
+				// 주기
+				let period = $("#periodSelect :selected").text();
+				let finalPeriod = "";
+				
+				
+				if(period == "매월"){
+					let Mperiod = $("#periodInput").val();
+					if(Mperiod == ""){ // 유효성 검사
+						alert("반복일을 입력해주세요!");
+						return ;
+					}
+					finalPeriod = "M" + Mperiod;
+						
+				}else if(period == "매주"){
+					let Wperiod = $("#weekPeriod").val();
+					if(Wperiod == ""){ // 유효성 검사
+						alert("요일을 선택해주세요!");
+						return ;
+					}
+					finalPeriod = "W" + Wperiod;
+					
+				}else{
+					finalPeriod = "Daily";
+				};
+					
+				// 자산
+				let assetsId = $("#assetsSelected :selected").val();
+				if(assetsId == ""){
+					alert("자산을 선택해주세요!"); // 유효성 검사
+					return;
+				}
+				
+				// 카테고리 - 비어있어도 됨
+				let categoryId = "";
+				if($("#categorySelected").length > 0){
+					categoryId = $("#categorySelected :selected").val();
+					if(categoryId == ""){
+						categoryId = 0;
+					}
+				}else{
+					categoryId = 0;
+				};
+					
+					
+				// 세부 카테고리 - 비어있어도 됨
+				let detailCategoryId = "";
+				if($("#detailCategorySelected").length > 0){
+					detailCategoryId = $("#detailCategorySelected :selected").val();
+					if(detailCategoryId == ""){
+						detailCategoryId = 0;
+					}
+				}else{
+					detailCategoryId = 0;
+				}
+					
+					
+				// 내역명
+				let fixedCostName = $("#fixedCostName").val();
+				
+				if(fixedCostName == ""){
+					alert("내역명을 입력해주세요!"); // 유효성 검사
+					return ;
+				}
+				
+				// 금액
+				let fixedCostString = $("#fixedCostCost").val();
+				let fixedCostCost = fixedCostString.replace(/,/g, "");
+				if(fixedCostCost == ""){
+					alert("금액을 입력해주세요!"); // 유효성 검사
+					return ;
+				}
+				
+				// 메모 - 비어있어도 됨
+				let memo = $("#memo").val();
+				
+				
+				// FormData
+				let formData = new FormData();
+				formData.append("classification", classification);
+				formData.append("period", finalPeriod);
+				formData.append("assetsId", assetsId);
+				formData.append("categoryId", categoryId);
+				formData.append("detailCategoryId", detailCategoryId);
+				formData.append("fixedCostName", fixedCostName);
+				formData.append("fixedCost", fixedCostCost);
+				formData.append("memo", memo);
+				
+				// 고정비 내역 수정이라면 fixedCostId 추가해서 수정이라는 걸 알려주기
+				if($("#fixedCostDiv").data("fixed-cost-id") != null){
+					// fixedCostId
+        			let fixedCostId = $("#fixedCostDiv").data("fixed-cost-id");
+        			formData.append("fixedCostId", fixedCostId);
+    			}
+				
+				
+				$.ajax({
+					type : "post"
+					, url : "/budgetBook/money/fixedCost/save"
+					, data : formData
+					, processData : false
+	                , contentType : false
+	                , success : function(data){
+	                	if(data.result == "success"){
+	                		location.href = "/budgetBook/money/fixedCost-view";
+	                	}else{
+	                		alert("고정비 추가 실패!");
+	                	}
+	                }
+					, error : function(){
+						alert("고정비 추가 에러!");
+					}
+				});
+					
+					
+			});
+				
+			//// 삭제 버튼 클릭
+  			$("#deleteBtn").on("click", function(){
+  				// fixedCostId
+    			let fixedCostId = $("#fixedCostDiv").data("fixed-cost-id");
+  				
+  				$.ajax({
+  					type : "delete"
+  					, url : "/budgetBook/money/fixedCost/delete"
+  					, data : {"fixedCostId" : fixedCostId}
+  					, success : function(data){
+  						if(data.result = "success"){
+  							location.href = "/budgetBook/money/fixedCost-view";
+  						}else{
+  							alert("고정비 삭제 실패!");
+  						}
+  					}
+  					, error : function(){
+  						alert("고정비 삭제 에러!");
+  					}
+  				});
+  			});
+				
+			
+			// 반복주기에 따라 뒤에 오는 글자를 다르게 하기
+			$("#periodSelect").change(function(){
+				let period = $("#periodSelect :selected").text();
+				
+				if(period == "매월"){
+					$("#weekPeriod").addClass("d-none");
+					$("#periodInput").removeClass("d-none");
+					$("#periodText").val("일 마다 반복");
+				}else if(period == "매주"){
+					$("#periodText").text("마다 반복");
+					$("#periodInput").addClass("d-none");
+					$("#weekPeriod").removeClass("d-none");
+				}else{
+					$("#periodInput").addClass("d-none");
+					$("#weekPeriod").addClass("d-none");
+					$("#periodText").addClass("d-none");
+				}
+			});
+			
+			// 버튼 클릭 시 버튼 스타일 변경
+			 // 수입 버튼
+			$("#incomeBtn").on("click", function(){
+				$("#incomeBtn").removeClass("btn-outline-success");
+				$("#incomeBtn").addClass("btn-success");
+				
+				$("#outgoingBtn").removeClass("btn-danger");
+				$("#outgoingBtn").addClass("btn-outline-danger");
+				$("#transferBtn").removeClass("btn-secondary");
+				$("#transferBtn").addClass("btn-outline-secondary");
+				
+				$("[id^='breakdownIncomeCategorySelect']").removeClass("d-none");
+				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
+			});
+			// 지출 버튼
+			$("#outgoingBtn").on("click", function(){
+				$("#outgoingBtn").removeClass("btn-outline-danger");
+				$("#outgoingBtn").addClass("btn-danger");
+				
+				$("#incomeBtn").removeClass("btn-success");
+				$("#incomeBtn").addClass("btn-outline-success");
+				$("#transferBtn").removeClass("btn-secondary");
+				$("#transferBtn").addClass("btn-outline-secondary");
+
+				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+				$("[id^='breakdownOutgoingCategorySelect']").removeClass("d-none");
+				$("[id^='breakdownTransferCategorySelect']").addClass("d-none");
+			}); 
+			// 이체 버튼
+			$("#transferBtn").on("click", function(){
+				$("#transferBtn").removeClass("btn-outline-secondary");
+				$("#transferBtn").addClass("btn-secondary");
+				
+				$("#outgoingBtn").removeClass("btn-danger");
+				$("#outgoingBtn").addClass("btn-outline-danger");
+				$("#incomeBtn").removeClass("btn-success");
+				$("#incomeBtn").addClass("btn-outline-success");
+
+				$("[id^='breakdownIncomeCategorySelect']").addClass("d-none");
+				$("[id^='breakdownOutgoingCategorySelect']").addClass("d-none");
+				$("[id^='breakdownTransferCategorySelect']").removeClass("d-none");
+			}); 
+		});
+    </script>
+
+</html>

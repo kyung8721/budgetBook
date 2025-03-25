@@ -9,4 +9,5 @@ import com.budgetBook.user.domain.User;
 public interface UserRepository extends JpaRepository<User, Integer>{
 	Optional<User> findByLoginId(String loginId);
 	Optional<User> findByEmail(String email);
+	int countById(int userId);
 }

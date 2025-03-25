@@ -20,7 +20,9 @@ import com.budgetBook.money.domain.Breakdown;
 import com.budgetBook.money.domain.Category;
 import com.budgetBook.money.domain.DetailCategory;
 import com.budgetBook.money.domain.FixedCost;
+import com.budgetBook.money.dto.AssetsDto;
 import com.budgetBook.money.dto.CategoryDto;
+import com.budgetBook.money.dto.DetailCategoryDto;
 import com.budgetBook.money.service.MoneyService;
 
 import jakarta.servlet.http.HttpSession;
@@ -435,12 +437,62 @@ public class MoneyRestController {
 	
 	// 카테고리 리스트 새로고침
 	@GetMapping("/detail/categoryList")
-	public List<CategoryDto> reloadCategoryDto(HttpSession session){
+	public Map<String, Object> reloadCategoryDto(HttpSession session){
 		int userId = (Integer)session.getAttribute("userId");
 		
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		
-		return categoryDtoList;
+		
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		if(categoryDtoList != null) {
+			resultMap.put("result", "success");
+			resultMap.put("categories", categoryDtoList);
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 세부 카테고리 리스트 새로고침
+	@GetMapping("/detail/detailCategoryList")
+	public Map<String, Object> reloadDetailCategoryDto(HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
+		
+		
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		if(detailCategoryDtoList != null) {
+			resultMap.put("result", "success");
+			resultMap.put("detailCategories", detailCategoryDtoList);
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 자산 리스트 새로고침
+	@GetMapping("/detail/assetsList")
+	public Map<String, Object> reloadAssetsDto(HttpSession session){
+		int userId = (Integer)session.getAttribute("userId");
+		
+		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
+		
+		
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		if(assetsDtoList != null) {
+			resultMap.put("result", "success");
+			resultMap.put("assets", assetsDtoList);
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
 	}
 	
 

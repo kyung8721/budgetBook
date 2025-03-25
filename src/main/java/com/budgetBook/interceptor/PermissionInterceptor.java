@@ -43,7 +43,8 @@ public class PermissionInterceptor implements HandlerInterceptor{
 					&& !(uri.startsWith("/budgetBook/user/passwordChange"))
 					&& !(uri.startsWith("/budgetBook/user/passwordCheck"))
 					&& !(uri.startsWith("/budgetBook/user/profileImage/delete"))
-					&& !(uri.startsWith("/budgetBook/user/profileImage"))) {
+					&& !(uri.startsWith("/budgetBook/user/profileImage"))
+					&& !(uri.startsWith("/budgetBook/user/userDelete"))) {
 				response.sendRedirect("/budgetBook/money/main-view");
 				return false;
 			}

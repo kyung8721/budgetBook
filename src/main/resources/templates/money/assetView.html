@@ -30,33 +30,30 @@
     					<th>No</th>
     					<th>자산</th>
     					<th>금액</th>
-    					<th>지난 달 요약</th>
-    					<th>이번 달 예상 상황</th>
+    					<th>이번 달 하위 예산 합계</th>
    					</tr>
     			</thead>
     			<tbody>
     				<tr th:id="|assetSummary${assets.id}|" th:each="assets, assetsStat : ${assetsList}" th:data-assets-id = "${assets.id}">
     					<td th:text="${assetsStat.count}">1</td>
     					<td th:text="${assets.assetsName}">카카오뱅크 생활비 통장</td>
-    					<td th:text="${#numbers.formatInteger(assets.balance, 3, 'COMMA')}">300,000</td>
     					<td>
-    						<div th:if="${assets.balanceDifference} != null">
-    							<span th:if="${#strings.substring(assets.balanceDifference, 0, 2)} == '감소'" >
-    								<span>지난 달보다 </span><span class = "text-danger" th:text="${#strings.substring(assets.balanceDifference, 2)}">100,000</span><span>원 </span><span class = "text-danger">감소</span>했어요!
-    							</span>
-    							
-	    						<span th:if="${#strings.substring(assets.balanceDifference, 0, 2)} == '증가'" >
-    								<span>지난 달보다 </span><span class = "text-success" th:text="${#strings.substring(assets.balanceDifference, 2)}">100,000</span><span>원 </span><span class = "text-success">증가</span>했어요!
-    							</span>
-    							<span th:if="${#strings.substring(assets.balanceDifference, 0, 4)} == '변함없음'" >
-    								<span>지난 달과 변함이 없어요!</span>
-    							</span>
-	    						
+    						<div th:if = "${assets.balance} < 100 and ${assets.balance} > -100">
+    							<div th:text="${assets.balance}">300,000</div>
     						</div>
-    						
-   						</td>
-    					<td class = "text-danger" th:if="${assets.balancePrediction < 0}">이번 달이 끝나면 <span th:text="${assets.balancePrediction} * -1">200,000</span>원 감소할 예정이에요!</td>
-    					<td class = "text-success" th:if="${assets.balancePrediction > 0}">이번 달이 끝나면 <span th:text="${assets.balancePrediction}">200,000</span>원 증가할 예정이에요!</td>
+    						<div th:unless = "${assets.balance} < 100 and ${assets.balance} > -100">
+    							<div th:text="${#numbers.formatInteger(assets.balance, 3, 'COMMA')}">300,000</div>
+    						</div>
+    					</td>
+    					
+    					<td class = "text-danger" th:if="${assets.balancePrediction < 0}">이번 달이 끝나면 
+    						<span th:if = "${assets.balancePrediction} < 100 and ${assets.balancePrediction} > -100" th:text="${assets.balancePrediction * -1} + '원 감소할 예정이에요!'">200,000</span>
+    						<span th:unless = "${assets.balancePrediction} < 100 and ${assets.balancePrediction} > -100" th:text="${#numbers.formatInteger(assets.balancePrediction * -1, 3, 'COMMA')} + '원 감소할 예정이에요!'">200,000</span>
+    					</td>
+    					<td class = "text-success" th:if="${assets.balancePrediction > 0}">이번 달이 끝나면 
+    						<span th:if = "${assets.balancePrediction} < 100 and ${assets.balancePrediction} > -100" th:text="${assets.balancePrediction} + '원 증가할 예정이에요!'">200,000</span>
+    						<span th:unless = "${assets.balancePrediction} < 100 and ${assets.balancePrediction} > -100" th:text="${#numbers.formatInteger(assets.balancePrediction, 3, 'COMMA')} + '원 증가할 예정이에요!'">200,000</span>
+    					</td>
     					<td th:if="${assets.balancePrediction == 0}">이번 달이 끝나도 변함이 없을 예정이에요!</td>
     				</tr>
     				

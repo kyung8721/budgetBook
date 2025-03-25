@@ -115,44 +115,48 @@ public class MoneyController {
 	}
 	
 	
-	// 고정비 작성 모달
-	@GetMapping("/fixedCostModal")
-	public String fixedCostModalView(Model model, HttpSession session) {
-		int userId = (Integer)session.getAttribute("userId");
-		
-		
-		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
-		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
-		
-		model.addAttribute("assetsList", assetsDtoList);
-		model.addAttribute("categoryList", categoryDtoList);
-		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		
-		return "money/fixedCostModal";
-	}
-	
-	// 고정비 내역 클릭 시 모달(고정비 수정 가능)
-	@GetMapping("/fixedCostEditModal")
-	public String fixedCostEditModalView(
-			@RequestParam("fixedCostId") int fixedCostId 
+	// 고정비 추가, 수정 페이지
+	@GetMapping("/fixedCostAdd")
+	public String fixedCostModalView(
+			@RequestParam(value = "fixedCostId", required=false) Integer fixedCostId 
 			, Model model, HttpSession session) {
 		int userId = (Integer)session.getAttribute("userId");
+		// 사용자 정보
+		UserDto userDto = moneyService.callUserData(userId);
 		
-		// 해당 고정비 정보 불러오기
-		FixedCostDto fixedCostDto = moneyService.callFixedCostDtoById(fixedCostId);
+		FixedCostDto fixedCostDto;
+		if(fixedCostId != null) {
+			// 내역 불러오기
+			fixedCostDto = moneyService.callFixedCostDtoById(fixedCostId);
+		}else {
+			fixedCostDto = FixedCostDto.builder()
+					.id(null)
+					.userId(null)
+					.classification(null)
+					.period(null)
+					.assetsName(null)
+					.assetsColor(null)
+					.categoryName(null)
+					.categoryColor(null)
+					.detailCategoryName(null)
+					.fixedCostName(null)
+					.fixedCost(null)
+					.memo(null)
+					.build();
+		}
 		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
 		
+		model.addAttribute("user", userDto);
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
 		model.addAttribute("fixedCost", fixedCostDto);
 		
-		return "money/fixedCostEditModal";
+		return "money/fixedCostAddView";
 	}
 	
 	// 내역 페이지
@@ -212,48 +216,55 @@ public class MoneyController {
 	}
 	
 
-	// 상세 내역 모달(내역 작성)
-	@GetMapping("/detailModal")
-	public String detailListView(Model model, HttpSession session, @RequestParam("realTimePrediction")int realTimePrediction) {
-		
-		int userId = (Integer)session.getAttribute("userId");
-		
-		
-		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
-		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
-		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
-		
-		model.addAttribute("assetsList", assetsDtoList);
-		model.addAttribute("categoryList", categoryDtoList);
-		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		model.addAttribute("realTimePrediction", realTimePrediction);
-		
-		return "money/detail";
-	}
-	
-	// 상세 내역 클릭시 모달
-	@GetMapping("/detailEditModal")
-	public String detailModalEditView(Model model, HttpSession session
-			, @RequestParam("breakdownId")int breakdownId
+	// 상세 내역 추가(내역 작성)
+	@GetMapping("/detailAdd")
+	public String detailListView(Model model, HttpSession session
+			, @RequestParam(value ="breakdownId", required = false)String breakdownId
 			, @RequestParam("realTimePrediction")int realTimePrediction) {
 		
 		int userId = (Integer)session.getAttribute("userId");
 		
-		// 내역 불러오기
-		BreakdownDto breakdownDto = moneyService.callBreakdownById(userId, breakdownId);
+		// 사용자 정보
+		UserDto userDto = moneyService.callUserData(userId);
+		
+		BreakdownDto breakdownDto;
+		if(breakdownId != null) {
+			int intBreakdownId = Integer.parseInt(breakdownId);
+			// 내역 불러오기
+			breakdownDto = moneyService.callBreakdownById(userId, intBreakdownId);
+		}else {
+			breakdownDto = BreakdownDto.builder()
+					.id(null)
+					.userId(null)
+					.realTimePrediction(null)
+					.classification(null)
+					.date(null)
+					.listDate(null)
+					.assetsName(null)
+					.categoryName(null)
+					.detailCategoryName(null)
+					.breakdownName(null)
+					.cost(null)
+					.memoImagePath(null)
+					.memo(null)
+					.build();
+		}
+		
 		
 		List<AssetsDto> assetsDtoList = moneyService.callAssetsDtoByUserId(userId);
 		List<CategoryDto> categoryDtoList = moneyService.callCategoryDtoByUserId(userId);
 		List<DetailCategoryDto> detailCategoryDtoList = moneyService.callDetailCategoryDtoList(userId);
 		
+		model.addAttribute("user", userDto);
 		model.addAttribute("assetsList", assetsDtoList);
 		model.addAttribute("categoryList", categoryDtoList);
 		model.addAttribute("detailCategoryList", detailCategoryDtoList);
-		model.addAttribute("breakdown", breakdownDto);
 		model.addAttribute("realTimePrediction", realTimePrediction);
+		model.addAttribute("breakdown", breakdownDto);
 		
-		return "money/detailEditModal";
+		return "money/detailAddView";
 	}
+	
 	
 	// 예산 예측 페이지
 	@GetMapping("/budgetPrediction-view")
@@ -495,4 +506,5 @@ public class MoneyController {
 		
 		return "money/staticinComeView";
 	}
+	
 }

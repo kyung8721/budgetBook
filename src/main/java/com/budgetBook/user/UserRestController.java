@@ -18,6 +18,7 @@ import com.budgetBook.mail.service.MailService;
 import com.budgetBook.user.domain.Profile;
 import com.budgetBook.user.domain.User;
 import com.budgetBook.user.dto.UserDto;
+import com.budgetBook.user.service.UserDeleteService;
 import com.budgetBook.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,10 +30,12 @@ public class UserRestController {
 	
 	private UserService userService;
 	private MailService mailService;
+	private UserDeleteService userDeleteService;
 	
-	UserRestController(UserService userService, MailService mailService){
+	UserRestController(UserService userService, MailService mailService, UserDeleteService userDeleteService){
 		this.userService = userService;
 		this.mailService = mailService;
+		this.userDeleteService = userDeleteService;
 	}
 	
 	// 회원가입
@@ -299,6 +302,27 @@ public class UserRestController {
 		
 		Map<String, String> resultMap = new HashMap<>();
 		
+		if(result) {
+			resultMap.put("result", "success");
+		}else {
+			resultMap.put("result", "fail");
+		}
+		
+		return resultMap;
+	}
+	
+	// 회원탈퇴
+	@PostMapping("/userDelete")
+	public Map<String, String> userDelete(HttpSession session) {
+		int userId = (Integer)session.getAttribute("userId");
+		boolean result = userDeleteService.deleteUser(userId);
+		
+		// 세션 제거
+		session.removeAttribute("userId");
+		session.removeAttribute("loginId");
+		
+		
+		Map<String, String> resultMap = new HashMap<>();
 		if(result) {
 			resultMap.put("result", "success");
 		}else {

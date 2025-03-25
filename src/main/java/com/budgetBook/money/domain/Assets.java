@@ -38,11 +38,11 @@ public class Assets {
 	
 	private int balance; // 자산 잔액
 	
-	@Column(name="lastBalance")
-	private Integer lastBalance;
-	
 	private String color;
 	private String memo;
+	
+	@Column(name="balanceUpdatedAt")
+	private LocalDateTime balanceUpdatedAt;
 	
 	@Column(name="createdAt")
 	@CreationTimestamp

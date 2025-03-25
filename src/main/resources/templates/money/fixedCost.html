@@ -65,22 +65,6 @@
     		</table>
     	</div>
     
-	
-	<!-- Modal -->
-	<div class="modal fade" id="fixedCostModal"  aria-hidden="true">
-	  <div class="modal-dialog modal-dialog-centered">
-	    <div class="modal-content p-3">
-	    	<div class=" d-flex justify-content-end">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-	        </div>
-	      <div class="modal-body">
-	      </div>
-	    </div>
-	  </div>
-	</div>
-    
     </section>
     
     <script layout:fragment="script">
@@ -107,8 +91,7 @@
     		
      		// 내역추가 버튼 클릭
     		$("#fixedCostModalAdd").on("click", function(){
-    			$("#fixedCostModal .modal-body").load("/budgetBook/money/fixedCostModal");
-    			$("#fixedCostModal").modal("show");
+    			location.href = "/budgetBook/money/fixedCostAdd";
     		});
     		
     		$("#budgetPredictionDetailList").on("click", "tr td:not(:has(.btn))", function(){
@@ -119,8 +102,7 @@
     		// 상세내역 모달 불러오기
     		$("[id^='fixedCostDetail']").on("click", function(){
     			let fixedCostId = $(this).data("fixed-cost-id");
-    			$("#fixedCostModal .modal-body").load("/budgetBook/money/fixedCostEditModal?fixedCostId=" + fixedCostId);
-    			$("#fixedCostModal").modal("show");
+    			location.href = "/budgetBook/money/fixedCostAdd?fixedCostId=" + fixedCostId;
     		}); // 상세내역 모달 불러오기 이벤트 종료
     	}); // 문서 종료
     </script>
